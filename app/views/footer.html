@@ -1,0 +1,9 @@
+	</div>
+	<div class="container">
+		{{template "flash.html" .}}
+	</div>
+	{{if eq .RunMode "dev"}}
+		{{template "debug.html" .}}
+	{{end}}
+	</body>
+</html>

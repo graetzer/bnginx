@@ -1,0 +1,37 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<div class="row">
+	<div class="col-sm-1" style="min-width:160px">
+		{{template "Admin/adminMenu.html" .}}
+	</div>
+	<div class="col-sm-8">
+		<table class="table table-hover">
+		   <thead>
+		       <tr>
+				<th>#ID</th>
+				<th>Title</th>
+				<th>Status</th>
+				<th>Creation Date</th>
+				<th>Last Update Date</th>
+				<th>Actions</th>
+		       </tr>
+		   </thead>
+		   <tbody>
+		    {{range .posts}}
+		       	<tr>
+					<td>{{.PostId}}</td>
+					<td>{{.Title}}</td>
+					<td>{{if not .Published}}Not {{end}}Published</td>
+					<td>{{.CreatedTime}}</td>
+					<td>{{.UpdatedTime}}</td>
+					<td><a href="/admin/post/edit/{{.PostId}}">Edit</a></td>
+				</tr>
+			{{end}}
+		   </tbody>
+		
+		</table>
+	</div>
+</div>
+
+{{template "footer.html" .}}

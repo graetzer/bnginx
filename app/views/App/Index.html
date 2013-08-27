@@ -1,0 +1,18 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+{{range .posts}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{.Title}}</h3>
+  </div>
+  <div class="panel-body">
+    {{markdown .Body}}
+  </div>
+</div>
+{{end}}
+
+<h1>Hi !</h1>
+<p>Todo show some content</p>
+
+{{template "footer.html" .}}
