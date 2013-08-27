@@ -69,7 +69,18 @@ func (c App) Index() revel.Result {
 	var posts []*models.Post
 	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published`)
 	if err != nil {
-		revel.ERROR.Fatal(err.Error())
+		revel.ERROR.Panic(err.Error())
+	}
+	return c.Render(posts)
+}
+
+func (c App) Search(query string) revel.Result {
+	var posts []*models.Post
+	// TODO speed this up
+	query = "%"+query+"%"
+	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published AND (Body like ? OR Title like ?)`, query, query)
+	if err != nil {
+		revel.ERROR.Panic(err.Error())
 	}
 	return c.Render(posts)
 }

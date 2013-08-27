@@ -5,6 +5,9 @@
 module:testrunner
 
 GET     /                                       App.Index
+GET     /search                                 App.Search
+
+# Login & Logout
 POST    /login                                  App.Login
 POST    /logout                                 App.Logout
 
