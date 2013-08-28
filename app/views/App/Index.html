@@ -1,6 +1,11 @@
 {{set . "title" "Home"}}
 {{template "header.html" .}}
 
+{{if not .posts}}
+<h1>Hi!</h1>
+<p>Todo: produce some content</p>
+{{end}}
+
 {{range .posts}}
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -12,8 +17,6 @@
 </div>
 {{end}}
 
-<h1>Hi !</h1>
-<p>Todo show some content</p>
 
 
 <link rel="stylesheet" type="text/css" href="/public/css/highlight.css">

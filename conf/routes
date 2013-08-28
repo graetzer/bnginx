@@ -18,9 +18,9 @@ GET     /admin                                  Admin.Index
 POST     /admin/user/create                     Admin.CreateUser
 
 # Post paths
-GET     /admin/post/create                      Admin.CreatePost
-GET     /admin/post/edit/:postId                Admin.EditPost
-POST    /admin/post/save                        Admin.SavePost
+GET     /admin/post/create                      Admin.EditPost
+GET     /admin/post/:postId                     Admin.EditPost
+POST    /admin/post/:postId                     Admin.SavePost
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

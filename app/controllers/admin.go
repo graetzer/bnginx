@@ -29,14 +29,18 @@ func (c Admin) Index() revel.Result {
 	return c.Render(posts)
 }
 
-func (c Admin) CreateUser(username string, name string, email string) revel.Result {
-	user := c.getUser(username)	
+func (c Admin) CreateUser(name string, email string) revel.Result {
+	if !c.connected().Admin {
+		return c.Redirect(routes.Admin.Index())
+	}
+	
+	user := c.getUser(email)	
 	if user != nil {
 		c.Flash.Error("User already exists")
 		return c.Redirect(routes.Admin.Index())
 	}
 	
-    user = &models.User{UserId:0, Name:name, Email:email, Username:username, Password:"default"}
+    user = &models.User{UserId:0, Name:name, Email:email, Password:"default", Admin:false}
     err := c.Txn.Insert(user)
 	if err != nil {
 		revel.ERROR.Panic(err)
@@ -45,34 +49,54 @@ func (c Admin) CreateUser(username string, name string, email string) revel.Resu
     return c.Redirect(routes.Admin.Index())
 }
 
-func (c Admin) CreatePost() revel.Result {
-	post := models.NewPost(c.connected())// Creates
-	err := c.Txn.Insert(post)
-	if err != nil {
-		revel.WARN.Println(err)
-	}
-	return c.Redirect(routes.Admin.EditPost(post.PostId))
-}
 
 func (c Admin) EditPost(postId int64) revel.Result {
-	obj, err := c.Txn.Get(models.Post{}, postId)
-	if err != nil {
-		revel.ERROR.Panic(err)
-	}
-	if obj == nil {
-		c.Flash.Error("No result for this id")
-		return c.Redirect(routes.Admin.Index())
+	var post *models.Post = new(models.Post)
+    if postId > 0 {
+		_, err := c.Txn.Get(&post, postId)
+		if err != nil {
+			revel.ERROR.Panic(err)
+		} else if post == nil {
+			c.Flash.Error("No result for this id")
+			return c.Redirect(routes.Admin.Index())
+		}
 	}
 	
-	post := obj.(*models.Post)
 	return c.Render(post)
 }
 
-func (c Admin) SavePost(post *models.Post) revel.Result {
+func (c Admin) SavePost(postId int64, published bool, title, body string) revel.Result {
+	var post *models.Post
+	if postId <= 0 {
+		post = models.NewPost(c.connected())
+	} else {
+		_, err := c.Txn.Get(&post, postId)
+		if err != nil {
+			revel.ERROR.Panic(err)
+		} else if post == nil {
+			c.Flash.Error("No result for this id")
+			return c.Redirect(routes.Admin.Index())
+		}
+		
+		if c.connected().UserId != post.AuthorId && !c.connected().Admin {
+			c.Flash.Error("You have no permission to edit this post")
+			return c.Redirect(routes.Admin.Index())
+		}
+	}
 	post.SetUpdatedTime(time.Now())
-    _, err := c.Txn.Update(post)
+	post.Published = published
+	post.Title = title
+	post.Body = body
+	
+	var err error
+	if (post.PostId <= 0) {
+		err = c.Txn.Insert(post)
+	} else {
+		_, err = c.Txn.Update(post)
+	}
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}
+	
 	return c.Redirect(routes.Admin.Index())
 }

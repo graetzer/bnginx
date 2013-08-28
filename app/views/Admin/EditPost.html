@@ -10,21 +10,20 @@
 		<form role="form" method="POST" action="/admin/post/save">
 			<div class="form-group">
 				<label for="inputPostTitle">Post Titel</label>
-				<input type="text" class="form-control" id="inputPostTitle" name="post.Title" placeholder="Titel" value="{{.post.Title}}">
+				<input type="text" class="form-control" id="inputPostTitle" name="title" placeholder="Titel" value="{{.post.Title}}">
 			</div>
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="post.Published" value="true" {{if .post.Published}}checked{{end}}> Published
+					<input type="checkbox" name="published" value="true" {{if .post.Published}}checked{{end}}> Published
 				</label>
 			</div>
 			<div class="form-group">
 				<label for="wmd-input">Content</label>
 				<div>
             		<div id="wmd-button-bar"></div>
-					<textarea class="form-control" rows="20" id="wmd-input" name="post.Body">{{.post.Body}}</textarea>
+					<textarea class="form-control" rows="20" id="wmd-input" name="body">{{.post.Body}}</textarea>
 				</div>
 			</div>
-			<input type="hidden" name="post.PostId" value="{{.post.PostId}}">
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
 	</div>

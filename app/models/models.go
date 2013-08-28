@@ -6,7 +6,6 @@ type User struct {
     UserId      int64
     Name        string
     Email       string
-    Username    string
     Password    string
     Admin       bool
 }

@@ -1,9 +1,38 @@
-	</div>
-	<div class="container">
+		
 		{{template "flash.html" .}}
-	</div>
-	{{if eq .RunMode "dev"}}
-		{{template "debug.html" .}}
-	{{end}}
+		
+		<footer>
+			<div class="pull-right">
+			{{if not .user}}
+				<form class="form-inline" role="form" action="/login" method="POST">
+				  <div class="form-group">
+				    <label class="sr-only" for="loginInputUser">Your Email Address</label>
+				    <input type="email" class="form-control" id="loginInputUser" name="email" placeholder="Enter email">
+				  </div>
+				  <div class="form-group">
+				    <label class="sr-only" for="loginInputPassword">Password</label>
+				    <input type="password" class="form-control" id="loginInputPassword" name="password" placeholder="Password">
+				  </div>
+				  {{/*<div class="checkbox">
+				    <label><input type="checkbox"> Remember me</label>
+				  </div>*/}}
+				  <button type="submit" class="btn btn-info">Sign in</button>
+				</form>
+			{{else}}
+				<form class="form-inline" role="form" action="/logout" method="POST">
+					<div class="form-group">
+						Logged in as <a href="/admin/user/{{urlquery .user.Email}}">{{.user.Name}}</a>
+						<button type="submit" class="btn btn-info">Logout</button>
+					</div>
+				</form>
+			{{end}} 
+			</div>
+		</footer>
+		
+		</div><!-- /.container -->
+		
+		{{if eq .RunMode "dev"}}
+			{{template "debug.html" .}}
+		{{end}}
 	</body>
 </html>

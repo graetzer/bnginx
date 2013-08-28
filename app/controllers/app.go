@@ -23,14 +23,14 @@ func (c App) connected() *models.User {
     if c.RenderArgs["user"] != nil {
         return c.RenderArgs["user"].(*models.User)
     }
-    if username, ok := c.Session["user"]; ok {
-        return c.getUser(username)
+    if email, ok := c.Session["user"]; ok {
+        return c.getUser(email)
     }
     return nil
 }
 
-func (c App) getUser(username string) *models.User {
-    users, err := c.Txn.Select(models.User{}, `SELECT * FROM User WHERE Username = ?`, username)
+func (c App) getUser(email string) *models.User {
+    users, err := c.Txn.Select(models.User{}, `SELECT * FROM User WHERE Email = ?`, email)
     if err != nil {
 		//c.Flash.Error("Database error: "+err.Error())
 		//return nil
@@ -44,17 +44,18 @@ func (c App) getUser(username string) *models.User {
 
 // ================ Actions ================
 
-func (c App) Login(username string, password string) revel.Result {
+func (c App) Login(email string, password string) revel.Result {
     if user := c.connected(); user != nil {
-        c.Flash.Error("Already logged in as %s", user.Username)
+        c.Flash.Error("Already logged in as %s", user.Name)
         return c.Redirect(routes.App.Index())
     }
-    user := c.getUser(username)
+	
+    user := c.getUser(email)
     if user == nil || user.Password != password {
-        c.Flash.Error("Wrong username or password")
+        c.Flash.Error("Wrong email or password")
         return c.Redirect(routes.App.Index())
     }
-    c.Session["user"] = user.Username
+    c.Session["user"] = user.Email
     c.RenderArgs["User"] = user // Probably not needed
     return c.Redirect(routes.Admin.Index())
 }
@@ -76,25 +77,24 @@ func (c App) Index() revel.Result {
 
 func (c App) Search(query string) revel.Result {
 	var posts []*models.Post
-	// TODO speed this up
-	query = "%"+query+"%"
-	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published AND (Body like ? OR Title like ?)`, query, query)
+	q := "%"+query+"%"
+	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published AND (Body like ? OR Title like ?)`, q, q)
 	if err != nil {
 		revel.ERROR.Panic(err.Error())
 	}
-	return c.Render(posts)
+	return c.Render(posts, query)
 }
 
 func (c App) Page(postId int64) revel.Result {
-	obj, err := c.Txn.Get(models.Post{}, postId)
-	post := obj.(*models.Post)
+	var post *models.Post
+	_, err := c.Txn.Get(&post, postId)
 	if err != nil {
 		c.Flash.Error("Wrong post ID")
 		return c.Redirect(routes.App.Index())
 	}
 	
 	user := c.connected()
-	if !post.Published && (user == nil || !user.Admin) {
+	if post == nil || !post.Published && (user == nil || !user.Admin) {
 		c.Flash.Error("Wrong post ID")
 		return c.Redirect(routes.App.Index())
 	}

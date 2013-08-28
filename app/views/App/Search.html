@@ -12,8 +12,11 @@
 </div>
 {{end}}
 
-<h1>Hi !</h1>
-<p>Todo show some content</p>
+{{if not .posts}}
+<h2>Oops!</h2>
+<p>It seems that there are no results here</p>
+{{end}}
+
 
 
 <link rel="stylesheet" type="text/css" href="/public/css/highlight.css">
