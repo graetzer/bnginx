@@ -12,12 +12,23 @@ type User struct {
 
 type Post struct {
     PostId      int64    
-    Created     int64 // Datetime
     Updated     int64 //Datetime
     Published   bool
     Title       string
     Body        string
     AuthorId    int64
+	IsPage      bool
+	PageOrder   int16
+}
+
+type Comment struct {
+	CommentId   int64
+	PostId      int64
+	Created     int64
+	Title       string
+	Body        string
+	Email       string
+	Approved    bool
 }
 
 func NewPost(user *User) *Post {
@@ -25,18 +36,10 @@ func NewPost(user *User) *Post {
 	unix := now.Unix()
 	//formatted := now.Format("Jan 2, 2006 at 15:04 (MST)")
 	
-	post := Post{PostId:0, Created:unix, Updated:unix,
-	 Published:false, Title:"New Post", Body:"", AuthorId:user.UserId}
+	post := Post{PostId:0, Updated:unix,
+	 Published:false, Title:"New Post", Body:"", AuthorId:user.UserId, IsPage:false, PageOrder:0}
 	
 	return &post
-}
-
-func (p Post) CreatedTime() time.Time {
-	return time.Unix(p.Created, 0)
-}
-
-func (p Post) SetCreatedTime(t time.Time) {
-	p.Created = t.Unix()
 }
 
 func (p Post) UpdatedTime() time.Time {

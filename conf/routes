@@ -6,6 +6,7 @@ module:testrunner
 
 GET     /                                       App.Index
 GET     /search                                 App.Search
+GET     /page/:pageId/*                         App.Page
 
 # Login & Logout
 POST    /login                                  App.Login
@@ -15,12 +16,13 @@ POST    /logout                                 App.Logout
 GET     /admin                                  Admin.Index
 
 # User management
-POST     /admin/user/create                     Admin.CreateUser
+GET      /admin/user/:userId                    Admin.EditUser
+POST     /admin/user/:userId                    Admin.SaveUser
 
 # Post paths
-GET     /admin/post/create                      Admin.EditPost
 GET     /admin/post/:postId                     Admin.EditPost
 POST    /admin/post/:postId                     Admin.SavePost
+GET     /admin/post/delete/:postId             Admin.DeletePost
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

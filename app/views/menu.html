@@ -13,20 +13,20 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Link</a></li>
-      <li><a href="#">Link</a></li>
+      {{$current := .page}}
+	  {{range .pages}}
+	     <li {{if eq $current.PostId .PostId}}class="active"{{end}}><a href="/page/{{.PostId}}/{{urlquery .Title}}">{{.Title}}</a></li>
+	  {{end}}
+	      
 	  {{if .user}}
 	  <li><a href="/admin">Administration</a></li>
 	  {{end}}
     </ul>
-    <form class="navbar-form navbar-right" role="search" action="/search">
-		<div class="input-group">
-	      <input type="text" class="form-control" placeholder="Search" name="query" value="{{.query}}">
-	      <span class="input-group-btn">
-			<button type="submit" class="btn btn-default">Suchen</button>
-	      </span>
-	    </div>
-      
+	<form class="navbar-form navbar-right" role="search" action="/search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search" name="query" value="{{.query}}">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
     </form>
 
   </div><!-- /.navbar-collapse -->

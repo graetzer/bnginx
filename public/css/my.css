@@ -1,0 +1,12 @@
+body {
+	 background:url('/public/img/cream_pixels.png');
+}
+
+#trailer {
+	background:url('/public/img/trailer.jpg') no-repeat;
+	background-size: 100% auto;
+}
+/*
+.panel-heading .pull-right {
+	margin-top: -20px;
+}*/

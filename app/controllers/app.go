@@ -4,7 +4,6 @@ import (
     "github.com/robfig/revel"
     "bngnix/app/models"
 	"bngnix/app/routes"
-	"github.com/russross/blackfriday"
 )
 
 type App struct {
@@ -12,7 +11,18 @@ type App struct {
 }
 
 // ================ Helper functions ================
-func (c App) AddUser() revel.Result {
+
+func (c App) addPages() revel.Result {
+	var pages []*models.Post
+	_, err := c.Txn.Select(&pages, `SELECT * FROM Post WHERE Published AND IsPage ORDER BY PageOrder ASC`)
+	if err != nil {
+		revel.ERROR.Panic(err)
+	}
+	c.RenderArgs["pages"] = pages
+	return nil
+}
+
+func (c App) addUser() revel.Result {
     if user := c.connected(); user != nil {
          c.RenderArgs["user"] = user
     }
@@ -32,9 +42,8 @@ func (c App) connected() *models.User {
 func (c App) getUser(email string) *models.User {
     users, err := c.Txn.Select(models.User{}, `SELECT * FROM User WHERE Email = ?`, email)
     if err != nil {
-		//c.Flash.Error("Database error: "+err.Error())
-		//return nil
-        panic(err)
+		revel.ERROR.Panic(err)
+		return nil
     }
     if len(users) == 0 {
         return nil
@@ -42,18 +51,38 @@ func (c App) getUser(email string) *models.User {
     return users[0].(*models.User)
 }
 
+func (c App) getPost(postId int64) *models.Post {
+	obj, err := c.Txn.Get(models.Post{}, postId)
+	if err != nil {
+		revel.ERROR.Panic(err)
+	} else if obj == nil {
+		c.Flash.Error("No result for this id")
+		return nil
+	}
+	return obj.(*models.Post)
+}
+
+func (c App) getPublishedPosts(offset int64) []*models.Post {
+	var posts []*models.Post
+	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published ORDER BY Updated DESC LIMIT 5 OFFSET ?`, offset)
+	if err != nil {
+		revel.ERROR.Panic(err)
+	}
+	return posts
+}
+
 // ================ Actions ================
 
 func (c App) Login(email string, password string) revel.Result {
     if user := c.connected(); user != nil {
         c.Flash.Error("Already logged in as %s", user.Name)
-        return c.Redirect(routes.App.Index())
+        return c.Redirect(routes.App.Index(0))
     }
 	
     user := c.getUser(email)
     if user == nil || user.Password != password {
         c.Flash.Error("Wrong email or password")
-        return c.Redirect(routes.App.Index())
+        return c.Redirect(routes.App.Index(0))
     }
     c.Session["user"] = user.Email
     c.RenderArgs["User"] = user // Probably not needed
@@ -63,44 +92,33 @@ func (c App) Login(email string, password string) revel.Result {
 func (c App) Logout() revel.Result {
 	delete(c.Session, "user")
 	delete(c.RenderArgs, "user")
-	return c.Redirect(routes.App.Index())
+	return c.Redirect(routes.App.Index(0))
 }
 
-func (c App) Index() revel.Result {
-	var posts []*models.Post
-	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published`)
-	if err != nil {
-		revel.ERROR.Panic(err.Error())
-	}
+func (c App) Index(offset int64) revel.Result {
+	posts := c.getPublishedPosts(offset)
 	return c.Render(posts)
 }
 
-func (c App) Search(query string) revel.Result {
+func (c App) Search(query string, offset int64) revel.Result {
 	var posts []*models.Post
 	q := "%"+query+"%"
-	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published AND (Body like ? OR Title like ?)`, q, q)
+	
+	sql := `SELECT * FROM Post WHERE Published AND (Body like ? OR Title like ?) LIMIT 10 OFFSET ?`
+	_, err := c.Txn.Select(&posts, sql, q, q, offset)
 	if err != nil {
 		revel.ERROR.Panic(err.Error())
 	}
 	return c.Render(posts, query)
 }
 
-func (c App) Page(postId int64) revel.Result {
-	var post *models.Post
-	_, err := c.Txn.Get(&post, postId)
-	if err != nil {
-		c.Flash.Error("Wrong post ID")
-		return c.Redirect(routes.App.Index())
+func (c App) Page(pageId int64) revel.Result {
+	page := c.getPost(pageId)
+	//user := c.connected()
+	
+	// TODO Maybe a hidden property would be better
+	if page == nil {//|| !page.Published && (user == nil || !user.Admin) {
+		return c.Redirect(routes.App.Index(0))
 	}
-	
-	user := c.connected()
-	if post == nil || !post.Published && (user == nil || !user.Admin) {
-		c.Flash.Error("Wrong post ID")
-		return c.Redirect(routes.App.Index())
-	}
-	
-	input := []byte(post.Body)
-	output := blackfriday.MarkdownCommon(input)
-	
-	return c.RenderText(string(output))
+	return c.Render(page)
 }

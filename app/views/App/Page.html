@@ -10,25 +10,17 @@
 </div>
 </header>
 
-{{range .posts}}
 <article>
 	<div class="panel panel-default">
 	  <div class="panel-heading">
-	    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
+	    <h3 class="panel-title">{{.page.Title}}<small class="pull-right">{{.page.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
 	  </div>
 	  <div class="panel-body">
-	    {{markdown .Body}}
+	    {{markdown .page.Body}}
 	  </div>
 	</div>
 </article>
-{{end}}
 
-<a href="/?offset=10">Next &raquo;</a>
-
-
-
-<link rel="stylesheet" type="text/css" href="/public/css/highlight.css">
-<script type="text/javascript" src="/public/js/highlight.js"></script>
 <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 
 {{template "footer.html" .}}
