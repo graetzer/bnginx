@@ -1,31 +1,69 @@
-{{set . "title" "Home"}}
+{{set . "title" "Admin Panel"}}
 {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-1" style="min-width:160px">
+	<div class="col-sm-2" style="min-width:160px">
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-8">
+	    <h3>Posts</h3>
 		<table class="table table-hover">
 		   <thead>
 		       <tr>
 				<th>#ID</th>
 				<th>Title</th>
-				<th>Status</th>
+				<th>Published</th>
+				<th>Type</th>
 				<th>Last Update Date</th>
+				<th>Author</th>
 				<th>Actions</th>
 		       </tr>
 		   </thead>
 		   <tbody>
+			{{$user := .user}}
 		    {{range .posts}}
 		       	<tr>
 					<td>{{.PostId}}</td>
 					<td>{{.Title}}</td>
 					<td>{{if not .Published}}Not {{end}}Published</td>
-					<td>{{.UpdatedTime}}</td>
+					<td>{{if not .IsPage}}Page{{else}}Blogpost{{end}}</td>
+					<td>{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</td>
+					<td>{{.AuthorId}}</td>
 					<td>
 						<a href="/admin/post/{{.PostId}}">Edit</a>
-						<a href="/admin/post/delete/{{.PostId}}">Delete</a>
+						{{if eq $user.UserId .AuthorId}}
+							<a href="/admin/post/delete/{{.PostId}}">Delete</a>
+						{{end}}
+					</td>
+				</tr>
+			{{end}}
+		   </tbody>
+		
+		</table>
+		
+		<h3>Users</h3>
+		<table class="table table-striped">
+		   <thead>
+		       <tr>
+				<th>#ID</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Type</th>
+				<th>Actions</th>
+		       </tr>
+		   </thead>
+		   <tbody>
+		    {{range .users}}
+		       	<tr>
+					<td>{{.UserId}}</td>
+					<td>{{.Name}}</td>
+					<td>{{.Email}}</td>
+					<td>{{if .IsAdmin}}Administrator{{else}}User{{end}}</td>
+					<td>
+						<a href="/admin/user/{{urlquery .Email}}">Edit</a>
+						{{if $user.IsAdmin}}
+							<a href="/admin/user/delete/{{.Email}}">Delete</a>
+						{{end}}
 					</td>
 				</tr>
 			{{end}}

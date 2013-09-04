@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"github.com/coopernurse/gorp"
 	revel "github.com/robfig/revel"
-    "bngnix/app/models"
+    "bnginx/app/models"
 	//"github.com/robfig/revel/samples/booking/app/models"
 )
 
@@ -45,7 +45,7 @@ func DBInit() {
         revel.ERROR.Fatal("Error checking for users "+err.Error())
     }
     if len(users) == 0 {
-        user := &models.User{UserId:0, Name:"Simon", Email:"simon@graetzer.org", Password:"default", Admin:true}
+        user := &models.User{UserId:0, Name:"Simon", Email:"simon@graetzer.org", Password:"default", IsAdmin:true}
         Dbm.Insert(user)
     }
 }

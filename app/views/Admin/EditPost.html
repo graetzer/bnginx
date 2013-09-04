@@ -4,25 +4,27 @@
 {{set . "title" "Edit Post"}}
 {{end}}
 
-{{append . "moreStyles" "Markdown.Editor.css"}}
-{{append . "moreScripts" "Markdown.Converter.js"}}
-{{append . "moreScripts" "Markdown.Sanitizer.js"}}
-{{append . "moreScripts" "Markdown.Editor.js"}}
-{{append . "moreStyles" "highlight.css"}}
-{{append . "moreScripts" "highlight.js"}}
+{{append . "moreStyles" "/public/css/Markdown.Editor.css"}}
+{{append . "moreScripts" "/public/js/Markdown.Converter.js"}}
+{{append . "moreScripts" "/public/js/Markdown.Sanitizer.js"}}
+{{append . "moreScripts" "/public/js/Markdown.Editor.js"}}
+
+{{append . "moreStyles" "/public/css/highlight.css"}}
+{{/*append . "moreScripts" "/public/js/highlight.js"*/}}
+{{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 
 {{template "header.html" .}}
 
 
 <div class="row">
-	<div class="col-sm-1" style="min-width:160px">
+	<div class="col-sm-2" style="min-width:160px">
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-5">
 		<form role="form" method="POST" action="/admin/post/{{.post.PostId}}">
 			<div class="form-group">
 				<label for="inputPostTitle">Post Title</label>
-				<input type="text" class="form-control" id="inputPostTitle" name="title" placeholder="Titel" value="{{.post.Title}}">
+				<input type="text" class="form-control" id="inputPostTitle" name="title" placeholder="Titel" value="{{.post.Title}}" />
 			</div>
 			<div class="form-group">
 				<label for="wmd-input">Content</label>
@@ -33,17 +35,17 @@
 			</div>
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="published" value="true" {{if .post.Published}}checked{{end}}> Published (publicly visible)
+					<input type="checkbox" name="published" value="true" {{if .post.Published}}checked{{end}} /> Published (publicly visible)
 				</label>
 			</div>
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="isPage" value="true" {{if .post.IsPage}}checked{{end}}> Is a Page that should appear in the menu
+					<input type="checkbox" name="isPage" value="true" {{if .post.IsPage}}checked{{end}} /> Is a Page that should appear in the menu
 				</label>
 			</div>
 			<div class="form-group">
-				<label for="inputPostPageOrder">Page Oder</label>
-				<input type="number" class="form-control" id="inputPostPageOrder" name="pageOrder" placeholder="0" value="{{.post.PageOrder}}">
+				<label for="inputPostPageOrder">Page Order</label>
+				<input type="number" class="form-control" id="inputPostPageOrder" name="pageOrder" placeholder="0" value="{{.post.PageOrder}}" />
 			</div>
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>

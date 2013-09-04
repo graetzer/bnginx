@@ -7,7 +7,11 @@ type User struct {
     Name        string
     Email       string
     Password    string
-    Admin       bool
+    IsAdmin       bool
+}
+
+func (u User) CheckPassword(inPass string) bool {
+	return inPass == u.Password
 }
 
 type Post struct {

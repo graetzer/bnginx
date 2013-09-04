@@ -1,7 +1,9 @@
 <ul class="nav nav-pills nav-stacked">
-  <li class="active"><a href="/admin"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+  <li class="active"><a href="/admin"><span class="glyphicon glyphicon-home"></span> Content</a></li>
   <li><a href="/admin/post/create"><span class="glyphicon glyphicon-plus"></span> Create Post</a></li>
-  {{if .user.Admin}}
+  <li><a href="/admin/upload"><span class="glyphicon glyphicon-arrow-up"></span> Upload Media</a></li>
+  <li><a href="/admin/comments"><span class="glyphicon glyphicon-envelope"></span> Comments</a></li>
+  {{if .user.IsAdmin}}
   	<li><a href="/admin/user/create"><span class="glyphicon glyphicon-user"></span> Create User</a></li>
   {{end}}
 </ul>

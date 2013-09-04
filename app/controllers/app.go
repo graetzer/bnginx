@@ -2,9 +2,10 @@ package controllers
 
 import (
     "github.com/robfig/revel"
-    "bngnix/app/models"
-	"bngnix/app/routes"
+    "bnginx/app/models"
+	"bnginx/app/routes"
 )
+
 
 type App struct {
     GorpController
@@ -46,12 +47,25 @@ func (c App) getUser(email string) *models.User {
 		return nil
     }
     if len(users) == 0 {
+		c.Flash.Error("No result for this email")
         return nil
     }
     return users[0].(*models.User)
 }
 
-func (c App) getPost(postId int64) *models.Post {
+func (c App) getUserById(userId int64) *models.User {
+	obj, err := c.Txn.Get(models.User{}, userId)
+	if err != nil {
+		revel.ERROR.Panic(err)
+		return nil
+    } else if obj == nil {
+		c.Flash.Error("No result for this id")
+		return nil
+	}
+	return obj.(*models.User)
+}
+
+func (c App) getPostById(postId int64) *models.Post {
 	obj, err := c.Txn.Get(models.Post{}, postId)
 	if err != nil {
 		revel.ERROR.Panic(err)
@@ -74,13 +88,17 @@ func (c App) getPublishedPosts(offset int64) []*models.Post {
 // ================ Actions ================
 
 func (c App) Login(email string, password string) revel.Result {
-    if user := c.connected(); user != nil {
-        c.Flash.Error("Already logged in as %s", user.Name)
-        return c.Redirect(routes.App.Index(0))
-    }
+	c.Validation.Required(email)
+	c.Validation.Required(password)
+	if c.Validation.HasErrors() {
+		// Store the validation errors in the flash context and redirect.
+		c.Validation.Keep()
+		c.FlashParams()
+		return c.Redirect(routes.App.Index(0))
+	}
 	
     user := c.getUser(email)
-    if user == nil || user.Password != password {
+    if user == nil || user.CheckPassword(password) {
         c.Flash.Error("Wrong email or password")
         return c.Redirect(routes.App.Index(0))
     }
@@ -113,11 +131,11 @@ func (c App) Search(query string, offset int64) revel.Result {
 }
 
 func (c App) Page(pageId int64) revel.Result {
-	page := c.getPost(pageId)
+	page := c.getPostById(pageId)
 	//user := c.connected()
 	
 	// TODO Maybe a hidden property would be better
-	if page == nil {//|| !page.Published && (user == nil || !user.Admin) {
+	if page == nil {//|| !page.Published && (user == nil || !user.IsAdmin) {
 		return c.Redirect(routes.App.Index(0))
 	}
 	return c.Render(page)

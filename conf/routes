@@ -16,13 +16,18 @@ POST    /logout                                 App.Logout
 GET     /admin                                  Admin.Index
 
 # User management
-GET      /admin/user/:userId                    Admin.EditUser
-POST     /admin/user/:userId                    Admin.SaveUser
+GET      /admin/user/:email                    Admin.EditUser
+POST     /admin/user/save                      Admin.SaveUser
+GET      /admin/user/delete/:email             Admin.DeleteUser
 
-# Post paths
+# Post management
 GET     /admin/post/:postId                     Admin.EditPost
 POST    /admin/post/:postId                     Admin.SavePost
-GET     /admin/post/delete/:postId             Admin.DeletePost
+GET     /admin/post/delete/:postId              Admin.DeletePost
+
+# Media upload
+GET     /admin/upload                           Admin.Upload
+POST    /admin/upload/save                      Admin.SaveUpload
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

@@ -1,6 +1,6 @@
-{{set . "title" "Home"}}
-{{append . "moreStyles" "highlight.css"}}
-{{append . "moreScripts" "highlight.js"}}
+{{set . "title" .page.Title}}
+{{append . "moreStyles" "/public/css/highlight.css"}}
+{{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 {{template "header.html" .}}
 
 <header>

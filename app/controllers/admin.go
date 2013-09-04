@@ -2,9 +2,14 @@ package controllers
 
 import (
     "github.com/robfig/revel"
-    "bngnix/app/models"
-	"bngnix/app/routes"
+    "bnginx/app/models"
+	"bnginx/app/routes"
 	"time"
+	"path/filepath"
+	"os"
+	"io"
+	"io/ioutil"
+	"strconv"
 )
 
 type Admin struct {
@@ -21,56 +26,109 @@ func (c Admin) checkUser() revel.Result {
 }
 
 func (c Admin) Index() revel.Result {
-	var posts []*models.Post
+	var (
+		posts []*models.Post
+		users []*models.User
+	)
 	_, err := c.Txn.Select(&posts, "SELECT * FROM Post")
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}
-	return c.Render(posts)
-}
-
-func (c Admin) EditUser (userId int64) revel.Result {
-	user := new (models.User)
-	user.UserId = -1
-	if  c.Params.Get("userId") != "create" {
-		obj, err := c.Txn.Get(models.User{}, userId)
-		if err != nil {
-			revel.ERROR.Panic(err)
-		} else if user == nil {
-			c.Flash.Error("No result for this id")
-			return c.Redirect(routes.Admin.Index())
-		}
-		user = obj.(*models.User)
-	}
-	return c.Render(user)
-}
-
-func (c Admin) SaveUser(name string, email string) revel.Result {
-	if !c.connected().Admin {
-		return c.Redirect(routes.Admin.Index())
-	}
-	
-	user := c.getUser(email)	
-	if user != nil {
-		c.Flash.Error("User already exists")
-		return c.Redirect(routes.Admin.Index())
-	}
-	
-    user = &models.User{UserId:0, Name:name, Email:email, Password:"default", Admin:false}
-    err := c.Txn.Insert(user)
+	_, err = c.Txn.Select(&users, "SELECT * FROM User")
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}
-	c.Flash.Success("Set password to default")
-    return c.Redirect(routes.Admin.Index())
+	return c.Render(posts, users)
 }
 
+// ==================== Handle Users ====================
+
+func (c Admin) EditUser (email string) revel.Result {
+	profile := new(models.User)
+	profile.UserId = -1
+    if email != "create" {
+		profile = c.getUser(email)
+		if profile == nil {
+			return c.Redirect(routes.Admin.Index())
+		}
+	}
+	
+	return c.Render(profile)
+}
+
+func (c Admin) SaveUser(userId int64, name string, email string, password string) revel.Result {
+	c.Validation.Required(userId)
+	c.Validation.Required(email)
+	c.Validation.MinSize(password, 8)
+	//c.Validation.Match(username, regexp.MustCompile("^\\w*$"))
+	if c.Validation.HasErrors() {
+		// Store the validation errors in the flash context and redirect.
+		c.Validation.Keep()
+		c.FlashParams()
+		return c.Redirect(routes.Admin.Index())
+	}
+	
+	var user *models.User
+	u := c.connected()
+	if userId == -1 {
+		user = new(models.User)
+		if c.getUser(email) != nil {
+			c.Flash.Error("This is email address is already used")
+			return c.Redirect(routes.Admin.Index())
+		}
+		delete(c.Flash.Out, "error")
+	} else {
+		if u.UserId != userId && !u.IsAdmin {
+			c.Flash.Error("You have not the permission to save this post")
+			return c.Redirect(routes.Admin.Index())
+		}
+		
+		user = c.getUserById(userId)
+		if user == nil {
+			return c.Redirect(routes.Admin.Index())
+		}
+	}
+	user.Name = name
+	user.Email = email
+	user.Password = password
+	
+	var err error
+	if (userId == -1) {
+		err = c.Txn.Insert(user)
+	} else {
+		_, err = c.Txn.Update(user)
+	}
+	if err != nil {
+		revel.ERROR.Panic(err)
+	}
+	
+	return c.Redirect(routes.Admin.Index())
+}
+
+func (c Admin) DeleteUser(email string) revel.Result {
+	user := c.getUser(email)
+	if user == nil {
+		return c.Redirect(routes.Admin.Index())
+	}
+
+	u := c.connected()
+	if u.UserId == user.UserId || u.IsAdmin {
+		_, err := c.Txn.Delete(user)
+		if err == nil {
+			revel.ERROR.Panic(err)
+		}
+		c.Flash.Success("Deleted user")
+	}
+	return c.Redirect(routes.Admin.Index())
+}
+
+// ==================== Handle Posts ====================
 
 func (c Admin) EditPost(postId int64) revel.Result {
 	post := new(models.Post)
 	post.PostId = -1
     if c.Params.Get("postId") != "create" {
-		post = c.getPost(postId)
+		post = c.getPostById(postId)
 		if post == nil {
 			return c.Redirect(routes.Admin.Index())
 		}
@@ -87,13 +145,13 @@ func (c Admin) SavePost(postId int64, published bool, title, body string, isPage
 		post = models.NewPost(c.connected())
 		post.AuthorId = u.UserId
 	} else {
-		post = c.getPost(postId)
+		post = c.getPostById(postId)
 		if post == nil {
 			return c.Redirect(routes.Admin.Index())
 		}
 		
-		if u.UserId != post.AuthorId && !u.Admin {
-			c.Flash.Error("You have no permission to edit this post")
+		if u.UserId != post.AuthorId && !u.IsAdmin {
+			c.Flash.Error("You have not the permission to save this post")
 			return c.Redirect(routes.Admin.Index())
 		}
 	}
@@ -118,18 +176,56 @@ func (c Admin) SavePost(postId int64, published bool, title, body string, isPage
 }
 
 func (c Admin) DeletePost(postId int64) revel.Result {
-	post := c.getPost(postId)
+	post := c.getPostById(postId)
 	if post == nil {
 		return c.Redirect(routes.Admin.Index())
 	}
 
 	u := c.connected()
-	if u.UserId == postId || u.Admin {
-		_, err := c.Txn.Delete(post.PostId)
+	if u.UserId == postId || u.IsAdmin {
+		_, err := c.Txn.Delete(post)
 		if err == nil {
 			revel.ERROR.Panic(err)
 		}
 		c.Flash.Success("Deleted post")
 	}
 	return c.Redirect(routes.Admin.Index())
+}
+
+// ==================== Handle Uploads ====================
+
+func (c Admin) Upload() revel.Result {
+	// TODO configure that
+	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
+	files, err := ioutil.ReadDir(basePath)
+	if err != nil {
+		revel.ERROR.Panic(err)
+		return c.Redirect(routes.Admin.Index())
+	}
+	
+	return c.Render(files)
+}
+
+func (c Admin) SaveUpload() revel.Result {
+	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
+	
+	for _, fInfo := range c.Params.Files["file"] {
+		
+		fi, err := fInfo.Open()
+		if err != nil { return c.RenderError(err) }
+		defer fi.Close()
+		
+		time := strconv.FormatInt(time.Now().Unix(), 10)
+		full := filepath.Join(basePath, time + "_" + filepath.Base(fInfo.Filename))
+		
+		fo, err := os.Create(full)
+		if err != nil { return c.RenderError(err) }
+		defer fo.Close()
+		
+		if _, err = io.Copy(fo, fi); err != nil { 
+			return c.RenderError(err) 
+		}
+    }
+
+	return c.RenderText("ok")
 }

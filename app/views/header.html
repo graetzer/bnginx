@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en-US">
   <head>
     <title>{{.title}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -8,14 +8,10 @@
 	<link rel="shortcut icon" type="image/png" href="/public/img/favicon.png">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/public/css/my.css">
-    {{range .moreStyles}}
-      <link rel="stylesheet" type="text/css" href="/public/css/{{.}}">
-    {{end}}
+    {{range .moreStyles}}<link rel="stylesheet" type="text/css" href="{{.}}">{{end}}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    {{range .moreScripts}}
-      <script src="/public/js/{{.}}" type="text/javascript" charset="utf-8"></script>
-    {{end}}
+    {{range .moreScripts}}<script src="{{.}}" type="text/javascript" charset="utf-8"></script>{{end}}
   </head>
   <body>
     <div class="container">

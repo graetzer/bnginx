@@ -1,6 +1,13 @@
 {{set . "title" "Home"}}
 {{template "header.html" .}}
 
+<header>
+<div class="jumbotron" id="trailer">
+   <h1>Technical Stuff</h1>
+   <p class="lead">Stuff on iOS, Android, GoLang and more.</p>
+</div>
+</header>
+
 {{range .posts}}
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -14,11 +21,10 @@
 
 <ul class="pagination">
   <li><a href="#">&laquo;</a></li>
-  <li><a href="#">1</a></li>
-  <li><a href="#">2</a></li>
-  <li><a href="#">3</a></li>
-  <li><a href="#">4</a></li>
-  <li><a href="#">5</a></li>
+  <li><a href="?query={{urlquery .query}}&offset=10">1</a></li>
+  <li><a href="?query={{urlquery .query}}&offset=20">2</a></li>
+  <li><a href="?query={{urlquery .query}}&offset=30">3</a></li>
+  <li><a href="?query={{urlquery .query}}&offset=40">4</a></li>
   <li><a href="#">&raquo;</a></li>
 </ul>
 

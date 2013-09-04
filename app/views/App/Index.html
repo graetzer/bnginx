@@ -1,6 +1,6 @@
-{{set . "title" "Home"}}
-{{append . "moreStyles" "highlight.css"}}
-{{append . "moreScripts" "highlight.js"}}
+{{set . "title" "Technical Stuff"}}
+{{append . "moreStyles" "/public/css/highlight.css"}}
+{{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 {{template "header.html" .}}
 
 <header>
@@ -10,11 +10,15 @@
 </div>
 </header>
 
+{{$user := .user}}
 {{range .posts}}
 <article>
 	<div class="panel panel-default">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
+		{{if eq $user.UserId .AuthorId}}
+			<a href="/admin/post/{{.PostId}}" title="Edit this Post">Edit</a>
+		{{end}}
 	  </div>
 	  <div class="panel-body">
 	    {{markdown .Body}}
