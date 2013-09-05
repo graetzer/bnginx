@@ -10,6 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strconv"
+	"strings"
 )
 
 type Admin struct {
@@ -35,9 +36,7 @@ func (c Admin) Index() revel.Result {
 		revel.ERROR.Panic(err)
 	}
 	_, err = c.Txn.Select(&users, "SELECT * FROM User")
-	if err != nil {
-		revel.ERROR.Panic(err)
-	}
+	if err != nil {revel.ERROR.Panic(err)}
 	return c.Render(posts, users)
 }
 
@@ -197,10 +196,14 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 func (c Admin) Upload() revel.Result {
 	// TODO configure that
 	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
-	files, err := ioutil.ReadDir(basePath)
-	if err != nil {
-		revel.ERROR.Panic(err)
-		return c.Redirect(routes.Admin.Index())
+	
+	fs, err := ioutil.ReadDir(basePath)
+	if err != nil {revel.ERROR.Panic(err)}
+	files := make([]os.FileInfo, 0, len(fs))
+	for _, f := range fs {
+		if ! strings.HasPrefix(f.Name(), ".") {
+			files = append(files, f)
+		} 
 	}
 	
 	return c.Render(files)
@@ -225,7 +228,58 @@ func (c Admin) SaveUpload() revel.Result {
 		if _, err = io.Copy(fo, fi); err != nil { 
 			return c.RenderError(err) 
 		}
+		return c.RenderJson(struct {Message string}{"Success"})
     }
+	return c.Redirect(routes.Admin.Upload())
+}
 
-	return c.RenderText("ok")
+func (c Admin) DeleteUpload(filename string) revel.Result {
+	if c.connected().IsAdmin {
+		basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
+		full := filepath.Join(basePath, filepath.Base(filename))
+		err := os.Remove(full)
+		if err != nil {
+			c.Flash.Error(err.Error())
+		}
+		
+	}
+	return c.Redirect(routes.Admin.Upload())
+}
+
+// ==================== Handle Uploads ====================
+
+func (c Admin) Comments() revel.Result {
+	var comments []*models.Comment
+	_, err := c.Txn.Select(&comments, "SELECT * FROM Comment")
+	if err != nil {revel.ERROR.Panic(err)}
+	return c.Render(comments)
+}
+
+func (c Admin) ApproveComment (commentId int64) revel.Result {
+	obj, err := c.Txn.Get(models.Comment{}, commentId)
+	if err != nil {revel.ERROR.Panic(err)}
+	if obj != nil {
+		comment := obj.(*models.Comment)
+		comment.Approved = true
+		_, err := c.Txn.Update(comment)
+		if err != nil {
+			revel.ERROR.Panic(err)
+		}
+	}
+	
+	return c.Redirect(routes.Admin.Comments())
+}
+
+func (c Admin) DeleteComment (commentId int64) revel.Result {
+	obj, err := c.Txn.Get(models.Comment{}, commentId)
+	if err != nil {revel.ERROR.Panic(err)}
+	if obj != nil {
+		comment := obj.(*models.Comment)
+		_, err := c.Txn.Delete(comment)
+		if err != nil {
+			revel.ERROR.Panic(err)
+		}
+	}
+	
+	return c.Redirect(routes.Admin.Comments())
 }

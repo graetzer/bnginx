@@ -1,0 +1,50 @@
+{{set . "title" "Admin Panel"}}
+{{template "header.html" .}}
+
+<div class="row">
+	<div class="col-sm-2" style="min-width:160px">
+		{{ set . "pp" 3}}
+		{{template "Admin/adminMenu.html" .}}
+	</div>
+	<div class="col-sm-10">
+	    <h3>Pending Comments</h3>
+		<table class="table table-hover">
+		   <thead>
+		       <tr>
+				<th>#ID</th>
+				<th>Post</th>
+				<th>Email</th>
+				<th>Date</th>
+				<th>Title</th>
+				<th>Body</th>
+				<th>Actions</th>
+		       </tr>
+		   </thead>
+		   <tbody>
+			{{$user := .user}}
+		    {{range .comments}}
+				{{if not .Approved}}
+		       	<tr>
+					<td>{{.CommentId}}</td>
+					<td>{{.PostId}}</td>
+					<td>{{.Email}}</td>
+					<td>{{.CreatedTime.Format "Mon Jan 2 15:04:05"}}</td>
+					<td>{{.Title}}</td>
+					<td>{{.Body}}</td>
+					<td>
+						{{if $user.IsAdmin}}
+							<a href="/admin/comments/approve/{{.CommentId}}">Approve</a>
+							<a href="/admin/comments/delete/{{.CommentId}}">Delete</a>
+						{{end}}
+					</td>
+				</tr>
+				{{end}}
+			{{end}}
+		   </tbody>
+		
+		</table>
+		
+	</div>
+</div>
+
+{{template "footer.html" .}}

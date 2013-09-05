@@ -11,6 +11,10 @@ type User struct {
 }
 
 func (u User) CheckPassword(inPass string) bool {
+	//h := md5.New()
+ //   io.WriteString(h, "The fog is getting thicker!")
+ //   fmt.Printf("%x", h.Sum(nil))
+	
 	return inPass == u.Password
 }
 
@@ -23,16 +27,6 @@ type Post struct {
     AuthorId    int64
 	IsPage      bool
 	PageOrder   int16
-}
-
-type Comment struct {
-	CommentId   int64
-	PostId      int64
-	Created     int64
-	Title       string
-	Body        string
-	Email       string
-	Approved    bool
 }
 
 func NewPost(user *User) *Post {
@@ -52,4 +46,22 @@ func (p Post) UpdatedTime() time.Time {
 
 func (p Post) SetUpdatedTime(t time.Time) {
 	p.Updated = t.Unix()
+}
+
+type Comment struct {
+	CommentId   int64
+	PostId      int64
+	Created     int64
+	Title       string
+	Body        string
+	Email       string
+	Approved    bool
+}
+
+func (c Comment) CreatedTime() time.Time {
+	return time.Unix(c.Created, 0)
+}
+
+func (c Comment) SetCreatedTime(t time.Time) {
+	c.Created = t.Unix()
 }

@@ -9,9 +9,11 @@
 
 <div class="row">
 	<div class="col-sm-2" style="min-width:160px">
+		{{ set . "pp" 4}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-5">
+		<h3>User Profile</h3>
 		<form role="form" method="POST" action="/admin/user/save">
 			<div class="form-group">
 				<label for="inputUserName">Name</label>

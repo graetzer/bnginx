@@ -38,6 +38,7 @@ func DBInit() {
     
     Dbm.AddTable(models.User{}).SetKeys(true, "UserId")
     Dbm.AddTable(models.Post{}).SetKeys(true, "PostId")
+	Dbm.AddTable(models.Comment{}).SetKeys(true, "CommentId")
     Dbm.CreateTablesIfNotExists()
     
     users, err := Dbm.Select(models.User{}, "SELECT * FROM User")

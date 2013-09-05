@@ -91,14 +91,13 @@ func (c App) Login(email string, password string) revel.Result {
 	c.Validation.Required(email)
 	c.Validation.Required(password)
 	if c.Validation.HasErrors() {
-		// Store the validation errors in the flash context and redirect.
 		c.Validation.Keep()
 		c.FlashParams()
 		return c.Redirect(routes.App.Index(0))
 	}
 	
     user := c.getUser(email)
-    if user == nil || user.CheckPassword(password) {
+    if user == nil || !user.CheckPassword(password) {
         c.Flash.Error("Wrong email or password")
         return c.Redirect(routes.App.Index(0))
     }
@@ -130,13 +129,13 @@ func (c App) Search(query string, offset int64) revel.Result {
 	return c.Render(posts, query)
 }
 
-func (c App) Page(pageId int64) revel.Result {
-	page := c.getPostById(pageId)
+func (c App) Post(postId int64) revel.Result {
+	post := c.getPostById(postId)
 	//user := c.connected()
 	
 	// TODO Maybe a hidden property would be better
-	if page == nil {//|| !page.Published && (user == nil || !user.IsAdmin) {
+	if post == nil {//|| !page.Published && (user == nil || !user.IsAdmin) {
 		return c.Redirect(routes.App.Index(0))
 	}
-	return c.Render(page)
+	return c.Render(post)
 }

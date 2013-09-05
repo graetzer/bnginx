@@ -15,7 +15,7 @@
     <ul class="nav navbar-nav">
       {{$current := .page}}
 	  {{range .pages}}
-	     <li {{if eq $current.PostId .PostId}}class="active"{{end}}><a href="/page/{{.PostId}}/{{urlquery .Title}}">{{.Title}}</a></li>
+	     <li {{if eq $current.PostId .PostId}}class="active"{{end}}><a href="/post/{{.PostId}}/{{urlquery .Title}}">{{.Title}}</a></li>
 	  {{end}}
 	      
 	  {{if .user}}
