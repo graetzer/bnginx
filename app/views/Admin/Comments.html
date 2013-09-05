@@ -1,4 +1,4 @@
-{{set . "title" "Admin Panel"}}
+{{set . "title" "Comments"}}
 {{template "header.html" .}}
 
 <div class="row">
@@ -7,12 +7,16 @@
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+	
 	    <h3>Pending Comments</h3>
 		<table class="table table-hover">
 		   <thead>
 		       <tr>
-				<th>#ID</th>
-				<th>Post</th>
+				<th>Post ID</th>
 				<th>Email</th>
 				<th>Date</th>
 				<th>Title</th>
@@ -23,9 +27,7 @@
 		   <tbody>
 			{{$user := .user}}
 		    {{range .comments}}
-				{{if not .Approved}}
-		       	<tr>
-					<td>{{.CommentId}}</td>
+		       	<tr class="{{if .Approved}}success{{else}}danger{{end}}" >
 					<td>{{.PostId}}</td>
 					<td>{{.Email}}</td>
 					<td>{{.CreatedTime.Format "Mon Jan 2 15:04:05"}}</td>
@@ -33,12 +35,15 @@
 					<td>{{.Body}}</td>
 					<td>
 						{{if $user.IsAdmin}}
-							<a href="/admin/comments/approve/{{.CommentId}}">Approve</a>
+							{{if .Approved}}
+							<a href="/admin/comments/update/{{.CommentId}}?approved=false">Reject</a>
+							{{else}}
+							<a href="/admin/comments/update/{{.CommentId}}?approved=true">Approve</a>
+							{{end}}
 							<a href="/admin/comments/delete/{{.CommentId}}">Delete</a>
 						{{end}}
 					</td>
 				</tr>
-				{{end}}
 			{{end}}
 		   </tbody>
 		

@@ -250,17 +250,25 @@ func (c Admin) DeleteUpload(filename string) revel.Result {
 
 func (c Admin) Comments() revel.Result {
 	var comments []*models.Comment
-	_, err := c.Txn.Select(&comments, "SELECT * FROM Comment")
+	_, err := c.Txn.Select(&comments, "SELECT * FROM Comment ORDER BY Created DESC")
 	if err != nil {revel.ERROR.Panic(err)}
 	return c.Render(comments)
 }
 
-func (c Admin) ApproveComment (commentId int64) revel.Result {
+func (c Admin) UpdateComment (commentId int64, approved bool) revel.Result {
+	c.Validation.Required(commentId)
+	c.Validation.Required(approved)
+	if c.Validation.HasErrors() {
+		c.Validation.Keep()
+		c.FlashParams()
+		return c.Redirect(routes.Admin.Comments())
+	}
+	
 	obj, err := c.Txn.Get(models.Comment{}, commentId)
 	if err != nil {revel.ERROR.Panic(err)}
 	if obj != nil {
 		comment := obj.(*models.Comment)
-		comment.Approved = true
+		comment.Approved = approved
 		_, err := c.Txn.Update(comment)
 		if err != nil {
 			revel.ERROR.Panic(err)

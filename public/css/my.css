@@ -1,3 +1,5 @@
+// Copyrigth Simon Peter Grätzer simon(at)graetzer.org
+
 body {
 	 background:url('../img/cream_pixels.png');
 }
@@ -5,6 +7,10 @@ body {
 #trailer {
 	background:url('../img/trailer.jpg') no-repeat;
 	background-size: 100% auto;
+}
+
+footer {
+	padding: 30px 0;
 }
 /*
 .panel-heading .pull-right {

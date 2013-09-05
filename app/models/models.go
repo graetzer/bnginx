@@ -52,10 +52,15 @@ type Comment struct {
 	CommentId   int64
 	PostId      int64
 	Created     int64
+	Email       string
+	Name        string
 	Title       string
 	Body        string
-	Email       string
 	Approved    bool
+}
+
+func NewComment() *Comment {
+	return &Comment{Created:time.Now().Unix(), Approved:false}
 }
 
 func (c Comment) CreatedTime() time.Time {

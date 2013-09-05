@@ -4,6 +4,7 @@ import (
     "github.com/robfig/revel"
     "bnginx/app/models"
 	"bnginx/app/routes"
+	"regexp"
 )
 
 
@@ -13,7 +14,7 @@ type App struct {
 
 // ================ Helper functions ================
 
-func (c App) addPages() revel.Result {
+func (c App) addGlobalPages() revel.Result {
 	var pages []*models.Post
 	_, err := c.Txn.Select(&pages, `SELECT * FROM Post WHERE Published AND IsPage ORDER BY PageOrder ASC`)
 	if err != nil {
@@ -85,6 +86,14 @@ func (c App) getPublishedPosts(offset int64) []*models.Post {
 	return posts
 }
 
+func (c App) getCommentsByPost(post *models.Post) (comments []*models.Comment) {
+	_, err := c.Txn.Select(&comments, "SELECT * FROM Comment WHERE Approved AND PostId = ?", post.PostId)
+	if err != nil {
+		revel.ERROR.Panic(err)
+	}
+	return
+}
+
 // ================ Actions ================
 
 func (c App) Login(email string, password string) revel.Result {
@@ -114,7 +123,7 @@ func (c App) Logout() revel.Result {
 
 func (c App) Index(offset int64) revel.Result {
 	posts := c.getPublishedPosts(offset)
-	return c.Render(posts)
+	return c.Render(posts, offset)
 }
 
 func (c App) Search(query string, offset int64) revel.Result {
@@ -123,10 +132,8 @@ func (c App) Search(query string, offset int64) revel.Result {
 	
 	sql := `SELECT * FROM Post WHERE Published AND (Body like ? OR Title like ?) LIMIT 10 OFFSET ?`
 	_, err := c.Txn.Select(&posts, sql, q, q, offset)
-	if err != nil {
-		revel.ERROR.Panic(err.Error())
-	}
-	return c.Render(posts, query)
+	if err != nil {revel.ERROR.Panic(err)}
+	return c.Render(posts, query, offset)
 }
 
 func (c App) Post(postId int64) revel.Result {
@@ -137,5 +144,32 @@ func (c App) Post(postId int64) revel.Result {
 	if post == nil {//|| !page.Published && (user == nil || !user.IsAdmin) {
 		return c.Redirect(routes.App.Index(0))
 	}
-	return c.Render(post)
+	comments := c.getCommentsByPost(post)
+	return c.Render(post, comments)
+}
+
+func (c App) SaveComment(postId int64, email, name, title, body string) revel.Result {
+	c.Validation.Required(postId)
+	c.Validation.MinSize(name,1)
+	c.Validation.MaxSize(name,50)
+	c.Validation.Match(email, regexp.MustCompile(`(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})`))
+	c.Validation.Required(title)
+	c.Validation.Required(body)
+	c.Validation.MaxSize(body, 500)
+	if c.Validation.HasErrors() {
+		c.Validation.Keep()
+		c.FlashParams()
+	} else if post := c.getPostById(postId); post != nil {
+		
+		comment := models.NewComment()
+		comment.PostId = postId
+		comment.Email = email
+		comment.Name = name
+		comment.Title = title
+		comment.Body = body
+		err := c.Txn.Insert(comment)
+		if err != nil {revel.ERROR.Panic(err.Error())}
+		c.Flash.Success("Thanks for commenting")
+	}
+	return c.Redirect(routes.App.Post(postId))
 }

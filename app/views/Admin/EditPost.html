@@ -22,6 +22,12 @@
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-5">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+
+		<h3>{{.title}}</h3>
 		<form role="form" method="POST" action="/admin/post/{{.post.PostId}}">
 			<div class="form-group">
 				<label for="inputPostTitle">Post Title</label>

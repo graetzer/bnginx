@@ -2,38 +2,49 @@
 {{append . "moreStyles" "/public/css/highlight.css"}}
 {{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 {{template "header.html" .}}
+{{template "App/trailer.html" .}}
 
-<header>
-<div class="jumbotron" id="trailer">
-   <h1>Technical Stuff</h1>
-   <p class="lead">Stuff on iOS, Android, GoLang and more.</p>
-</div>
-</header>
-
-{{$user := .user}}
-{{range .posts}}
-<article>
-	<div class="panel panel-default">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
-		{{if eq $user.UserId .AuthorId}}
-			<a href="/admin/post/{{.PostId}}" title="Edit this Post">Edit</a>
-		{{end}}
-	  </div>
-	  <div class="panel-body">
-	    {{markdown .Body}}
-		<a href="/post/{{.PostId}}/{{urlquery .Title}}#commentForm" title="Make a comment">Comment on this post</a>
-	  </div>
+<div class="row">
+	<div class="col-sm-10">
+	{{$user := .user}}
+	{{range .posts}}
+	<article>
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
+			{{if eq $user.UserId .AuthorId}}
+				<a href="/admin/post/{{.PostId}}" title="Edit this Post">Edit</a>
+			{{end}}
+		  </div>
+		  <div class="panel-body">
+		    {{markdown .Body}}
+			<a href="/post/{{.PostId}}/{{urlquery .Title}}#commentForm" title="Make a comment">
+			{{$count := commentCount .}}
+			{{if eq $count 0}}Comment on this article{{else}}
+			{{if eq $count 1}}One comment so far{{else}}
+			View all {{$count}} Comments{{end}}{{end}}</a>
+		  </div>
+		</div>
+	</article>
+	{{end}}
+	
+	{{/* Handling of next/back/empty */}}
+	{{if .posts}}
+	<a href="/?offset={{add .offset 5}}">Next &raquo;</a>
+	{{else}}{{if eq .offset 0}}
+	<h2>Oops!</h2>
+	<p>It seems that I haven't added content yet</p>
+	{{else}}
+	<h2>Oops!</h2>
+	<p>There seems to be no content here</p>
+	<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
+	{{end}}{{end}}
+	
 	</div>
-</article>
-{{end}}
+	<div class="col-sm-2">
+	{{template "App/social.html" .}}
+	</div>
+</div><!-- /.row -->
 
-<a href="/?offset=10">Next &raquo;</a>
-
-
-
-<link rel="stylesheet" type="text/css" href="/public/css/highlight.css">
-<script type="text/javascript" src="/public/js/highlight.js"></script>
 <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
-
 {{template "footer.html" .}}

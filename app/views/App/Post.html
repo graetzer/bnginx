@@ -2,54 +2,88 @@
 {{append . "moreStyles" "/public/css/highlight.css"}}
 {{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 {{template "header.html" .}}
+{{template "App/trailer.html" .}}
 
-<header>
-<div class="jumbotron" id="trailer">
-   <h1>Technical Stuff</h1>
-   <p class="lead">Stuff on iOS, Android, GoLang and more.</p>
-</div>
-</header>
-
-<article>
-	<div class="panel panel-default">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{.post.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
-	  </div>
-	  <div class="panel-body">
-	    {{markdown .post.Body}}
-	  </div>
+<div class="row">
+	<div class="col-sm-10">
+	
+	<article>
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">{{.post.Title}}
+			<small class="pull-right">{{.post.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small>
+			</h3>
+		  </div>
+		  <div class="panel-body">
+		    {{markdown .post.Body}}
+		  </div>
+		</div>
+	</article>
+	
 	</div>
-</article>
+	<div class="col-sm-2">
+	{{template "App/social.html" .}}
+	</div>
+</div><!-- /.row -->
 
 {{if not .post.IsPage}}
-<h4>Leave a comment</h4>
-<form id="commentForm" class="form-horizontal" role="form" method="POST" action="/post/{{.PostId}}/comment">
-  <div class="form-group">
-    <label for="inputEmail" class="col-lg-1 control-label">Email</label>
-    <div class="col-lg-5">
-      <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputTitle" class="col-lg-1 control-label">Title</label>
-    <div class="col-lg-5">
-      <input type="input" class="form-control" id="inputTitle" placeholder="Comment title">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="textareaBody" class="col-lg-1 control-label">Comment</label>
-    <div class="col-lg-5">
-	  <textarea class="form-control" rows="5" id="textareaBody" name="body"></textarea>
-	  <span class="help-block">Markdown is supported. Every Post will be checked befor it is shown</span>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-lg-offset-1 col-lg-10">
-      <button type="submit" class="btn btn-default">Send</button>
-    </div>
-  </div>
-</form>
+<section>
+<div class="row">
+	<div class="col-sm-4">
+		<h4>Leave a comment</h4>
+		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.PostId}}">
+		  <div class="form-group">
+		    <label for="inputName">Name</label>
+		    <input type="text" class="form-control" id="inputName" placeholder="Jon Doe" name="name">
+			<span class="help-block">Required, maximal 50 characters.</span>
+		  </div>
+		
+		  <div class="form-group">
+		    <label for="inputEmail">Email address</label>
+		    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email">
+			<span class="help-block">Required, will not be published.</span>
+		  </div>
+		
+		  <div class="form-group">
+		    <label for="inputTitle">Title</label>
+		    <input type="input" class="form-control" id="inputTitle" placeholder="Comment title" name="title">
+		  </div>
+		
+		  <div class="form-group">
+		    <label for="textareaBody">Comment</label>
+			<textarea class="form-control" rows="5" id="textareaBody" name="body"></textarea>
+			<span class="help-block">Max 500 characters. Markdown is supported. Every Post will be checked befor it is shown</span>
+		  </div>
+		
+		  <div class="form-group">
+		    <button type="submit" class="btn btn-default">Send</button>
+		  </div>
+		</form>
+	</div>
+	{{if .comments}}
+	<div class="col-sm-6 col-sm-offset-2">
+		<h3>Comments ({{len .comments}})</h3>
+		{{range .comments}}
+			<div class="panel panel-warning">
+			  <div class="panel-heading">
+			    <h3 class="panel-title">{{.Title}}
+				<small class="pull-right">{{.CreatedTime.Format "Mon Jan 2 15:04:05"}}</small>
+				</h3>
+				By {{.Name}}
+			  </div>
+			  <div class="panel-body">
+			    {{markdown .Body}}
+			  </div>
+			</div>
+		{{end}}
+	</div>
+	{{end}}
+</div>
+</section>
 {{end}}
+
+
+
 
 <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 

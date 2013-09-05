@@ -7,6 +7,7 @@ module:testrunner
 GET     /                                       App.Index
 GET     /search                                 App.Search
 GET     /post/:postId/*                         App.Post
+POST    /post/comment/:postId                   App.SaveComment
 
 # Login & Logout
 POST    /login                                  App.Login
@@ -32,7 +33,7 @@ GET     /admin/uploads/delete/:filename         Admin.DeleteUpload
 
 # Comment management
 GET     /admin/comments                          Admin.Comments
-GET     /admin/comments/approve/:commentId       Admin.ApproveComment
+GET     /admin/comments/update/:commentId        Admin.UpdateComment
 GET     /admin/comments/delete/:commentId        Admin.DeleteComment
 
 # Ignore favicon requests

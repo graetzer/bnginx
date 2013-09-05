@@ -8,6 +8,11 @@
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+	
 	    <h3>Upload Zone</h3>
 		<form action="/admin/uploads/save" class="dropzone" id="formUpload" method="POST" enctype="multipart/form-data">
 			<div class="fallback">
