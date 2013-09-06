@@ -31,7 +31,7 @@ func (c Admin) Index() revel.Result {
 		posts []*models.Post
 		users []*models.User
 	)
-	_, err := c.Txn.Select(&posts, "SELECT * FROM Post")
+	_, err := c.Txn.Select(&posts, "SELECT * FROM Post ORDER BY Updated DESC")
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}

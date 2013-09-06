@@ -5,7 +5,7 @@
 {{template "App/trailer.html" .}}
 
 <div class="row">
-	<div class="col-sm-10">
+	<div class="col-sm-11">
 	{{$user := .user}}
 	{{range .posts}}
 	<article>
@@ -19,29 +19,39 @@
 		  <div class="panel-body">
 		    {{markdown .Body}}
 			<a href="/post/{{.PostId}}/{{urlquery .Title}}#commentForm" title="Make a comment">
+			
+			{{if not .IsPage}}
+			
 			{{$count := commentCount .}}
 			{{if eq $count 0}}Comment on this article{{else}}
 			{{if eq $count 1}}One comment so far{{else}}
 			View all {{$count}} Comments{{end}}{{end}}</a>
+			
+			{{end}}
 		  </div>
 		</div>
 	</article>
 	{{end}}
 	
 	{{/* Handling of next/back/empty */}}
-	{{if .posts}}
-	<a href="/?offset={{add .offset 5}}">Next &raquo;</a>
-	{{else}}{{if eq .offset 0}}
-	<h2>Oops!</h2>
-	<p>It seems that I haven't added content yet</p>
+	{{if eq .offset 0}}
+		{{if len .posts | eq 0}}
+			<h2>Oops!</h2>
+			<p>It seems that I haven't added content yet</p>
+		{{end}}
+		{{if len .posts | eq 5}}
+			<a href="/?offset={{add .offset 5}}">Next &raquo;</a>
+		{{end}}
 	{{else}}
-	<h2>Oops!</h2>
-	<p>There seems to be no content here</p>
-	<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
-	{{end}}{{end}}
-	
+		{{if len .posts | eq 0}}
+			<h2>Oops!</h2>
+			<p>There seems to be no content here</p>
+			<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
+		{{end}}
+	{{end}}
 	</div>
-	<div class="col-sm-2">
+	
+	<div class="col-xs-1">
 	{{template "App/social.html" .}}
 	</div>
 </div><!-- /.row -->

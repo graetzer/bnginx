@@ -78,16 +78,17 @@ func (c App) getPostById(postId int64) *models.Post {
 }
 
 func (c App) getPublishedPosts(offset int64) []*models.Post {
+	query := "SELECT * FROM Post WHERE Published AND NOT IsPage "+
+	"ORDER BY Updated DESC LIMIT 5 OFFSET ?"
+	
 	var posts []*models.Post
-	_, err := c.Txn.Select(&posts, `SELECT * FROM Post WHERE Published ORDER BY Updated DESC LIMIT 5 OFFSET ?`, offset)
-	if err != nil {
-		revel.ERROR.Panic(err)
-	}
+	_, err := c.Txn.Select(&posts, query, offset)
+	if err != nil {revel.ERROR.Panic(err)}
 	return posts
 }
 
 func (c App) getCommentsByPost(post *models.Post) (comments []*models.Comment) {
-	_, err := c.Txn.Select(&comments, "SELECT * FROM Comment WHERE Approved AND PostId = ?", post.PostId)
+	_, err := c.Txn.Select(&comments, `SELECT * FROM Comment WHERE Approved AND PostId = ?`, post.PostId)
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}

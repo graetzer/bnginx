@@ -28,11 +28,11 @@
 		   <tbody>
 			{{$user := .user}}
 		    {{range .posts}}
-		       	<tr>
+		       	<tr class="{{if .Published}}success{{else}}warning{{end}}">
 					<td>{{.PostId}}</td>
 					<td>{{.Title}}</td>
 					<td>{{if not .Published}}Not {{end}}Published</td>
-					<td>{{if not .IsPage}}Page{{else}}Blogpost{{end}}</td>
+					<td>{{if .IsPage}}Page{{else}}Blogpost{{end}}</td>
 					<td>{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</td>
 					<td>{{.AuthorId}}</td>
 					<td>
