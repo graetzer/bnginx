@@ -33,7 +33,10 @@ func DBInit() {
     }
 
     Dbm = &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
-    Dbm.TraceOn("[gorp]", revel.INFO)
+	if revel.DevMode {
+		Dbm.TraceOn("[gorp]", revel.INFO)
+	}
+    
     
     Dbm.AddTable(models.User{}).SetKeys(true, "UserId")
     Dbm.AddTable(models.Post{}).SetKeys(true, "PostId")
