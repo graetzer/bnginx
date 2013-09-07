@@ -32,34 +32,47 @@
 	<div class="col-sm-4">
 		<h4>Leave a comment</h4>
 		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.PostId}}">
-		  <div class="form-group">
+		  <div class="form-group {{if .errors.name}}has-error{{end}}">
 		    <label for="inputName">Name</label>
-		    <input type="text" class="form-control" id="inputName" placeholder="Jon Doe" name="name">
-			<span class="help-block">Required, maximal 50 characters.</span>
+		    <input type="text" class="form-control" id="inputName" placeholder="Jon Doe" name="name" value="{{.flash.name}}">
+			<span class="help-block">Maximum of 50 characters.</span>
 		  </div>
 		
-		  <div class="form-group">
+		  <div class="form-group {{if .errors.email}}has-error{{end}}">
 		    <label for="inputEmail">Email address</label>
-		    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email">
+		    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email" value="{{.flash.email}}">
 			<span class="help-block">Required, will not be published.</span>
 		  </div>
 		
-		  <div class="form-group">
+		  <div class="form-group {{if .errors.title}}has-error{{end}}">
 		    <label for="inputTitle">Title</label>
-		    <input type="input" class="form-control" id="inputTitle" placeholder="Comment title" name="title">
+		    <input type="input" class="form-control" id="inputTitle" placeholder="Comment title" name="title" value="{{.flash.title}}">
+			<span class="help-block">Max 100 characters.</span>
 		  </div>
 		
-		  <div class="form-group">
+		  <div class="form-group {{if .errors.body}}has-error{{end}}">
 		    <label for="textareaBody">Comment</label>
-			<textarea class="form-control" rows="5" id="textareaBody" name="body"></textarea>
-			<span class="help-block">Max 500 characters. Markdown is supported. Every Post will be checked befor it is shown</span>
+			<textarea class="form-control" rows="5" id="textareaBody" name="body">{{.flash.body}}</textarea>
+			<span class="help-block">Required. Max 500 characters. Markdown is supported. Every Post will be checked befor it is shown</span>
 		  </div>
 		
+			<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6LfFIucSAAAAAA0L8Ks5_f3B9tb_z8wmge7FGmyw">
+		    </script>
+		    <noscript>
+		       <iframe src="http://www.google.com/recaptcha/api/noscript?k=your_public_key"
+		           height="300" width="500" frameborder="0"></iframe><br>
+		       <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+		       </textarea>
+		       <input type="hidden" name="recaptcha_response_field"
+		           value="manual_challenge">
+		    </noscript>
+
 		  <div class="form-group">
 		    <button type="submit" class="btn btn-default">Send</button>
 		  </div>
 		</form>
 	</div>
+	
 	{{if .comments}}
 	<div class="col-sm-6 col-sm-offset-2">
 		<h3>Comments ({{len .comments}})</h3>
@@ -69,7 +82,7 @@
 			    <h3 class="panel-title">{{.Title}}
 				<small class="pull-right">{{.CreatedTime.Format "Mon Jan 2 15:04:05"}}</small>
 				</h3>
-				By {{.Name}}
+				By {{with .Name}}{{.}}{{else}}Anonymous{{end}}
 			  </div>
 			  <div class="panel-body">
 			    {{markdown .Body}}

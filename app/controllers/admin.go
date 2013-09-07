@@ -2,8 +2,8 @@ package controllers
 
 import (
     "github.com/robfig/revel"
-    "bnginx/app/models"
-	"bnginx/app/routes"
+    "github.com/graetzer/bnginx/app/models"
+	"github.com/graetzer/bnginx/app/routes"
 	"time"
 	"path/filepath"
 	"os"

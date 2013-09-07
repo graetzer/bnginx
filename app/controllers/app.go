@@ -2,9 +2,11 @@ package controllers
 
 import (
     "github.com/robfig/revel"
-    "bnginx/app/models"
-	"bnginx/app/routes"
+    "github.com/graetzer/bnginx/app/models"
+	"github.com/graetzer/bnginx/app/routes"
+	"github.com/dpapathanasiou/go-recaptcha"
 	"regexp"
+	"strings"
 )
 
 
@@ -149,19 +151,28 @@ func (c App) Post(postId int64) revel.Result {
 	return c.Render(post, comments)
 }
 
-func (c App) SaveComment(postId int64, email, name, title, body string) revel.Result {
+func (c App) SaveComment(postId int64, email, name, title, body,
+recaptcha_challenge_field, recaptcha_response_field string) revel.Result {
+	
 	c.Validation.Required(postId)
-	c.Validation.MinSize(name,1)
 	c.Validation.MaxSize(name,50)
 	c.Validation.Match(email, regexp.MustCompile(`(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})`))
-	c.Validation.Required(title)
+	//c.Validation.Required(title)
+	c.Validation.MaxSize(title, 100)
 	c.Validation.Required(body)
 	c.Validation.MaxSize(body, 500)
-	if c.Validation.HasErrors() {
+	c.Validation.Required(recaptcha_challenge_field)
+	c.Validation.Required(recaptcha_response_field)
+	
+	client_ip := strings.Split(c.Request.RemoteAddr, ":")[0]
+	ok := recaptcha.Confirm(client_ip, recaptcha_challenge_field, recaptcha_response_field)
+	if !ok {
+		c.Flash.Error("Wrong captcha")
+	}
+	if c.Validation.HasErrors() || !ok {
 		c.Validation.Keep()
 		c.FlashParams()
 	} else if post := c.getPostById(postId); post != nil {
-		
 		comment := models.NewComment()
 		comment.PostId = postId
 		comment.Email = email

@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"github.com/robfig/revel"
+	"github.com/graetzer/bnginx/app/models"
 	"github.com/russross/blackfriday"
+	"github.com/dpapathanasiou/go-recaptcha"
 	"html/template"
-	"bnginx/app/models"
 )
 
 func init() {
@@ -39,4 +40,6 @@ func init() {
 		if err != nil {revel.ERROR.Panic(err)}
 		return result
 	}
+	
+	recaptcha.Init ("6LfFIucSAAAAAIGONUxESWtpg1Afn4TTSTgtEUYZ")
 }

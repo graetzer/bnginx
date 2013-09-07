@@ -2,11 +2,10 @@ package controllers
 
 import (
 	//"code.google.com/p/go.crypto/bcrypt"
-	"database/sql"
 	"github.com/coopernurse/gorp"
-	revel "github.com/robfig/revel"
-    "bnginx/app/models"
-	//"github.com/robfig/revel/samples/booking/app/models"
+	"github.com/robfig/revel"
+    "github.com/graetzer/bnginx/app/models"
+	"database/sql"
 )
 
 var (
