@@ -113,9 +113,7 @@ func (c Admin) DeleteUser(email string) revel.Result {
 	u := c.connected()
 	if u.UserId == user.UserId || u.IsAdmin {
 		_, err := c.Txn.Delete(user)
-		if err == nil {
-			revel.ERROR.Panic(err)
-		}
+		if err != nil {revel.ERROR.Panic(err)}
 		c.Flash.Success("Deleted user")
 	}
 	return c.Redirect(routes.Admin.Index())
@@ -167,9 +165,7 @@ func (c Admin) SavePost(postId int64, published bool, title, body string, isPage
 	} else {
 		_, err = c.Txn.Update(post)
 	}
-	if err != nil {
-		revel.ERROR.Panic(err)
-	}
+	if err != nil {revel.ERROR.Panic(err)}
 	
 	return c.Redirect(routes.Admin.Index())
 }
@@ -183,9 +179,11 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 	u := c.connected()
 	if u.UserId == postId || u.IsAdmin {
 		_, err := c.Txn.Delete(post)
-		if err == nil {
-			revel.ERROR.Panic(err)
-		}
+		if err != nil {revel.ERROR.Panic(err)}
+		
+		_, err = c.Txn.Exec("DELETE FROM Comment WHERE PostId = ?", postId)
+		if err != nil {revel.ERROR.Panic(err)}
+		
 		c.Flash.Success("Deleted post")
 	}
 	return c.Redirect(routes.Admin.Index())
