@@ -41,5 +41,15 @@ func init() {
 		return result
 	}
 	
-	recaptcha.Init ("6LfFIucSAAAAAIGONUxESWtpg1Afn4TTSTgtEUYZ")
+	private, found := revel.Config.String("recaptcha.private")
+	if found {
+		recaptcha.Init (private)
+	}
+	
+	public, found := revel.Config.String("recaptcha.public")
+	if found {
+		revel.TemplateFuncs["recaptchaKey"] = func () string {
+			return public
+		}
+	}
 }
