@@ -1,9 +1,10 @@
+{{set . "title" "Uploaded Files"}}
 {{append . "moreStyles" "/public/css/dropzone.css"}}
 {{append . "moreScripts" "/public/js/dropzone.js"}}
 {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-2" style="min-width:160px">
+	<div class="col-sm-2">
 		{{ set . "pp" 2}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
@@ -12,17 +13,9 @@
 		  <li><a href="/admin">Admin Panel</a></li>
 		  <li class="active">{{.title}}</li>
 		</ol>
-	
-	    <h3>Upload Zone</h3>
-		<form action="/admin/uploads/save" class="dropzone" id="formUpload" method="POST" enctype="multipart/form-data">
-			<div class="fallback">
-    			<input name="file" type="file" multiple />
-				<button type="submit" class="btn btn-default">Save</button>
-  			</div>
-		</form>
 		
-		<h3>Uploaded Media</h3>
-		<table class="table table-bordered">
+		<h3>Uploaded Files</h3>
+		<table class="table table-bordered" id="filesTable">
 		    <thead>
 				<tr>
 				    <th>Name</th>
@@ -36,13 +29,42 @@
 		            <td>{{.Name}}</td>
 					<td>{{.Size}} Bytes</td>
 					<td>
-						<a title="Delete this file" href="/public/uploads/{{urlquery .Name}}">View</a>
-						<a title="Delete this file" href="/admin/uploads/delete/{{urlquery .Name}}">Delete</a>
+						<a title="View this file" href="/public/uploads/{{urlquery .Name}}" class="btn btn-primary btn-sm">View</a>
+						<a title="Delete this file" href="/admin/uploads/delete/{{urlquery .Name}}" class="btn btn-danger btn-sm">Delete</a>
 					</td>
 				</tr>
 				{{end}}
 		    </tbody>
 		</table>
+	
+	    <h3>Upload Zone</h3>
+		<form action="/admin/uploads/save" class="dropzone" id="myAwesomeDropzone" method="POST" enctype="multipart/form-data">
+			<div class="fallback">
+    			<input name="file" type="file" multiple />
+				<button type="submit" class="btn btn-default">Save</button>
+  			</div>
+		</form>
+		
+		<script type="text/javascript" charset="utf-8">
+		/* <![CDATA[ */
+	    (function() {
+			Dropzone.options.myAwesomeDropzone = {
+				init: function() {
+					this.on("addedfile", function(file) {
+						var enc = encodeURIComponent(file.name);
+						
+						$("#filesTable tbody").append('<tr>'+
+						'<td>'+file.name+'</td>'+
+						'<td>'+file.size+' Bytes</td>'+
+						'<td><a title="View this file" href="/public/uploads/'+enc+'" class="btn btn-primary btn-sm">View</a> '+
+						'<a title="Delete this file" href="/admin/uploads/delete/'+enc+'" class="btn btn-danger btn-sm">Delete</a></td>'+
+						'</tr>');
+					});
+				}
+			};
+	    })();
+	    /* ]]> */
+		</script>
 	</div>
 </div>
 

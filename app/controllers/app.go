@@ -90,7 +90,9 @@ func (c App) getPublishedPosts(offset int64) []*models.Post {
 }
 
 func (c App) getCommentsByPost(post *models.Post) (comments []*models.Comment) {
-	_, err := c.Txn.Select(&comments, `SELECT * FROM Comment WHERE Approved AND PostId = ?`, post.PostId)
+	query := "SELECT * FROM Comment WHERE Approved"+
+	  " AND PostId = ? ORDER BY Created ASC"
+	_, err := c.Txn.Select(&comments, query, post.PostId)
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}
@@ -164,7 +166,14 @@ recaptcha_challenge_field, recaptcha_response_field string) revel.Result {
 	c.Validation.Required(recaptcha_challenge_field)
 	c.Validation.Required(recaptcha_response_field)
 	
-	client_ip := strings.Split(c.Request.RemoteAddr, ":")[0]
+	// Get client IP
+	var client_ip string
+	if c.Request.Header.Get("X-Real-IP") != "" {
+		client_ip = c.Request.Header.Get("X-Real-IP")
+	} else {
+		client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
+	}
+	
 	ok := recaptcha.Confirm(client_ip, recaptcha_challenge_field, recaptcha_response_field)
 	if !ok {
 		c.Flash.Error("Wrong captcha")

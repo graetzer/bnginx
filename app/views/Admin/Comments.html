@@ -2,7 +2,7 @@
 {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-2" style="min-width:160px">
+	<div class="col-sm-2">
 		{{ set . "pp" 3}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
@@ -36,11 +36,11 @@
 					<td>
 						{{if $user.IsAdmin}}
 							{{if .Approved}}
-							<a href="/admin/comments/update/{{.CommentId}}?approved=false">Reject</a>
+							<a href="/admin/comments/update/{{.CommentId}}?approved=false" class="btn btn-warning btn-sm">Reject</a>
 							{{else}}
-							<a href="/admin/comments/update/{{.CommentId}}?approved=true">Approve</a>
+							<a href="/admin/comments/update/{{.CommentId}}?approved=true" class="btn btn-success btn-sm">Approve</a>
 							{{end}}
-							<a href="/admin/comments/delete/{{.CommentId}}">Delete</a>
+							<a href="/admin/comments/delete/{{.CommentId}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>

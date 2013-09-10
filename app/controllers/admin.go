@@ -9,7 +9,7 @@ import (
 	"os"
 	"io"
 	"io/ioutil"
-	"strconv"
+	//"strconv"
 	"strings"
 )
 
@@ -216,8 +216,9 @@ func (c Admin) SaveUpload() revel.Result {
 		if err != nil { return c.RenderError(err) }
 		defer fi.Close()
 		
-		time := strconv.FormatInt(time.Now().Unix(), 10)
-		full := filepath.Join(basePath, time + "_" + filepath.Base(fInfo.Filename))
+		//time := strconv.FormatInt(time.Now().Unix(), 10)
+		//full := filepath.Join(basePath, time + "_" + filepath.Base(fInfo.Filename))
+		full := filepath.Join(basePath, filepath.Base(fInfo.Filename))
 		
 		fo, err := os.Create(full)
 		if err != nil { return c.RenderError(err) }

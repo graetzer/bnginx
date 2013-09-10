@@ -32,9 +32,9 @@ POST    /admin/uploads/save                     Admin.SaveUpload
 GET     /admin/uploads/delete/:filename         Admin.DeleteUpload
 
 # Comment management
-GET     /admin/comments                          Admin.Comments
-GET     /admin/comments/update/:commentId        Admin.UpdateComment
-GET     /admin/comments/delete/:commentId        Admin.DeleteComment
+GET     /admin/comments                         Admin.Comments
+GET     /admin/comments/update/:commentId       Admin.UpdateComment
+GET     /admin/comments/delete/:commentId       Admin.DeleteComment
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
@@ -43,4 +43,4 @@ GET     /favicon.ico                            404
 GET     /public/*filepath                       Static.Serve("public")
 
 # Catch all
-# *       /:controller/:action                    :controller.:action
+# *       /:controller/:action                  :controller.:action

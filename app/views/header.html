@@ -2,19 +2,19 @@
 
 <html lang="en-US">
   <head>
-    <title>{{.title}}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="author" content="Simon Peter Grätzer">
+    <title>Simon's Blog - {{.title}}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="author" content="Simon Peter Grätzer" />
+	<meta name="keywords" content="iOS, Android, Go, GoLang, Java, OpenGL, C++" />
+	<meta name="description" content="A blog on iOS, Android, GoLang, 3D Graphics and similar topics" />
 	
-	<link rel="shortcut icon" type="image/png" href="/public/img/favicon.png">
-    <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"-->
-	<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="/public/css/custom.css">
-    {{range .moreStyles}}<link rel="stylesheet" type="text/css" href="{{.}}">{{end}}
+	<link rel="shortcut icon" type="image/png" href="/public/img/favicon.png" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/public/css/custom.css" />
+    {{range .moreStyles}}<link rel="stylesheet" type="text/css" href="{{.}}" />{{end}}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
-	<script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/bootstrap.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     {{range .moreScripts}}<script src="{{.}}" type="text/javascript" charset="utf-8"></script>{{end}}
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];

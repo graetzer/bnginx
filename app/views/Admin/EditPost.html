@@ -10,14 +10,13 @@
 {{append . "moreScripts" "/public/js/Markdown.Editor.js"}}
 
 {{append . "moreStyles" "/public/css/highlight.css"}}
-{{/*append . "moreScripts" "/public/js/highlight.js"*/}}
 {{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 
 {{template "header.html" .}}
 
 
 <div class="row">
-	<div class="col-sm-2" style="min-width:160px">
+	<div class="col-sm-2">
 		{{ set . "pp" 1}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>

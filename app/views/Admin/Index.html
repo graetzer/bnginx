@@ -3,7 +3,7 @@
 
 
 <div class="row">
-	<div class="col-sm-2" style="min-width:160px">
+	<div class="col-sm-2">
 		{{ set . "pp" 0}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
@@ -36,9 +36,9 @@
 					<td>{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</td>
 					<td>{{.AuthorId}}</td>
 					<td>
-						<a href="/admin/post/{{.PostId}}">Edit</a>
+						<a href="/admin/post/{{.PostId}}" class="btn btn-primary btn-sm">Edit</a>
 						{{if eq $user.UserId .AuthorId}}
-							<a href="/admin/post/delete/{{.PostId}}">Delete</a>
+							<a href="/admin/post/delete/{{.PostId}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>
@@ -66,9 +66,9 @@
 					<td>{{.Email}}</td>
 					<td>{{if .IsAdmin}}Administrator{{else}}User{{end}}</td>
 					<td>
-						<a href="/admin/user/{{urlquery .Email}}">Edit</a>
+						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a>
 						{{if $user.IsAdmin}}
-							<a href="/admin/user/delete/{{.Email}}">Delete</a>
+							<a href="/admin/user/delete/{{.Email}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>

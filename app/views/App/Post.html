@@ -30,7 +30,7 @@
 <section>
 <div class="row">
 	<div class="col-sm-4">
-		<h4>Leave a comment</h4>
+		<h3>Leave a comment</h3>
 		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.PostId}}">
 		  <div class="form-group {{if .errors.name}}has-error{{end}}">
 		    <label for="inputName">Name</label>
@@ -56,10 +56,10 @@
 			<span class="help-block">Required. Max 500 characters. Markdown is supported. Every Post will be checked befor it is shown</span>
 		  </div>
 		
-			<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6LfFIucSAAAAAA0L8Ks5_f3B9tb_z8wmge7FGmyw">
+			<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{recaptchaKey}}">
 		    </script>
 		    <noscript>
-		       <iframe src="http://www.google.com/recaptcha/api/noscript?k=your_public_key"
+		       <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptchaKey}}"
 		           height="300" width="500" frameborder="0"></iframe><br>
 		       <textarea name="recaptcha_challenge_field" rows="3" cols="40">
 		       </textarea>
@@ -74,7 +74,7 @@
 	</div>
 	
 	{{if .comments}}
-	<div class="col-sm-6 col-sm-offset-2">
+	<div class="col-sm-7">
 		<h3>Comments ({{len .comments}})</h3>
 		{{range .comments}}
 			<div class="panel panel-warning">
