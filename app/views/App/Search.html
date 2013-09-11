@@ -1,19 +1,24 @@
 {{set . "title" "Home"}}
+{{append . "moreStyles" "/public/css/highlight.css"}}
+{{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 {{template "header.html" .}}
 {{template "App/trailer.html" .}}
 
 <div class="row">
 	<div class="col-sm-11">
+	<main>
 	
 	{{range .posts}}
-	<div class="panel panel-default">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">{{.Title}}</h3>
-	  </div>
-	  <div class="panel-body">
-	    {{markdown .Body}}
-	  </div>
-	</div>
+		<article>
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">{{.Title}}</h3>
+		  </div>
+		  <div class="panel-body">
+		    {{markdown .Body}}
+		  </div>
+		</div>
+		</article>
 	{{end}}
 	
 	{{if not .posts}}
@@ -23,22 +28,21 @@
 		{{$uq := urlquery .query}}
 		<ul class="pagination">
 		  <li class="disabled"><a href="#">&laquo;</a></li>
-		  <li {{if eq .offset 0}}class="active"{{end}}><a href="?query={{$uq}}&offset=0">1</a></li>
-		  <li {{if eq .offset 10}}class="active"{{end}}><a href="?query={{$uq}}&offset=10">2</a></li>
-		  <li {{if eq .offset 20}}class="active"{{end}}><a href="?query={{$uq}}&offset=20">3</a></li>
-		  <li {{if eq .offset 30}}class="active"{{end}}><a href="?query={{$uq}}&offset=30">4</a></li>
+		  <li {{if eq .offset 0}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=0">1</a></li>
+		  <li {{if eq .offset 10}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=10">2</a></li>
+		  <li {{if eq .offset 20}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=20">3</a></li>
+		  <li {{if eq .offset 30}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=30">4</a></li>
 		  <li><a href="#">&raquo;</a></li>
 		</ul>
 	{{end}}
+	</main>
+	</div><!-- ./col-sm-11 -->
 	
-	</div>
 	<div class="col-sm-1">
 	{{template "App/social.html" .}}
 	</div>
 </div><!-- /.row -->
 
-<link rel="stylesheet" type="text/css" href="/public/css/highlight.css">
-<script type="text/javascript" src="/public/js/highlight.js"></script>
 <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 
 {{template "footer.html" .}}

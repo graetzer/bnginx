@@ -6,7 +6,7 @@
 
 <div class="row">
 	<div class="col-sm-11">
-	
+	<main>
 	<article>
 		<div class="panel panel-default">
 		  <div class="panel-heading">
@@ -19,8 +19,9 @@
 		  </div>
 		</div>
 	</article>
+	</main>
+	</div><!-- ./col-sm-11 -->
 	
-	</div>
 	<div class="col-sm-1">
 	{{template "App/social.html" .}}
 	</div>
@@ -46,7 +47,7 @@
 		
 		  <div class="form-group {{if .errors.title}}has-error{{end}}">
 		    <label for="inputTitle">Title</label>
-		    <input type="input" class="form-control" id="inputTitle" placeholder="Comment title" name="title" value="{{.flash.title}}">
+		    <input type="text" class="form-control" id="inputTitle" placeholder="Comment title" name="title" value="{{.flash.title}}">
 			<span class="help-block">Max 100 characters.</span>
 		  </div>
 		
@@ -60,7 +61,7 @@
 		    </script>
 		    <noscript>
 		       <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptchaKey}}"
-		           height="300" width="500" frameborder="0"></iframe><br>
+		           height="300" width="500" style="border:0;"></iframe><br>
 		       <textarea name="recaptcha_challenge_field" rows="3" cols="40">
 		       </textarea>
 		       <input type="hidden" name="recaptcha_response_field"
@@ -94,9 +95,6 @@
 </div>
 </section>
 {{end}}
-
-
-
 
 <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 
