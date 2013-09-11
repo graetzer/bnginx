@@ -48,7 +48,7 @@ func DBInit() {
         revel.ERROR.Fatal("Error checking for users "+err.Error())
     }
     if len(users) == 0 {
-        user := &models.User{UserId:0, Name:"Simon", Email:"simon@graetzer.org", Password:"default", IsAdmin:true}
+        user := &models.User{UserId:0, Name:"Simon", Email:"simon@graetzer.org", Password:models.HashPassword("default"), IsAdmin:true}
         Dbm.Insert(user)
     }
 }

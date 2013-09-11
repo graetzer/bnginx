@@ -28,9 +28,15 @@
 				<label for="inputUserEmail">Email address</label>
 				<input type="email" class="form-control" id="inputUserEmail" name="email" placeholder="jon.doe@gmail.com" value="{{.profile.Email}}" />
 			</div>
+			{{if .profile.Password}}
 			<div class="form-group">
-				<label for="inputUserPassword">Password (At least 8 characters)</label>
-				<input type="password" class="form-control" id="inputUserPassword" name="password" placeholder="Password" value="{{.profile.Password}}" />
+				<label for="inputUserOldPassword">Old Password</label>
+				<input type="password" class="form-control" id="inputUserOldPassword" name="oldPassword" placeholder="Old Password" value="" />
+			</div>
+			{{end}}
+			<div class="form-group {{if .errors.password}}has-error{{end}}">
+				<label for="inputUserPassword">New Password (At least 8 characters)</label>
+				<input type="password" class="form-control" id="inputUserPassword" name="password" placeholder="Password" value="" />
 			</div>
 			<input type="hidden" name="userId" value={{.profile.UserId}} />
 			<button type="submit" class="btn btn-default">Save</button>

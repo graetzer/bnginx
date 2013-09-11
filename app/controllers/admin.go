@@ -55,16 +55,19 @@ func (c Admin) EditUser (email string) revel.Result {
 	return c.Render(profile)
 }
 
-func (c Admin) SaveUser(userId int64, name string, email string, password string) revel.Result {
+func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string) revel.Result {
 	c.Validation.Required(userId)
 	c.Validation.Required(email)
 	c.Validation.MinSize(password, 8)
 	//c.Validation.Match(username, regexp.MustCompile("^\\w*$"))
 	if c.Validation.HasErrors() {
-		// Store the validation errors in the flash context and redirect.
 		c.Validation.Keep()
 		c.FlashParams()
-		return c.Redirect(routes.Admin.Index())
+		if userId == -1 {
+			return c.Redirect(routes.Admin.Index())
+		} else {
+			return c.Redirect(routes.Admin.EditUser(email))
+		}
 	}
 	
 	var user *models.User
@@ -73,23 +76,28 @@ func (c Admin) SaveUser(userId int64, name string, email string, password string
 		user = new(models.User)
 		if c.getUser(email) != nil {
 			c.Flash.Error("This is email address is already used")
-			return c.Redirect(routes.Admin.Index())
+			return c.Redirect(routes.Admin.EditUser("create"))
 		}
 		delete(c.Flash.Out, "error")
 	} else {
 		if u.UserId != userId && !u.IsAdmin {
-			c.Flash.Error("You have not the permission to save this post")
-			return c.Redirect(routes.Admin.Index())
+			c.Flash.Error("You have no permission to edit this profile")
+			return c.Redirect(routes.Admin.EditUser("create"))
 		}
 		
 		user = c.getUserById(userId)
 		if user == nil {
 			return c.Redirect(routes.Admin.Index())
 		}
+		
+		if !user.CheckPassword(oldPassword) {
+			c.Flash.Error("The old password is incorrect")
+			return c.Redirect(routes.Admin.EditUser(user.Email))
+		}
 	}
 	user.Name = name
 	user.Email = email
-	user.Password = password
+	user.Password = models.HashPassword(password)
 	
 	var err error
 	if (userId == -1) {
@@ -97,9 +105,7 @@ func (c Admin) SaveUser(userId int64, name string, email string, password string
 	} else {
 		_, err = c.Txn.Update(user)
 	}
-	if err != nil {
-		revel.ERROR.Panic(err)
-	}
+	if err != nil {revel.ERROR.Panic(err)}
 	
 	return c.Redirect(routes.Admin.Index())
 }

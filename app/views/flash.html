@@ -1,18 +1,18 @@
 {{if .flash.success}}
 <div class="alert alert-success">
-	{{.flash.success}}
+	<h4>{{.flash.success}}</h4>
 </div>
 {{end}}
 
 {{if or .errors .flash.error}}
 <div class="alert alert-warning">
 	{{if .flash.error}}
-		{{.flash.error}}
+		<h4>{{.flash.error}}</h4>
 	{{end}}
-	{{/*<ul style="margin-top:10px;">
+	<ul>
 		{{range .errors}}
 			<li>{{.}}</li>
 		{{end}}
-	</ul>*/}}
+	</ul>
 </div>
 {{end}}

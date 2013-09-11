@@ -159,7 +159,6 @@ recaptcha_challenge_field, recaptcha_response_field string) revel.Result {
 	c.Validation.Required(postId)
 	c.Validation.MaxSize(name,50)
 	c.Validation.Match(email, regexp.MustCompile(`(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})`))
-	//c.Validation.Required(title)
 	c.Validation.MaxSize(title, 100)
 	c.Validation.Required(body)
 	c.Validation.MaxSize(body, 500)

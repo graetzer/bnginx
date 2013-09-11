@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+	"crypto/sha256"
+	"encoding/base64"
+)
 
 type User struct {
     UserId      int64
@@ -10,12 +14,18 @@ type User struct {
     IsAdmin       bool
 }
 
-func (u User) CheckPassword(inPass string) bool {
-	//h := md5.New()
- //   io.WriteString(h, "The fog is getting thicker!")
- //   fmt.Printf("%x", h.Sum(nil))
-	
-	return inPass == u.Password
+func HashPassword(in string) string {
+	hash := sha256.New()
+	buffer := []byte(in)
+	for i := 0; i < 100; i++ {
+		hash.Write(buffer) 
+		buffer = hash.Sum(nil)
+	}
+	return base64.StdEncoding.EncodeToString(buffer)
+}
+
+func (u User) CheckPassword(in string) bool {
+	return HashPassword(in) == u.Password
 }
 
 type Post struct {
