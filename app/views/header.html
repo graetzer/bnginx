@@ -2,7 +2,7 @@
 
 <html lang="en-US">
   <head>
-    <title>Simon's Blog - {{.title}}</title>
+    <title>Simon's Blog{{with .title}} - {{.}}{{end}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="author" content="Simon Peter Grätzer" />
@@ -13,9 +13,10 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="/public/css/custom.css" />
     {{range .moreStyles}}<link rel="stylesheet" type="text/css" href="{{.}}" />{{end}}
+	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    {{range .moreScripts}}<script src="{{.}}" type="text/javascript" charset="utf-8"></script>{{end}}
+    {{range .moreScripts}}<script src="{{.}}"></script>{{end}}
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-33874892-1']);
