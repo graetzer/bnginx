@@ -1,6 +1,4 @@
 {{set . "title" .post.Title}}
-{{append . "moreStyles" "/public/css/highlight.css"}}
-{{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"}}
 {{template "header.html" .}}
 {{template "App/trailer.html" .}}
 
@@ -95,6 +93,5 @@
 </div>
 </section>
 {{end}}
-<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 
 {{template "footer.html" .}}

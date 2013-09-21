@@ -59,6 +59,7 @@ func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string)
 	c.Validation.Required(userId)
 	c.Validation.Required(email)
 	c.Validation.MinSize(password, 8)
+	c.Validation.MaxSize(password, 300)
 	//c.Validation.Match(username, regexp.MustCompile("^\\w*$"))
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()

@@ -104,6 +104,7 @@ func (c App) getCommentsByPost(post *models.Post) (comments []*models.Comment) {
 func (c App) Login(email string, password string) revel.Result {
 	c.Validation.Required(email)
 	c.Validation.Required(password)
+	c.Validation.MaxSize(password, 300)
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
 		c.FlashParams()

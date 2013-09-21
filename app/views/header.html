@@ -10,12 +10,16 @@
 	<meta name="description" content="A blog on iOS, Android, GoLang, 3D Graphics and similar topics" />
 	
 	<link rel="shortcut icon" type="image/png" href="/public/img/favicon.png" />
+	
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="/public/css/custom.css" />
+	<link rel="stylesheet" type="text/css" href="/public/css/highlight.css" />
     {{range .moreStyles}}<link rel="stylesheet" type="text/css" href="{{.}}" />{{end}}
 	
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	<script defer src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script defer src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	<script defer src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js" onLoad="hljs.initHighlightingOnLoad()"></script>
+
     {{range .moreScripts}}<script src="{{.}}"></script>{{end}}
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];
