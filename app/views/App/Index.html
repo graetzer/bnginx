@@ -16,36 +16,28 @@
 		  </div>
 		  <div class="panel-body">
 		    {{markdown .Body}}
-			<a href="/post/{{.PostId}}/{{urlquery .Title}}#commentForm" title="Make a comment">
 			
-			{{if not .IsPage}}
-			
+			<p><a href="/post/{{.PostId}}/{{urlquery .Title}}#commentForm" title="Make a comment">
 			{{$count := commentCount .}}
 			{{if eq $count 0}}Comment on this article{{else}}
 			{{if eq $count 1}}One comment so far{{else}}
-			View all {{$count}} Comments{{end}}{{end}}</a>
-			
-			{{end}}
+			View all {{$count}} Comments{{end}}{{end}}</a></p>
 		  </div>
 		</div>
 	</article>
 	{{end}}
 	
 	{{/* Handling of next/back/empty */}}
-	{{if eq .offset 0}}
-		{{if len .posts | eq 0}}
-			<h2>Oops!</h2>
-			<p>It seems that I haven't added content yet</p>
-		{{end}}
+	{{if len .posts | eq 0}}
+		<h2>Oops!</h2>
+		<p>There seems to be no content here</p>
+	{{else}}
 		{{if len .posts | eq 5}}
 			<a href="/?offset={{add .offset 5}}">Next &raquo;</a>
 		{{end}}
-	{{else}}
-		{{if len .posts | eq 0}}
-			<h2>Oops!</h2>
-			<p>There seems to be no content here</p>
-			<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
-		{{end}}
+	{{end}}
+	{{if eq .offset 0 | not}}
+		<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
 	{{end}}
 	</main>
 	</div><!-- ./col-sm-11 -->

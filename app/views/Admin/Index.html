@@ -1,17 +1,19 @@
 {{set . "title" "Admin Panel"}}
 {{template "header.html" .}}
 
-
+<div class="row">
+	<div class="col-sm-5 col-sm-offset-2">
+		<ol class="breadcrumb">
+		  <li class="active">Admin Panel</li>
+		</ol>
+	</div>
+</div>
 <div class="row">
 	<div class="col-sm-2">
 		{{ set . "pp" 0}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
-		<ol class="breadcrumb">
-		  <li class="active">Admin Panel</li>
-		</ol>
-
 	    <h3>Posts</h3>
 		<table class="table table-hover">
 		   <thead>

@@ -4,16 +4,19 @@
 {{template "header.html" .}}
 
 <div class="row">
+	<div class="col-sm-5 col-sm-offset-2">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+	</div>
+</div>
+<div class="row">
 	<div class="col-sm-2">
 		{{ set . "pp" 2}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
-		<ol class="breadcrumb">
-		  <li><a href="/admin">Admin Panel</a></li>
-		  <li class="active">{{.title}}</li>
-		</ol>
-		
 		<h3>Uploaded Files</h3>
 		<table class="table table-bordered" id="filesTable">
 		    <thead>
@@ -38,7 +41,7 @@
 		</table>
 	
 	    <h3>Upload Zone</h3>
-		<form action="/admin/uploads/save" class="dropzone" id="myAwesomeDropzone" method="POST" enctype="multipart/form-data">
+		<form action="/admin/media/upload" class="dropzone" id="myAwesomeDropzone" method="POST" enctype="multipart/form-data">
 			<div class="fallback">
     			<input name="file" type="file" multiple />
 				<button type="submit" class="btn btn-default">Save</button>
@@ -47,13 +50,14 @@
 		
 		<script type="text/javascript" charset="utf-8">
 		/* <![CDATA[ */
+		var uploadPrefix = "{{.uploadPrefix}}";
 	    (function() {
 			Dropzone.options.myAwesomeDropzone = {
 				init: function() {
 					this.on("addedfile", function(file) {
-						var enc = encodeURIComponent(file.name);
+						var enc = encodeURIComponent(uploadPrefix+file.name);
 						
-						$("#filesTable tbody").append('<tr>'+
+						$("#filesTable tbody").prepend('<tr>'+
 						'<td>'+file.name+'</td>'+
 						'<td>'+file.size+' Bytes</td>'+
 						'<td><a title="View this file" href="/public/uploads/'+enc+'" class="btn btn-primary btn-sm">View</a> '+

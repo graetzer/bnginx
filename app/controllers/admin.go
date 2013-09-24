@@ -198,23 +198,29 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 
 // ==================== Handle Uploads ====================
 
-func (c Admin) Upload() revel.Result {
+func (c Admin) Media() revel.Result {
 	// TODO configure that
 	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
 	
 	fs, err := ioutil.ReadDir(basePath)
-	if err != nil {revel.ERROR.Panic(err)}
+	if err != nil {
+		revel.ERROR.Println(err); 
+		return c.RenderError(err)
+	}
+	
+	// Remove hidden files
 	files := make([]os.FileInfo, 0, len(fs))
 	for _, f := range fs {
-		if ! strings.HasPrefix(f.Name(), ".") {
+		if !strings.HasPrefix(f.Name(), ".") {
 			files = append(files, f)
 		} 
 	}
 	
-	return c.Render(files)
+	uploadPrefix := time.Now().Format("2006_01_02_")
+	return c.Render(files, uploadPrefix)
 }
 
-func (c Admin) SaveUpload() revel.Result {
+func (c Admin) Upload() revel.Result {
 	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
 	
 	for _, fInfo := range c.Params.Files["file"] {
@@ -223,9 +229,8 @@ func (c Admin) SaveUpload() revel.Result {
 		if err != nil { return c.RenderError(err) }
 		defer fi.Close()
 		
-		//time := strconv.FormatInt(time.Now().Unix(), 10)
-		//full := filepath.Join(basePath, time + "_" + filepath.Base(fInfo.Filename))
-		full := filepath.Join(basePath, filepath.Base(fInfo.Filename))
+		var uploadPrefix = time.Now().Format("2006_01_02_")
+		full := filepath.Join(basePath, uploadPrefix + filepath.Base(fInfo.Filename))
 		
 		fo, err := os.Create(full)
 		if err != nil { return c.RenderError(err) }
@@ -262,14 +267,6 @@ func (c Admin) Comments() revel.Result {
 }
 
 func (c Admin) UpdateComment (commentId int64, approved bool) revel.Result {
-	c.Validation.Required(commentId)
-	c.Validation.Required(approved)
-	if c.Validation.HasErrors() {
-		c.Validation.Keep()
-		c.FlashParams()
-		return c.Redirect(routes.Admin.Comments())
-	}
-	
 	obj, err := c.Txn.Get(models.Comment{}, commentId)
 	if err != nil {revel.ERROR.Panic(err)}
 	if obj != nil {

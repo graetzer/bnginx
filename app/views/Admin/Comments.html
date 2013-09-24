@@ -2,16 +2,19 @@
 {{template "header.html" .}}
 
 <div class="row">
+	<div class="col-sm-5 col-sm-offset-2">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+	</div>
+</div>
+<div class="row">
 	<div class="col-sm-2">
 		{{ set . "pp" 3}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
-		<ol class="breadcrumb">
-		  <li><a href="/admin">Admin Panel</a></li>
-		  <li class="active">{{.title}}</li>
-		</ol>
-	
 	    <h3>Pending Comments</h3>
 		<table class="table table-hover">
 		   <thead>
