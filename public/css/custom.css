@@ -1,30 +1,28 @@
 /* Copyrigth Simon Peter Grätzer simon(at)graetzer.org */
 
-body {
-	 background:url('../img/cream_pixels.png');
-}
+body {background:url('../img/cream_pixels.png');}
 
 #trailer {
 	background:url('../img/trailer.png') no-repeat;
 	background-size: auto 100%;
 }
-
 footer {
 	padding: 30px 0;
 }
-
 .panel-body img {
 	max-width:100%;
 }
-
 .table tbody > tr > td {
 	vertical-align:middle !important;
 }
-
-#wmd-preview img {
+#editorACE {height:450px;}
+#editorPreview {
+	height:550px;
+	overflow:auto;
+}
+#editorPreview img {
 	max-width:100%;
 }
-
 .social-list {
 	padding-left: 0px;
 } 
