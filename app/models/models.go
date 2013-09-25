@@ -54,7 +54,7 @@ func (p Post) UpdatedTime() time.Time {
 	return time.Unix(p.Updated, 0)
 }
 
-func (p Post) SetUpdatedTime(t time.Time) {
+func (p *Post) SetUpdatedTime(t time.Time) {
 	p.Updated = t.Unix()
 }
 
@@ -77,6 +77,6 @@ func (c Comment) CreatedTime() time.Time {
 	return time.Unix(c.Created, 0)
 }
 
-func (c Comment) SetCreatedTime(t time.Time) {
+func (c *Comment) SetCreatedTime(t time.Time) {
 	c.Created = t.Unix()
 }

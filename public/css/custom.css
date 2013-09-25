@@ -20,9 +20,6 @@ footer {
 	height:550px;
 	overflow:auto;
 }
-#editorPreview img {
-	max-width:100%;
-}
 .social-list {
 	padding-left: 0px;
 } 

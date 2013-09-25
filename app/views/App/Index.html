@@ -28,6 +28,9 @@
 	{{end}}
 	
 	{{/* Handling of next/back/empty */}}
+	{{if eq .offset 0 | not}}
+		<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
+	{{end}}
 	{{if len .posts | eq 0}}
 		<h2>Oops!</h2>
 		<p>There seems to be no content here</p>
@@ -35,9 +38,6 @@
 		{{if len .posts | eq 5}}
 			<a href="/?offset={{add .offset 5}}">Next &raquo;</a>
 		{{end}}
-	{{end}}
-	{{if eq .offset 0 | not}}
-		<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
 	{{end}}
 	</main>
 	</div><!-- ./col-sm-11 -->
