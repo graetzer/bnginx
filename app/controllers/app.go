@@ -16,13 +16,14 @@ type App struct {
 
 // ================ Helper functions ================
 
-func (c App) addGlobalPages() revel.Result {
+func (c App) addTemplateVars() revel.Result {
 	var pages []*models.Post
-	_, err := c.Txn.Select(&pages, `SELECT * FROM Post WHERE Published AND IsPage ORDER BY PageOrder ASC`)
+	_, err := c.Txn.Select(&pages, `SELECT * FROM Post WHERE Published AND IsPage ORDER BY PageOrder DESC`)
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}
 	c.RenderArgs["pages"] = pages
+	c.RenderArgs["recaptchaKey"] = revel.Config.StringDefault("recaptcha.public", "")
 	return nil
 }
 
@@ -45,10 +46,7 @@ func (c App) connected() *models.User {
 
 func (c App) getUser(email string) *models.User {
     users, err := c.Txn.Select(models.User{}, `SELECT * FROM User WHERE Email = ?`, email)
-    if err != nil {
-		revel.ERROR.Panic(err)
-		return nil
-    }
+    if err != nil {revel.ERROR.Panic(err)}
     if len(users) == 0 {
 		c.Flash.Error("No result for this email")
         return nil
@@ -60,7 +58,6 @@ func (c App) getUserById(userId int64) *models.User {
 	obj, err := c.Txn.Get(models.User{}, userId)
 	if err != nil {
 		revel.ERROR.Panic(err)
-		return nil
     } else if obj == nil {
 		c.Flash.Error("No result for this id")
 		return nil
@@ -81,7 +78,7 @@ func (c App) getPostById(postId int64) *models.Post {
 
 func (c App) getPublishedPosts(offset int64) []*models.Post {
 	query := "SELECT * FROM Post WHERE Published AND NOT IsPage "+
-	"ORDER BY Updated DESC LIMIT 5 OFFSET ?"
+	"ORDER BY PageOrder DESC, Updated DESC LIMIT 5 OFFSET ?"
 	
 	var posts []*models.Post
 	_, err := c.Txn.Select(&posts, query, offset)

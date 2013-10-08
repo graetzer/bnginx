@@ -36,7 +36,7 @@
 					<td>{{if not .Published}}Not {{end}}Published</td>
 					<td>{{if .IsPage}}Page{{else}}Blogpost{{end}}</td>
 					<td>{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</td>
-					<td>{{.AuthorId}}</td>
+					<td>{{.User.Name}}</td>
 					<td>
 						<a href="/admin/post/{{.PostId}}" class="btn btn-primary btn-sm">Edit</a>
 						{{if eq $user.UserId .AuthorId}}
@@ -46,7 +46,6 @@
 				</tr>
 			{{end}}
 		   </tbody>
-		
 		</table>
 		
 		<h3>Users</h3>

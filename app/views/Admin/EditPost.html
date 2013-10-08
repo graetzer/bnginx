@@ -48,7 +48,7 @@
 				</label>
 			</div>
 			<div class="form-group">
-				<label for="inputPostPageOrder">Page Order</label>
+				<label for="inputPostPageOrder">Post Order</label>
 				<input type="number" class="form-control" id="inputPostPageOrder" name="pageOrder" placeholder="0" value="{{.post.PageOrder}}" />
 			</div>
 			<button type="submit" class="btn btn-default">Save</button>
@@ -60,6 +60,7 @@
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h2 class="panel-title" id="titlePreview"></h2>
+			<small>By {{.user.Name}}</small>
 		  </div>
 		  <div class="panel-body" id="editorPreview">
 		  </div>
@@ -72,11 +73,15 @@
 	    if (element.addEventListener) element.addEventListener(event, fn, false);
 	    else if (element.attachEvent) element.attachEvent('on' + event, fn);
 	}
+		
+	// Initialize the ACE editor
 	var editor = ace.edit("editorACE");
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/markdown");
-	
+		
+	// jQuery should be loaded by now
 	addEvent(window, 'load', function() {
+		// Initialize the markdown preview
 		var converter = new Markdown.Converter();
 		var preview = $("#editorPreview");
 		var textarea = $("#editorTextarea");
@@ -88,10 +93,14 @@
 		editor.getSession().on("change", update);
 		update();
 		
+		// Update the Post title
 		$("#inputPostTitle").keyup(function(){
 			$("#titlePreview").text($(this).val());
 		});
 		$("#inputPostTitle").keyup();
+		
+		// Upscale the container
+		$(".container").css("max-width", "2000px");
 	});
 </script>
 {{template "footer.html" .}}

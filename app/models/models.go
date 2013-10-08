@@ -4,6 +4,7 @@ import (
 	"time"
 	"crypto/sha256"
 	"encoding/base64"
+	"github.com/coopernurse/gorp"
 )
 
 type User struct {
@@ -30,23 +31,21 @@ func (u User) CheckPassword(in string) bool {
 
 type Post struct {
     PostId      int64    
-    Updated     int64 //Datetime
+    Updated     int64
     Published   bool
     Title       string
     Body        string
     AuthorId    int64
 	IsPage      bool
 	PageOrder   int16
+	
+	// Transient
+	User		*User	`db:"-"`
 }
 
 func NewPost(user *User) *Post {
-	now := time.Now()
-	unix := now.Unix()
-	//formatted := now.Format("Jan 2, 2006 at 15:04 (MST)")
-	
-	post := Post{PostId:0, Updated:unix,
-	 Published:false, Title:"New Post", Body:"", AuthorId:user.UserId, IsPage:false, PageOrder:0}
-	
+	post := Post{PostId:0, Updated:time.Now().Unix(), Published:false,
+	 Title:"New Post", Body:"", AuthorId:user.UserId, IsPage:false, PageOrder:0}
 	return &post
 }
 
@@ -56,6 +55,14 @@ func (p Post) UpdatedTime() time.Time {
 
 func (p *Post) SetUpdatedTime(t time.Time) {
 	p.Updated = t.Unix()
+}
+
+func (p *Post) PostGet(s gorp.SqlExecutor) error {
+	obj, err := s.Get(User{}, p.AuthorId)
+	if (obj != nil) {
+		p.User = obj.(*User)
+	}
+	return err
 }
 
 type Comment struct {

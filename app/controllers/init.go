@@ -17,7 +17,7 @@ func init() {
 	revel.InterceptMethod((*GorpController).Rollback, revel.PANIC)
 	
 	revel.InterceptMethod((*App).addUser, revel.BEFORE)
-	revel.InterceptMethod((*App).addGlobalPages, revel.BEFORE)
+	revel.InterceptMethod((*App).addTemplateVars, revel.BEFORE)
 	revel.InterceptMethod((*Admin).checkUser, revel.BEFORE)
 	
 	revel.TemplateFuncs["markdown"] = func(input string) template.HTML { 
@@ -45,10 +45,6 @@ func init() {
 		}
 		if err != nil {revel.ERROR.Panic(err)}
 		return result
-	}
-	
-	revel.TemplateFuncs["recaptchaKey"] = func () string {
-		return revel.Config.StringDefault("recaptcha.public", "")
 	}
 }
 

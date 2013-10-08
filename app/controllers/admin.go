@@ -31,7 +31,7 @@ func (c Admin) Index() revel.Result {
 		posts []*models.Post
 		users []*models.User
 	)
-	_, err := c.Txn.Select(&posts, "SELECT * FROM Post ORDER BY Updated DESC")
+	_, err := c.Txn.Select(&posts, "SELECT * FROM Post ORDER BY PageOrder DESC, Updated DESC")
 	if err != nil {
 		revel.ERROR.Panic(err)
 	}
@@ -113,9 +113,7 @@ func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string)
 
 func (c Admin) DeleteUser(email string) revel.Result {
 	user := c.getUser(email)
-	if user == nil {
-		return c.Redirect(routes.Admin.Index())
-	}
+	if user == nil {return c.Redirect(routes.Admin.Index())}
 
 	u := c.connected()
 	if u.UserId == user.UserId || u.IsAdmin {
@@ -133,11 +131,8 @@ func (c Admin) EditPost(postId int64) revel.Result {
 	post.PostId = -1
     if c.Params.Get("postId") != "create" {
 		post = c.getPostById(postId)
-		if post == nil {
-			return c.Redirect(routes.Admin.Index())
-		}
+		if post == nil {return c.Redirect(routes.Admin.Index())}
 	}
-	
 	return c.Render(post)
 }
 
@@ -150,9 +145,7 @@ func (c Admin) SavePost(postId int64, published bool, title, body string, isPage
 		post.AuthorId = u.UserId
 	} else {
 		post = c.getPostById(postId)
-		if post == nil {
-			return c.Redirect(routes.Admin.Index())
-		}
+		if post == nil {return c.Redirect(routes.Admin.Index())}
 		
 		if u.UserId != post.AuthorId && !u.IsAdmin {
 			c.Flash.Error("You have not the permission to save this post")
@@ -257,7 +250,7 @@ func (c Admin) DeleteUpload(filename string) revel.Result {
 	return c.Redirect(routes.Admin.Upload())
 }
 
-// ==================== Handle Uploads ====================
+// ==================== Handle Comments ====================
 
 func (c Admin) Comments() revel.Result {
 	var comments []*models.Comment

@@ -8,9 +8,11 @@
 	<article>
 		<div class="panel panel-default">
 		  <div class="panel-heading">
-		    <h3 class="panel-title">{{.post.Title}}
-			<small class="pull-right">{{.post.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small>
-			</h3>
+		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{.post.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
+			<small>By {{.post.User.Name}}</small>
+			{{if eq .user.UserId .post.AuthorId}}
+				<a href="/admin/post/{{.PostId}}" title="Edit this Post">Edit</a>
+			{{end}}
 		  </div>
 		  <div class="panel-body">
 		    {{markdown .post.Body}}
@@ -55,10 +57,10 @@
 			<span class="help-block">Required. Max 500 characters. Markdown is supported, but no images. Every Post will be checked befor it is shown</span>
 		  </div>
 		
-			<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{recaptchaKey}}">
+			<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{.recaptchaKey}}">
 		    </script>
 		    <noscript>
-		       <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptchaKey}}"
+		       <iframe src="http://www.google.com/recaptcha/api/noscript?k={{.recaptchaKey}}"
 		           height="300" width="500" style="border:0;"></iframe><br>
 		       <textarea name="recaptcha_challenge_field" rows="3" cols="40">
 		       </textarea>
