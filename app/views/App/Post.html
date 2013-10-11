@@ -11,7 +11,7 @@
 		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{.post.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
 			<small>By {{.post.User.Name}}</small>
 			{{if eq .user.UserId .post.AuthorId}}
-				<a href="/admin/post/{{.PostId}}" title="Edit this Post">Edit</a>
+				<a href="/admin/post/{{.post.PostId}}" title="Edit this Post">Edit</a>
 			{{end}}
 		  </div>
 		  <div class="panel-body">

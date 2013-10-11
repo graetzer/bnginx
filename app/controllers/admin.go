@@ -129,7 +129,7 @@ func (c Admin) DeleteUser(email string) revel.Result {
 func (c Admin) EditPost(postId int64) revel.Result {
 	post := new(models.Post)
 	post.PostId = -1
-    if c.Params.Get("postId") != "create" {
+    if postId != -1 {
 		post = c.getPostById(postId)
 		if post == nil {return c.Redirect(routes.Admin.Index())}
 	}
