@@ -4,3 +4,9 @@ There is no CSRF protection yet and generally needs some improvements in certain
 
 
 ## Don't forget to change the secret in the app.conf file
+
+## TODO
+
+- CSRF protection
+- Simpler sorting of posts
+- Better upload management
