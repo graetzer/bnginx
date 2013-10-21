@@ -18,6 +18,7 @@ func init() {
 	
 	revel.InterceptMethod((*App).addUser, revel.BEFORE)
 	revel.InterceptMethod((*App).addTemplateVars, revel.BEFORE)
+	
 	revel.InterceptMethod((*Admin).checkUser, revel.BEFORE)
 	
 	revel.TemplateFuncs["markdown"] = func(input string) template.HTML { 

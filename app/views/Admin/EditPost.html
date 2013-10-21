@@ -5,11 +5,8 @@
 {{end}}
 
 {{append . "moreScripts" "/public/js/Markdown.Converter.js"}}
+{{append . "moreScripts" "/public/js/Markdown.Extra.js"}}
 {{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"}}
-{{/*append . "moreStyles" "/public/css/Markdown.Editor.css"}}
-{{append . "moreScripts" "/public/js/Markdown.Sanitizer.js"}}
-{{append . "moreScripts" "/public/js/Markdown.Editor.js"*/}}
-
 {{template "header.html" .}}
 
 <div class="row">
@@ -81,8 +78,11 @@
 		
 	// jQuery should be loaded by now
 	addEvent(window, 'load', function() {
+		
 		// Initialize the markdown preview
 		var converter = new Markdown.Converter();
+		Markdown.Extra.init(converter, {extensions: ["tables", "fenced_code_gfm"]});
+		
 		var preview = $("#editorPreview");
 		var textarea = $("#editorTextarea");
 		var update = function () {

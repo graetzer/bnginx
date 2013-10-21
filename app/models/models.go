@@ -57,6 +57,17 @@ func (p *Post) SetUpdatedTime(t time.Time) {
 	p.Updated = t.Unix()
 }
 
+// Just the first 150 characters (+"..."), may not be very good
+// considering that this is supposed to contain valid markdown
+func (p Post) Summary() string {
+	if len(p.Body) > 150 {
+		return p.Body[0:150] + "..."
+	}
+	return p.Body
+}
+
+// Executed when gorp fetches an instance of this struct
+// Fixes gorp's lack of support for relations
 func (p *Post) PostGet(s gorp.SqlExecutor) error {
 	obj, err := s.Get(User{}, p.AuthorId)
 	if (obj != nil) {

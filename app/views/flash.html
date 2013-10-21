@@ -9,10 +9,12 @@
 	{{if .flash.error}}
 		<h4>{{.flash.error}}</h4>
 	{{end}}
+	{{if eq .RunMode "dev"}}
 	<ul>
 		{{range .errors}}
 			<li>{{.}}</li>
 		{{end}}
 	</ul>
+	{{end}}
 </div>
 {{end}}

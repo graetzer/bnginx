@@ -1,0 +1,28 @@
+{{raw `<?xml version="1.0" encoding="UTF-8"?>` }}{{/* The html/template package doesn't think <? should be used here */}}
+<rss version="2.0">
+  <channel>
+    <title>Simon's Blog</title>
+    <link>http://www.graetzer.org</link>
+    <description>A blog on iOS, Android, GoLang, 3D Graphics and similar topics</description>
+    <language>en-en</language>
+    <copyright>2012-2013 (C) Simon Grätzer</copyright>
+    <pubDate>{{datetime .time}}</pubDate>
+    {{/*<image>
+      <url>URL einer einzubindenden Grafik</url>
+      <title>Bildtitel</title>
+      <link>URL, mit der das Bild verknüpft ist</link>
+    </image>*/}}
+	
+    {{range .posts}}
+	<item>
+      <title>{{.Title}}</title>
+      <description>{{.Summary}}</description>
+      <link>http://graetzer.org/post/{{.PostId}}/{{urlquery .Title}}</link>
+      <author>{{.User.Name}}, {{.User.Email}}</author>
+      {{/*<guid>Eindeutige Identifikation des Eintrages</guid>*/}}
+      <pubDate>Datum des Items</pubDate>
+    </item>
+	{{end}}
+ 	
+  </channel>
+</rss>

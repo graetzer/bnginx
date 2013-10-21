@@ -9,7 +9,7 @@
 	<article>
 		<div class="panel panel-default">
 		  <div class="panel-heading">
-		    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</small></h3>
+		    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedTime}}</small></h3>
 			<small>By {{.User.Name}}</small>
 			{{if eq $user.UserId .AuthorId}}
 				<a href="/admin/post/{{.PostId}}" title="Edit this Post">Edit</a>

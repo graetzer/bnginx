@@ -7,6 +7,7 @@ import (
 	"github.com/dpapathanasiou/go-recaptcha"
 	"regexp"
 	"strings"
+	"time"
 )
 
 
@@ -129,6 +130,13 @@ func (c App) Index(offset int64) revel.Result {
 	return c.Render(posts, offset)
 }
 
+func (c App) Feed() revel.Result {
+	c.RenderArgs["posts"] = c.getPublishedPosts(0)
+	c.RenderArgs["time"] = time.Now()
+	c.Response.ContentType = "application/rss+xml"
+	return c.RenderTemplate("App/Feed.xml")
+} 
+
 func (c App) Search(query string, offset int64) revel.Result {
 	var posts []*models.Post
 	q := "%"+query+"%"
@@ -164,18 +172,16 @@ recaptcha_challenge_field, recaptcha_response_field string) revel.Result {
 	c.Validation.Required(recaptcha_response_field)
 	
 	// Get client IP
-	var client_ip string
-	if c.Request.Header.Get("X-Real-IP") != "" {
-		client_ip = c.Request.Header.Get("X-Real-IP")
-	} else {
+	client_ip := c.Request.Header.Get("X-Real-IP")
+	if client_ip == "" {
 		client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
 	}
 	
 	ok := recaptcha.Confirm(client_ip, recaptcha_challenge_field, recaptcha_response_field)
-	if !ok {
-		c.Flash.Error("Wrong captcha")
-	}
-	if c.Validation.HasErrors() || !ok {
+	if !ok {c.Flash.Error("Wrong captcha")}
+	
+	if !ok || c.Validation.HasErrors() {
+		c.Flash.Error("Could not validate your input")
 		c.Validation.Keep()
 		c.FlashParams()
 	} else if post := c.getPostById(postId); post != nil {

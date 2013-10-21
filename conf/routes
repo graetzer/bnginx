@@ -5,6 +5,7 @@
 module:testrunner
 
 GET     /                                       App.Index
+GET     /feed.rss                               App.Feed
 GET     /search                                 App.Search
 GET     /post/:postId/*                         App.Post
 POST    /post/comment/:postId                   App.SaveComment
