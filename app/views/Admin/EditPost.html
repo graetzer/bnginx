@@ -74,7 +74,10 @@
 	// Initialize the ACE editor
 	var editor = ace.edit("editorACE");
     editor.setTheme("ace/theme/github");
-    editor.getSession().setMode("ace/mode/markdown");
+	var session = editor.getSession();
+    session.setMode("ace/mode/markdown");
+	session.setUseWrapMode(true);
+	session.setWrapLimitRange(70, 70);
 		
 	// jQuery should be loaded by now
 	addEvent(window, 'load', function() {

@@ -81,9 +81,9 @@
 			<div class="panel panel-warning">
 			  <div class="panel-heading">
 			    <h3 class="panel-title">{{.Title}}
-				<small class="pull-right">{{.CreatedTime.Format "Mon Jan 2 15:04:05"}}</small>
+				<small class="pull-right">{{datetime .CreatedTime}}</small>
 				</h3>
-				By {{with .Name}}{{.}}{{else}}Anonymous{{end}}
+				<small>By {{with .Name}}{{.}}{{else}}Anonymous{{end}}</small>
 			  </div>
 			  <div class="panel-body">
 			    {{markdownSave .Body}}
