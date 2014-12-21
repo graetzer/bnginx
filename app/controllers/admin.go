@@ -1,57 +1,52 @@
 package controllers
 
 import (
-    "github.com/robfig/revel"
-    "github.com/graetzer/bnginx/app/models"
 	"github.com/graetzer/bnginx/app/routes"
-	"time"
-	"path/filepath"
-	"os"
+	"github.com/revel/revel"
+
 	"io"
 	"io/ioutil"
-	//"strconv"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Admin struct {
 	*revel.Controller
-    App
+	App
 }
 
 func (c Admin) checkUser() revel.Result {
-    if user := c.connected(); user == nil {
-        c.Flash.Error("Please log in first")
-        return c.Redirect(routes.App.Index(0))
-    }
-    return nil
+	if user := c.connected(); user == nil {
+		c.Flash.Error("Please log in first")
+		return c.Redirect(routes.App.Index(0))
+	}
+	return nil
 }
 
 func (c Admin) Index() revel.Result {
 	var (
-		posts []*models.Post
-		users []*models.User
+		posts []*Post
+		users []*User
 	)
-	_, err := c.Txn.Select(&posts, "SELECT * FROM Post ORDER BY PageOrder DESC, Updated DESC")
-	if err != nil {
-		revel.ERROR.Panic(err)
-	}
-	_, err = c.Txn.Select(&users, "SELECT * FROM User")
-	if err != nil {revel.ERROR.Panic(err)}
+	DB.Order("page_order DESC, updated_at DESC").Find(&posts)
+	DB.Find(&users)
 	return c.Render(posts, users)
 }
 
 // ==================== Handle Users ====================
 
-func (c Admin) EditUser (email string) revel.Result {
-	profile := new(models.User)
-	profile.UserId = -1
-    if email != "create" {
+func (c Admin) EditUser(email string) revel.Result {
+	profile := new(User)
+	profile.Id = -1
+	if email != "create" {
 		profile = c.getUser(email)
 		if profile == nil {
 			return c.Redirect(routes.Admin.Index())
 		}
 	}
-	
+
 	return c.Render(profile)
 }
 
@@ -70,56 +65,44 @@ func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string)
 			return c.Redirect(routes.Admin.EditUser(email))
 		}
 	}
-	
-	var user *models.User
+
+	var user *User
 	u := c.connected()
-	if userId == -1 {
-		user = new(models.User)
+	if userId <= 0 {
+		user = new(User)
 		if c.getUser(email) != nil {
 			c.Flash.Error("This is email address is already used")
 			return c.Redirect(routes.Admin.EditUser("create"))
 		}
 		delete(c.Flash.Out, "error")
 	} else {
-		if u.UserId != userId && !u.IsAdmin {
+		if u.Id != userId && !u.IsAdmin {
 			c.Flash.Error("You have no permission to edit this profile")
 			return c.Redirect(routes.Admin.EditUser("create"))
 		}
-		
+
 		user = c.getUserById(userId)
-		if user == nil {
-			return c.Redirect(routes.Admin.Index())
-		}
-		
-		if !user.CheckPassword(oldPassword) {
-			c.Flash.Error("The old password is incorrect")
+		if user == nil || !user.CheckPassword(oldPassword) {
+			c.Flash.Error("Db corruption or the password is incorrect")
 			return c.Redirect(routes.Admin.EditUser(user.Email))
 		}
 	}
 	user.Name = name
 	user.Email = email
-	user.Password = models.HashPassword(password)
-	
-	var err error
-	if (userId == -1) {
-		err = c.Txn.Insert(user)
-	} else {
-		_, err = c.Txn.Update(user)
-	}
-	if err != nil {revel.ERROR.Panic(err)}
-	
+	user.SetPassword(password)
+	DB.Save(user)
+
 	return c.Redirect(routes.Admin.Index())
 }
 
 func (c Admin) DeleteUser(email string) revel.Result {
-	user := c.getUser(email)
-	if user == nil {return c.Redirect(routes.Admin.Index())}
 
-	u := c.connected()
-	if u.UserId == user.UserId || u.IsAdmin {
-		_, err := c.Txn.Delete(user)
-		if err != nil {revel.ERROR.Panic(err)}
-		c.Flash.Success("Deleted user")
+	if user := c.getUser(email); user != nil {
+		u := c.connected()
+		if u.Id == user.Id || u.IsAdmin {
+			DB.Delete(user)
+			c.Flash.Success("Deleted user")
+		}
 	}
 	return c.Redirect(routes.Admin.Index())
 }
@@ -127,46 +110,39 @@ func (c Admin) DeleteUser(email string) revel.Result {
 // ==================== Handle Posts ====================
 
 func (c Admin) EditPost(postId int64) revel.Result {
-	post := new(models.Post)
-	post.PostId = -1
-    if postId != -1 {
+	post := new(Post)
+	if postId != -1 {
 		post = c.getPostById(postId)
-		if post == nil {return c.Redirect(routes.Admin.Index())}
+		if post == nil {
+			return c.Redirect(routes.Admin.Index())
+		}
 	}
 	return c.Render(post)
 }
 
 func (c Admin) SavePost(postId int64, published bool, title, body string, isPage bool, pageOrder int16) revel.Result {
-	var post *models.Post
+	var post *Post
 	u := c.connected()
-	
-	if postId == -1 {
-		post = models.NewPost(c.connected())
-		post.AuthorId = u.UserId
+	if postId <= 0 {
+		post = &Post{Title: "New Post", UserId: u.Id}
+		post.UserId = u.Id
 	} else {
 		post = c.getPostById(postId)
-		if post == nil {return c.Redirect(routes.Admin.Index())}
-		
-		if u.UserId != post.AuthorId && !u.IsAdmin {
+		if post == nil {
+			return c.Redirect(routes.Admin.Index())
+		}
+		if u.Id != post.UserId && !u.IsAdmin {
 			c.Flash.Error("You have not the permission to save this post")
 			return c.Redirect(routes.Admin.Index())
 		}
 	}
-	post.SetUpdatedTime(time.Now())
 	post.Published = published
 	post.Title = title
 	post.Body = body
 	post.IsPage = isPage
 	post.PageOrder = pageOrder
-	
-	var err error
-	if (postId == -1) {
-		err = c.Txn.Insert(post)
-	} else {
-		_, err = c.Txn.Update(post)
-	}
-	if err != nil {revel.ERROR.Panic(err)}
-	
+	DB.Save(post)
+
 	return c.Redirect(routes.Admin.Index())
 }
 
@@ -177,13 +153,9 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 	}
 
 	u := c.connected()
-	if u.UserId == postId || u.IsAdmin {
-		_, err := c.Txn.Delete(post)
-		if err != nil {revel.ERROR.Panic(err)}
-		
-		_, err = c.Txn.Exec("DELETE FROM Comment WHERE PostId = ?", postId)
-		if err != nil {revel.ERROR.Panic(err)}
-		
+	if u.Id == postId || u.IsAdmin {
+		DB.Delete(u)
+		DB.Where("PostId = ?", u.Id).Delete(&Comment{})
 		c.Flash.Success("Deleted post")
 	}
 	return c.Redirect(routes.Admin.Index())
@@ -194,46 +166,50 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 func (c Admin) Media() revel.Result {
 	// TODO configure that
 	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
-	
+
 	fs, err := ioutil.ReadDir(basePath)
 	if err != nil {
-		revel.ERROR.Println(err); 
+		revel.ERROR.Println(err)
 		return c.RenderError(err)
 	}
-	
+
 	// Remove hidden files
 	files := make([]os.FileInfo, 0, len(fs))
 	for _, f := range fs {
 		if !strings.HasPrefix(f.Name(), ".") {
 			files = append(files, f)
-		} 
+		}
 	}
-	
+
 	uploadPrefix := time.Now().Format("2006_01_02_")
 	return c.Render(files, uploadPrefix)
 }
 
 func (c Admin) Upload() revel.Result {
 	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
-	
+
 	for _, fInfo := range c.Params.Files["file"] {
-		
+
 		fi, err := fInfo.Open()
-		if err != nil { return c.RenderError(err) }
-		defer fi.Close()
-		
-		var uploadPrefix = time.Now().Format("2006_01_02_")
-		full := filepath.Join(basePath, uploadPrefix + filepath.Base(fInfo.Filename))
-		
-		fo, err := os.Create(full)
-		if err != nil { return c.RenderError(err) }
-		defer fo.Close()
-		
-		if _, err = io.Copy(fo, fi); err != nil { 
-			return c.RenderError(err) 
+		if err != nil {
+			return c.RenderError(err)
 		}
-		return c.RenderJson(struct {Message string}{"Success"})
-    }
+		defer fi.Close()
+
+		var uploadPrefix = time.Now().Format("2006_01_02_")
+		full := filepath.Join(basePath, uploadPrefix+filepath.Base(fInfo.Filename))
+
+		fo, err := os.Create(full)
+		if err != nil {
+			return c.RenderError(err)
+		}
+		defer fo.Close()
+
+		if _, err = io.Copy(fo, fi); err != nil {
+			return c.RenderError(err)
+		}
+		return c.RenderJson(struct{ Message string }{"Success"})
+	}
 	return c.Redirect(routes.Admin.Upload())
 }
 
@@ -245,7 +221,7 @@ func (c Admin) DeleteUpload(filename string) revel.Result {
 		if err != nil {
 			c.Flash.Error(err.Error())
 		}
-		
+
 	}
 	return c.Redirect(routes.Admin.Upload())
 }
@@ -253,37 +229,24 @@ func (c Admin) DeleteUpload(filename string) revel.Result {
 // ==================== Handle Comments ====================
 
 func (c Admin) Comments() revel.Result {
-	var comments []*models.Comment
-	_, err := c.Txn.Select(&comments, "SELECT * FROM Comment ORDER BY Created DESC")
-	if err != nil {revel.ERROR.Panic(err)}
+	var comments []*Comment
+	DB.Order("Created DESC").Find(comments)
 	return c.Render(comments)
 }
 
-func (c Admin) UpdateComment (commentId int64, approved bool) revel.Result {
-	obj, err := c.Txn.Get(models.Comment{}, commentId)
-	if err != nil {revel.ERROR.Panic(err)}
-	if obj != nil {
-		comment := obj.(*models.Comment)
+func (c Admin) UpdateComment(commentId int64, approved bool) revel.Result {
+	var comment Comment
+	if !DB.First(&comment, commentId).RecordNotFound() {
 		comment.Approved = approved
-		_, err := c.Txn.Update(comment)
-		if err != nil {
-			revel.ERROR.Panic(err)
-		}
+		DB.Save(&comment)
 	}
-	
 	return c.Redirect(routes.Admin.Comments())
 }
 
-func (c Admin) DeleteComment (commentId int64) revel.Result {
-	obj, err := c.Txn.Get(models.Comment{}, commentId)
-	if err != nil {revel.ERROR.Panic(err)}
-	if obj != nil {
-		comment := obj.(*models.Comment)
-		_, err := c.Txn.Delete(comment)
-		if err != nil {
-			revel.ERROR.Panic(err)
-		}
+func (c Admin) DeleteComment(commentId int64) revel.Result {
+	var comment Comment
+	if !DB.First(&comment, commentId).RecordNotFound() {
+		DB.Delete(&comment)
 	}
-	
 	return c.Redirect(routes.Admin.Comments())
 }

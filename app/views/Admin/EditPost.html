@@ -1,4 +1,4 @@
-{{if eq .post.PostId -1}}
+{{if eq .post.Id -1}}
 {{set . "title" "Create a new Post"}}
 {{else}}
 {{set . "title" "Edit Post"}}
@@ -24,7 +24,7 @@
 	</div>*/}}
 	<div class="col-sm-6">
 		<h3>{{.title}}</h3>
-		<form role="form" method="POST" action="/admin/post/{{.post.PostId}}">
+		<form role="form" method="POST" action="/admin/post/{{.post.Id}}">
 			<div class="form-group">
 				<label for="inputPostTitle">Post Title</label>
 				<input type="text" class="form-control" id="inputPostTitle" name="title" placeholder="Titel" value="{{.post.Title}}" />

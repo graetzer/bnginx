@@ -29,9 +29,9 @@ POST    /admin/post/:postId                     Admin.SavePost
 GET     /admin/post/delete/:postId              Admin.DeletePost
 
 # Media upload
-GET     /admin/media                          Admin.Media
-POST    /admin/media/upload                   Admin.Upload
-GET     /admin/media/delete/:filename         Admin.DeleteUpload
+GET     /admin/media                            Admin.Media
+POST    /admin/media/upload                     Admin.Upload
+GET     /admin/media/delete/:filename           Admin.DeleteUpload
 
 # Comment management
 GET     /admin/comments                         Admin.Comments

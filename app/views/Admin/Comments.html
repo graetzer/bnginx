@@ -39,11 +39,11 @@
 					<td>
 						{{if $user.IsAdmin}}
 							{{if .Approved}}
-							<a href="/admin/comments/update/{{.CommentId}}?approved=false" class="btn btn-warning btn-sm">Reject</a>
+							<a href="/admin/comments/update/{{.Id}}?approved=false" class="btn btn-warning btn-sm">Reject</a>
 							{{else}}
-							<a href="/admin/comments/update/{{.CommentId}}?approved=true" class="btn btn-success btn-sm">Approve</a>
+							<a href="/admin/comments/update/{{.Id}}?approved=true" class="btn btn-success btn-sm">Approve</a>
 							{{end}}
-							<a href="/admin/comments/delete/{{.CommentId}}" class="btn btn-danger btn-sm">Delete</a>
+							<a href="/admin/comments/delete/{{.Id}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>

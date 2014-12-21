@@ -8,10 +8,10 @@
 	<article>
 		<div class="panel panel-default">
 		  <div class="panel-heading">
-		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{datetime .post.UpdatedTime}}</small></h3>
-			<small>By {{.post.User.Name}}</small>
-			{{if eq .user.UserId .post.AuthorId}}
-				<a href="/admin/post/{{.post.PostId}}" title="Edit this Post">Edit</a>
+		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{datetime .post.UpdatedAt}}</small></h3>
+			<small>By {{username .post.UserId}}</small>
+			{{if eq .user.Id .post.UserId}}
+				<a href="/admin/post/{{.post.Id}}" title="Edit this Post">Edit</a>
 			{{end}}
 		  </div>
 		  <div class="panel-body">
@@ -32,17 +32,11 @@
 <div class="row">
 	<div class="col-sm-4">
 		<h3>Leave a comment</h3>
-		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.PostId}}">
+		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.Id}}">
 		  <div class="form-group {{if .errors.name}}has-error{{end}}">
 		    <label for="inputName">Name</label>
 		    <input type="text" class="form-control" id="inputName" placeholder="Jon Doe" name="name" value="{{.flash.name}}">
 			<span class="help-block">Maximum of 50 characters.</span>
-		  </div>
-		
-		  <div class="form-group {{if .errors.email}}has-error{{end}}">
-		    <label for="inputEmail">Email address</label>
-		    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email" value="{{.flash.email}}">
-			<span class="help-block">Required, will not be published.</span>
 		  </div>
 		
 		  <div class="form-group {{if .errors.title}}has-error{{end}}">

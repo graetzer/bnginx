@@ -1,6 +1,7 @@
 
-		<footer>
-			<div class="pull-right">
+		<footer class="row">
+		<div class="col-sm-9" style="line-height: 30px;">&copy; 2013-2015 Simon Peter Grätzer</div>
+			<div class="col-sm-3">
 			{{if not .user}}
 				<form class="form-inline" role="form" action="/login" method="POST">
 				  <div class="form-group">
@@ -25,12 +26,8 @@
 				</form>
 			{{end}} 
 			</div>
-			
-			<em>Copyright 2013 (C) Simon Peter Grätzer</em>
 		</footer>
-		
-		</div><!-- /.container -->
-		
+		</div>
 		{{if eq .RunMode "dev"}}
 			{{template "debug.html" .}}
 		{{end}}

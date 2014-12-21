@@ -31,16 +31,16 @@
 			{{$user := .user}}
 		    {{range .posts}}
 		       	<tr class="{{if .Published}}success{{else}}warning{{end}}">
-					<td>{{.PostId}}</td>
+					<td>{{.Id}}</td>
 					<td>{{.Title}}</td>
 					<td>{{if not .Published}}Not {{end}}Published</td>
 					<td>{{if .IsPage}}Page{{else}}Blogpost{{end}}</td>
-					<td>{{.UpdatedTime.Format "Mon Jan 2 15:04:05"}}</td>
-					<td>{{.User.Name}}</td>
+					<td>{{datetime .UpdatedAt}}</td>
+					<td>{{username .UserId}}</td>
 					<td>
-						<a href="/admin/post/{{.PostId}}" class="btn btn-primary btn-sm">Edit</a>
-						{{if eq $user.UserId .AuthorId}}
-							<a href="/admin/post/delete/{{.PostId}}" class="btn btn-danger btn-sm">Delete</a>
+						<a href="/admin/post/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
+						{{if eq $user.Id .UserId}}
+							<a href="/admin/post/delete/{{.Id}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>
@@ -62,13 +62,13 @@
 		   <tbody>
 		    {{range .users}}
 		       	<tr>
-					<td>{{.UserId}}</td>
+					<td>{{.Id}}</td>
 					<td>{{.Name}}</td>
 					<td>{{.Email}}</td>
 					<td>{{if .IsAdmin}}Administrator{{else}}User{{end}}</td>
 					<td>
 						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a>
-						{{if $user.IsAdmin}}
+						{{if and ($user.IsAdmin) (not (eq $user.Id .Id))}}
 							<a href="/admin/user/delete/{{.Email}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>

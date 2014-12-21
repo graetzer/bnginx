@@ -7,7 +7,11 @@ body {background:url('../img/cream_pixels.png');}
 	background-size: auto 100%;
 }
 footer {
-	padding: 30px 0;
+	margin-top:50px;
+	background-color: #F8F8F8;
+	border: 1px solid #E7E7E7;
+	border-radius: 4px;
+	padding: 10px 0;
 }
 .panel-body img {
 	max-width:100%;
@@ -20,63 +24,6 @@ footer {
 	height:550px;
 	overflow:auto;
 }
-.social-list {
-	padding-left: 0px;
-} 
-.social-list li {
-	position: relative;
-	display: block;
-	padding: 10px 10px;
-	margin-bottom: -1px;
-}
-.social-list li a {
-	display: block;  
-	text-indent: -9999px; 
-	width: 25px; 
-	height: 25px;
-	opacity: 0.4;
-	filter:alpha(opacity=40); /* For IE8 and earlier */
-}
-.social-list li a:hover{
-	opacity: 1;
-	filter:alpha(opacity=100); /* For IE8 and earlier */
-}
-a.twitter { 
-	background:transparent url(../img/social-media.png) 0px 0 no-repeat;
-}
-a.facebook {
-	background:transparent url(../img/social-media.png) -30px 0 no-repeat;
-}
-a.flickr {
-	background:transparent url(../img/social-media.png) -60px 0 no-repeat;
-}
-a.pinterest { 
-	background:transparent url(../img/social-media.png) -95px 0 no-repeat;
-}
-a.youtube {
-	background:transparent url(../img/social-media.png) -130px 0 no-repeat;
-}
-a.rss {
-	background:transparent url(../img/social-media.png) -165px 0 no-repeat;
-}
-a.linkedin {
-	background:transparent url(../img/social-media.png) -200px 0 no-repeat;
-}
-a.vimeo {
-	background:transparent url(../img/social-media.png) -235px 0 no-repeat;
-}
-a.googleplus {
-	background:transparent url(../img/social-media.png) -270px 0 no-repeat;
-}
-a.delicious {
-	background:transparent url(../img/social-media.png) -305px 0 no-repeat;
-}
-a.dribble {
-	background:transparent url(../img/social-media.png) -339px 0 no-repeat;
-}
-a.github {
-	background:transparent url(../img/social-media.png) -373px 0 no-repeat;
-}
-a.tumblr {
-	background:transparent url(../img/social-media.png) -408px 0 no-repeat;
+#social li {
+	padding: 7px 0;
 }
