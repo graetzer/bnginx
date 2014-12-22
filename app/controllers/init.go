@@ -4,6 +4,7 @@ import (
 	"html/template"
 
 	"github.com/dpapathanasiou/go-recaptcha"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 
 	"github.com/jinzhu/gorm"
@@ -21,7 +22,7 @@ func init() {
 	}
 
 	revel.TemplateFuncs["markdownSave"] = func(input string) template.HTML {
-		return template.HTML(string(MarkdownSave([]byte(input))))
+		return template.HTML(string(SecureMarkdown([]byte(input))))
 	}
 
 	revel.TemplateFuncs["sub"] = func(a, b int64) int64 {
@@ -45,21 +46,27 @@ func init() {
 		if post == nil {
 			DB.Model(Comment{}).Where("NOT approved").Count(&result)
 		} else {
-			DB.Model(Comment{}).Where("post_id = ?", post.Id).Count(&result)
+			DB.Model(Comment{}).Where("post_id = ? AND approved", post.Id).Count(&result)
 		}
 		return result
 	}
 }
 
-var DB *gorm.DB
+var (
+	DB     *gorm.DB
+	policy *bluemonday.Policy
+)
 
 func AppInit() {
+	policy = bluemonday.UGCPolicy()
+
 	db, err := gorm.Open("sqlite3", "bnginx.db")
 	if err == nil {
 		db.LogMode(revel.DevMode)
 		db.CreateTable(&User{})
 		db.CreateTable(&Post{})
 		db.CreateTable(&Comment{})
+		db.AutoMigrate(&User{}, &Post{}, &Comment{})
 
 		var user User
 
@@ -76,7 +83,7 @@ func AppInit() {
 	}
 }
 
-func MarkdownSave(input []byte) []byte {
+func SecureMarkdown(input []byte) []byte {
 	// set up the HTML renderer
 	htmlFlags := 0
 	htmlFlags |= blackfriday.HTML_USE_XHTML
@@ -85,7 +92,6 @@ func MarkdownSave(input []byte) []byte {
 	htmlFlags |= blackfriday.HTML_SKIP_HTML
 	htmlFlags |= blackfriday.HTML_SKIP_STYLE
 	htmlFlags |= blackfriday.HTML_SKIP_IMAGES
-	htmlFlags |= blackfriday.HTML_SKIP_SCRIPT
 	htmlFlags |= blackfriday.HTML_SAFELINK
 	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
 
@@ -98,5 +104,6 @@ func MarkdownSave(input []byte) []byte {
 	extensions |= blackfriday.EXTENSION_STRIKETHROUGH
 	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
 
-	return blackfriday.Markdown(input, renderer, extensions)
+	unsafe := blackfriday.Markdown(input, renderer, extensions)
+	return policy.SanitizeBytes(unsafe)
 }

@@ -122,7 +122,8 @@ func (c App) Search(query string, offset int64) revel.Result {
 
 func (c App) Post(postId int64) revel.Result {
 	post := c.getPostById(postId)
-	comments := post.Comments
+	var comments []Comment
+	DB.Model(post).Related(&comments, "PostId")
 	return c.Render(post, comments)
 }
 

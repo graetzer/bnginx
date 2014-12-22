@@ -232,7 +232,7 @@ func (c Admin) DeleteUpload(filename string) revel.Result {
 
 func (c Admin) Comments() revel.Result {
 	var comments []*Comment
-	DB.Order("Created DESC").Find(comments)
+	DB.Order("created_at DESC").Find(&comments)
 	return c.Render(comments)
 }
 

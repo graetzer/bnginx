@@ -20,7 +20,6 @@
 		   <thead>
 		       <tr>
 				<th>Post ID</th>
-				<th>Email</th>
 				<th>Date</th>
 				<th>Title</th>
 				<th>Body</th>
@@ -32,8 +31,7 @@
 		    {{range .comments}}
 		       	<tr class="{{if .Approved}}success{{else}}danger{{end}}" >
 					<td>{{.PostId}}</td>
-					<td>{{.Email}}</td>
-					<td>{{.CreatedTime.Format "Mon Jan 2 15:04:05"}}</td>
+					<td>{{datetime .CreatedAt}}</td>
 					<td>{{.Title}}</td>
 					<td>{{.Body}}</td>
 					<td>

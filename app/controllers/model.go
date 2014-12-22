@@ -13,7 +13,7 @@ type User struct {
 	Password string
 	IsAdmin  bool
 
-	Posts []Post
+	Posts []Post // One-To-Many relationship (has many)
 }
 
 func hashPassword(in string) string {
@@ -36,7 +36,7 @@ func (u *User) SetPassword(in string) {
 
 type Post struct {
 	Id     int64
-	UserId int64
+	UserId int64 // Foreign key of User
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -47,7 +47,7 @@ type Post struct {
 	IsPage    bool
 	PageOrder int16
 
-	Comments []Comment
+	Comments []Comment // One-To-Many relationship (has many)
 }
 
 // Just the first 200 characters (+"..."), may not be very good
@@ -61,7 +61,7 @@ func (p Post) Summary() string {
 
 type Comment struct {
 	Id     int64
-	PostId int64
+	PostId int64 // Foreign key of Post
 
 	CreatedAt time.Time
 	Name      string
