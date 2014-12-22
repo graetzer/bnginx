@@ -19,7 +19,7 @@ type User struct {
 func hashPassword(in string) string {
 	hash := sha256.New()
 	buffer := []byte(in)
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 1000; i++ {
 		hash.Write(buffer)
 		buffer = hash.Sum(nil)
 	}

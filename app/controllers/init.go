@@ -56,6 +56,7 @@ var DB *gorm.DB
 func AppInit() {
 	db, err := gorm.Open("sqlite3", "bnginx.db")
 	if err == nil {
+		db.LogMode(revel.DevMode)
 		db.CreateTable(&User{})
 		db.CreateTable(&Post{})
 		db.CreateTable(&Comment{})

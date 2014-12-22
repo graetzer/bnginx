@@ -111,11 +111,14 @@ func (c Admin) DeleteUser(email string) revel.Result {
 
 func (c Admin) EditPost(postId int64) revel.Result {
 	post := new(Post)
-	if postId != -1 {
+	if postId > 0 {
 		post = c.getPostById(postId)
 		if post == nil {
 			return c.Redirect(routes.Admin.Index())
 		}
+	} else {
+		post.Title = "A new Blogpost"
+		post.Body = "### Start with something\n\nE.g.\n\n1. Make a List\n2. Of Interesting\n3. Things"
 	}
 	return c.Render(post)
 }
@@ -123,9 +126,8 @@ func (c Admin) EditPost(postId int64) revel.Result {
 func (c Admin) SavePost(postId int64, published bool, title, body string, isPage bool, pageOrder int16) revel.Result {
 	var post *Post
 	u := c.connected()
-	if postId <= 0 {
-		post = &Post{Title: "New Post", UserId: u.Id}
-		post.UserId = u.Id
+	if postId <= 0 { // Create a new one
+		post = &Post{UserId: u.Id}
 	} else {
 		post = c.getPostById(postId)
 		if post == nil {
@@ -153,9 +155,9 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 	}
 
 	u := c.connected()
-	if u.Id == postId || u.IsAdmin {
-		DB.Delete(u)
-		DB.Where("PostId = ?", u.Id).Delete(&Comment{})
+	if u.Id == post.UserId || u.IsAdmin {
+		DB.Where("PostId = ?", post.Id).Delete(&Comment{})
+		DB.Delete(post)
 		c.Flash.Success("Deleted post")
 	}
 	return c.Redirect(routes.Admin.Index())

@@ -24,14 +24,14 @@ GET      /admin/user/delete/:email              Admin.DeleteUser
 
 # Post management
 GET     /admin/post/create                      Admin.EditPost(-1)
+GET     /admin/post/:postId/delete              Admin.DeletePost
 GET     /admin/post/:postId                     Admin.EditPost
 POST    /admin/post/:postId                     Admin.SavePost
-GET     /admin/post/delete/:postId              Admin.DeletePost
 
 # Media upload
 GET     /admin/media                            Admin.Media
+GET     /admin/media/:filename/delete           Admin.DeleteUpload
 POST    /admin/media/upload                     Admin.Upload
-GET     /admin/media/delete/:filename           Admin.DeleteUpload
 
 # Comment management
 GET     /admin/comments                         Admin.Comments

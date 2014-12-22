@@ -6,7 +6,7 @@
 
 {{append . "moreScripts" "/public/js/Markdown.Converter.js"}}
 {{append . "moreScripts" "/public/js/Markdown.Extra.js"}}
-{{append . "moreScripts" "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"}}
+{{append . "moreScripts" "//cdn.jsdelivr.net/ace/1.1.8/min/ace.js"}}
 {{template "header.html" .}}
 
 <div class="row">
@@ -23,7 +23,7 @@
 		{{template "Admin/adminMenu.html" .}}
 	</div>*/}}
 	<div class="col-sm-6">
-		<h3>{{.title}}</h3>
+		{{/*<h3>{{.title}}</h3>*/}}
 		<form role="form" method="POST" action="/admin/post/{{.post.Id}}">
 			<div class="form-group">
 				<label for="inputPostTitle">Post Title</label>
@@ -52,8 +52,6 @@
 		</form>
 	</div>
 	<div class="col-sm-6">
-		<div ></div>
-		
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h2 class="panel-title" id="titlePreview"></h2>
@@ -78,10 +76,8 @@
     session.setMode("ace/mode/markdown");
 	session.setUseWrapMode(true);
 	session.setWrapLimitRange(70, 70);
-		
-	// jQuery should be loaded by now
-	addEvent(window, 'load', function() {
-		
+	
+	window.onload = function() {
 		// Initialize the markdown preview
 		var converter = new Markdown.Converter();
 		Markdown.Extra.init(converter, {extensions: ["tables", "fenced_code_gfm"]});
@@ -101,9 +97,7 @@
 			$("#titlePreview").text($(this).val());
 		});
 		$("#inputPostTitle").keyup();
-		
-		// Upscale the container
-		$(".container").css("max-width", "2000px");
-	});
+		$(".container").css("max-width", "2000px");// Upscale the container
+	};
 </script>
 {{template "footer.html" .}}

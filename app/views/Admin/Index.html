@@ -40,7 +40,7 @@
 					<td>
 						<a href="/admin/post/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
 						{{if eq $user.Id .UserId}}
-							<a href="/admin/post/delete/{{.Id}}" class="btn btn-danger btn-sm">Delete</a>
+							<a href="/admin/post/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>

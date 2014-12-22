@@ -1,18 +1,18 @@
 {{if .flash.success}}
 <div class="alert alert-success">
-	<h4>{{.flash.success}}</h4>
+	<strong>{{.flash.success}}</strong>
 </div>
 {{end}}
 
 {{if or .errors .flash.error}}
 <div class="alert alert-warning">
 	{{if .flash.error}}
-		<h4>{{.flash.error}}</h4>
+		<strong>{{.flash.error}}</strong>
 	{{end}}
 	{{if eq .RunMode "dev"}}
-	<ul>
-		{{range .errors}}
-			<li>{{.}}</li>
+	<ul class="list-unstyled">
+		{{range $key, $val := .errors}}
+			<li>{{$key}}: {{$val}}</li>
 		{{end}}
 	</ul>
 	{{end}}

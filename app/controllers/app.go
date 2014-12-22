@@ -30,7 +30,12 @@ func (c App) connected() *User {
 		return c.RenderArgs["user"].(*User)
 	}
 	if email, ok := c.Session["user"]; ok {
-		return c.getUser(email)
+		user := c.getUser(email)
+		if user == nil { // Email seems invalid
+			c.Flash.Error("Invalid email in stored in session")
+			delete(c.Session, "user")
+		}
+		return user
 	}
 	return nil
 }
@@ -38,7 +43,7 @@ func (c App) connected() *User {
 func (c App) getUser(email string) *User {
 	var user User
 	if DB.Where("email = ?", email).First(&user).RecordNotFound() {
-		c.Flash.Error("No result for this email")
+		c.Flash.Error("You are not logged in")
 		return nil
 	}
 	return &user
@@ -56,7 +61,7 @@ func (c App) getUserById(userId int64) *User {
 func (c App) getPostById(postId int64) *Post {
 	var post Post
 	if DB.First(&post, postId).RecordNotFound() {
-		c.Flash.Error("No post with this id")
+		c.Flash.Error("This Post does not exist")
 		return nil
 	}
 	return &post
@@ -125,26 +130,30 @@ func (c App) SaveComment(postId int64, name, title, body,
 	recaptcha_challenge_field, recaptcha_response_field string) revel.Result {
 
 	c.Validation.Required(postId)
+	c.Validation.Required(name)
 	c.Validation.MaxSize(name, 50)
 	//c.Validation.Match(email, regexp.MustCompile(`(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})`))
+	c.Validation.Required(title)
 	c.Validation.MaxSize(title, 100)
 	c.Validation.Required(body)
 	c.Validation.MaxSize(body, 500)
-	c.Validation.Required(recaptcha_challenge_field)
-	c.Validation.Required(recaptcha_response_field)
+	if !revel.DevMode {
+		c.Validation.Required(recaptcha_challenge_field)
+		c.Validation.Required(recaptcha_response_field)
 
-	// Get client IP
-	client_ip := c.Request.Header.Get("X-Real-IP")
-	if client_ip == "" {
-		client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
+		// Get client IP
+		client_ip := c.Request.Header.Get("X-Real-IP")
+		if client_ip == "" {
+			client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
+		}
+		ok := recaptcha.Confirm(client_ip, recaptcha_challenge_field, recaptcha_response_field)
+		if !ok {
+			c.Flash.Error("Wrong captcha")
+			return c.Redirect(routes.App.Post(postId))
+		}
 	}
 
-	ok := recaptcha.Confirm(client_ip, recaptcha_challenge_field, recaptcha_response_field)
-	if !ok {
-		c.Flash.Error("Wrong captcha")
-	}
-
-	if !ok || c.Validation.HasErrors() {
+	if c.Validation.HasErrors() {
 		c.Flash.Error("Could not validate your input")
 		c.Validation.Keep()
 		c.FlashParams()
