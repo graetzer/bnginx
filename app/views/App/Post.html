@@ -1,6 +1,7 @@
 {{set . "title" .post.Title}}
 {{template "header.html" .}}
 {{template "App/trailer.html" .}}
+{{append . "moreScripts" "https://www.google.com/recaptcha/api.js"}}
 
 <div class="row">
 	<div class="col-sm-11">
@@ -50,17 +51,8 @@
 			<textarea class="form-control" rows="5" id="textareaBody" name="body">{{.flash.body}}</textarea>
 			<span class="help-block">Required. Max 500 characters. Markdown is supported, but no images. Every Post will be checked befor it is shown</span>
 		  </div>
-		
-			<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{.recaptchaKey}}">
-		    </script>
-		    <noscript>
-		       <iframe src="http://www.google.com/recaptcha/api/noscript?k={{.recaptchaKey}}"
-		           height="300" width="500" style="border:0;"></iframe><br>
-		       <textarea name="recaptcha_challenge_field" rows="3" cols="40">
-		       </textarea>
-		       <input type="hidden" name="recaptcha_response_field"
-		           value="manual_challenge">
-		    </noscript>
+
+			<div class="g-recaptcha" data-sitekey="{{.recaptchaSiteKey}}"></div>
 
 		  <div class="form-group">
 		    <button type="submit" class="btn btn-default">Send</button>

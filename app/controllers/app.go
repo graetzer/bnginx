@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dpapathanasiou/go-recaptcha"
 	"github.com/graetzer/bnginx/app/routes"
+	"github.com/graetzer/go-recaptcha"
 	"github.com/revel/revel"
 )
 
@@ -19,7 +19,6 @@ func (c App) addTemplateVars() revel.Result {
 	var pages []*Post
 	DB.Where("published AND is_page").Order("page_order desc").Find(&pages)
 	c.RenderArgs["pages"] = pages
-	c.RenderArgs["recaptchaKey"] = revel.Config.StringDefault("recaptcha.public", "")
 	c.RenderArgs["user"] = c.connected()
 
 	return nil
@@ -124,11 +123,12 @@ func (c App) Post(postId int64) revel.Result {
 	post := c.getPostById(postId)
 	var comments []Comment
 	DB.Model(post).Related(&comments, "PostId")
-	return c.Render(post, comments)
+	recaptchaSiteKey := revel.Config.StringDefault("recaptcha.sitekey", "")
+	return c.Render(post, comments, recaptchaSiteKey)
 }
 
-func (c App) SaveComment(postId int64, name, title, body,
-	recaptcha_challenge_field, recaptcha_response_field string) revel.Result {
+func (c App) SaveComment(postId int64, name, title, body string) revel.Result {
+	recaptcha_response := c.Params.Get("g-recaptcha-response")
 
 	c.Validation.Required(postId)
 	c.Validation.Required(name)
@@ -138,26 +138,20 @@ func (c App) SaveComment(postId int64, name, title, body,
 	c.Validation.MaxSize(title, 100)
 	c.Validation.Required(body)
 	c.Validation.MaxSize(body, 500)
-	if !revel.DevMode {
-		c.Validation.Required(recaptcha_challenge_field)
-		c.Validation.Required(recaptcha_response_field)
+	c.Validation.Required(recaptcha_response)
 
-		// Get client IP
-		client_ip := c.Request.Header.Get("X-Real-IP")
-		if client_ip == "" {
-			client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
-		}
-		ok := recaptcha.Confirm(client_ip, recaptcha_challenge_field, recaptcha_response_field)
-		if !ok {
-			c.Flash.Error("Wrong captcha")
-			return c.Redirect(routes.App.Post(postId))
-		}
+	// Get client IP, optional
+	client_ip := c.Request.Header.Get("X-Real-IP")
+	if client_ip == "" {
+		client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
 	}
 
 	if c.Validation.HasErrors() {
 		c.Flash.Error("Could not validate your input")
 		c.Validation.Keep()
 		c.FlashParams()
+	} else if ok := recaptcha.Confirm(client_ip, recaptcha_response); !ok {
+		c.Flash.Error("Wrong captcha")
 	} else if post := c.getPostById(postId); post != nil {
 		comment := Comment{PostId: postId, Name: name, Title: title, Body: body}
 		DB.Save(&comment)

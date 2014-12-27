@@ -60,7 +60,7 @@ var (
 func AppInit() {
 	policy = bluemonday.UGCPolicy()
 
-	db, err := gorm.Open("sqlite3", "bnginx.db")
+	db, err := gorm.Open("sqlite3", "sqlite_bnginx.db")
 	if err == nil {
 		db.LogMode(revel.DevMode)
 		db.CreateTable(&User{})
@@ -78,8 +78,8 @@ func AppInit() {
 		DB = &db
 	}
 
-	if private, found := revel.Config.String("recaptcha.private"); found {
-		recaptcha.Init(private)
+	if secret, found := revel.Config.String("recaptcha.secret"); found {
+		recaptcha.Init(secret)
 	}
 }
 
