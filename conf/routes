@@ -42,7 +42,7 @@ GET     /admin/comments/delete/:commentId       Admin.DeleteComment
 GET     /favicon.ico                            404
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/uploads/*filepath               Static.Serve("/home/simon/bnginx-data", "public")
+GET     /public/uploads/*filepath               Static.Serve("/home/simon/bnginx-data/uploads")
 GET     /public/*filepath                       Static.Serve("public")
 
 # Catch all
