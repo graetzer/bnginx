@@ -12,7 +12,7 @@
 			    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
 				<small>By {{username .UserId}}</small>
 				{{if $user}}
-					{{if and $user (eq $user.Id .UserId)}}
+					{{if eq $user.Id .UserId}}
 						<a href="/admin/post/{{.Id}}" title="Edit this Post">Edit</a>
 					{{end}}
 				{{end}}
