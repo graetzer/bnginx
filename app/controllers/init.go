@@ -60,7 +60,7 @@ var (
 func AppInit() {
 	policy = bluemonday.UGCPolicy()
 
-	db, err := gorm.Open("sqlite3", "sqlite_bnginx.db")
+	db, err := gorm.Open("sqlite3", "~/sqlite_bnginx.db")
 	if err == nil {
 		db.LogMode(revel.DevMode)
 		db.CreateTable(&User{})
