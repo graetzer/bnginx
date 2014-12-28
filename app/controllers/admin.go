@@ -189,7 +189,7 @@ func (c Admin) Media() revel.Result {
 	return c.Render(files, uploadPrefix)
 }
 
-func (c Admin) Upload() revel.Result {
+func (c Admin) UploadMedia() revel.Result {
 	basePath := filepath.Join(DataBaseDir(), "uploads/")
 
 	// Loop through all uploads and save them
@@ -216,20 +216,18 @@ func (c Admin) Upload() revel.Result {
 		}
 		return c.RenderJson(struct{ Message string }{"Success"})
 	}
-	return c.Redirect(routes.Admin.Upload())
+	return c.Redirect(routes.Admin.Media())
 }
 
-func (c Admin) DeleteUpload(filename string) revel.Result {
+func (c Admin) DeleteMedia(filename string) revel.Result {
 	if c.connected().IsAdmin {
-		basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
-		full := filepath.Join(basePath, filepath.Base(filename))
-		err := os.Remove(full)
+		filepath := filepath.Join(DataBaseDir(), "uploads/", filepath.Base(filename))
+		err := os.Remove(filepath)
 		if err != nil {
 			c.Flash.Error(err.Error())
 		}
-
 	}
-	return c.Redirect(routes.Admin.Upload())
+	return c.Redirect(routes.Admin.Media())
 }
 
 // ==================== Handle Comments ====================

@@ -69,7 +69,7 @@
 					<td>
 						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a>
 						{{if and ($user.IsAdmin) (not (eq $user.Id .Id))}}
-							<a href="/admin/user/delete/{{.Email}}" class="btn btn-danger btn-sm">Delete</a>
+							<a href="/admin/user/{{.Email}}/delete" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>

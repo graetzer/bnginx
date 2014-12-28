@@ -20,7 +20,7 @@ GET     /admin                                  Admin.Index
 # User management
 GET      /admin/user/:email                     Admin.EditUser
 POST     /admin/user/save                       Admin.SaveUser
-GET      /admin/user/delete/:email              Admin.DeleteUser
+GET      /admin/user/:email/delete              Admin.DeleteUser
 
 # Post management
 GET     /admin/post/create                      Admin.EditPost(-1)
@@ -30,8 +30,8 @@ POST    /admin/post/:postId                     Admin.SavePost
 
 # Media upload
 GET     /admin/media                            Admin.Media
-GET     /admin/media/:filename/delete           Admin.DeleteUpload
-POST    /admin/media/upload                     Admin.Upload
+GET     /admin/media/:filename/delete           Admin.DeleteMedia
+POST    /admin/media/upload                     Admin.UploadMedia
 
 # Comment management
 GET     /admin/comments                         Admin.Comments
