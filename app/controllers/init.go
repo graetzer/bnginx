@@ -64,6 +64,7 @@ func AppInit() {
 	// Init HTML sanitizer
 	policy = bluemonday.UGCPolicy()
 
+	os.MkdirAll(DataBaseDir(), 0777)
 	db, err := gorm.Open("sqlite3", filepath.Join(DataBaseDir(), "sqlite_bnginx.db"))
 	if err == nil {
 		db.LogMode(revel.DevMode)
@@ -125,5 +126,6 @@ func DataBaseDir() string {
 		}
 		base = filepath.Join(base, "/bnginx-data")
 	}
+	revel.INFO.Println("Using basepath " + base)
 	return base
 }
