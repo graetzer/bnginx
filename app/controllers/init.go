@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"html/template"
+	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/dpapathanasiou/go-recaptcha"
 	"github.com/microcosm-cc/bluemonday"
@@ -58,9 +61,10 @@ var (
 )
 
 func AppInit() {
+	// Init HTML sanitizer
 	policy = bluemonday.UGCPolicy()
 
-	db, err := gorm.Open("sqlite3", "~/sqlite_bnginx.db")
+	db, err := gorm.Open("sqlite3", filepath.Join(DataBaseDir(), "sqlite_bnginx.db"))
 	if err == nil {
 		db.LogMode(revel.DevMode)
 		db.CreateTable(&User{})
@@ -106,4 +110,20 @@ func SecureMarkdown(input []byte) []byte {
 
 	unsafe := blackfriday.Markdown(input, renderer, extensions)
 	return policy.SanitizeBytes(unsafe)
+}
+
+func DataBaseDir() string {
+	base, found := revel.Config.String("databasedir")
+	if !found {
+		if runtime.GOOS == "windows" {
+			base = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+			if base == "" {
+				base = os.Getenv("USERPROFILE")
+			}
+		} else {
+			base = os.Getenv("HOME")
+		}
+		base = filepath.Join(base, "/bnginx-data")
+	}
+	return base
 }

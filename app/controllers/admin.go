@@ -166,13 +166,15 @@ func (c Admin) DeletePost(postId int64) revel.Result {
 // ==================== Handle Uploads ====================
 
 func (c Admin) Media() revel.Result {
-	// TODO configure that
-	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
+	basePath := filepath.Join(DataBaseDir(), "uploads/")
 
 	fs, err := ioutil.ReadDir(basePath)
-	if err != nil {
+	if err != nil && os.IsNotExist(err) {
+		c.Flash.Success("Creating uploads directory")
+		os.MkdirAll(basePath, 0777)
+	} else if err != nil {
 		revel.ERROR.Println(err)
-		return c.RenderError(err)
+		return c.Redirect(routes.Admin.Index()) //c.RenderError(err)
 	}
 
 	// Remove hidden files
@@ -188,8 +190,9 @@ func (c Admin) Media() revel.Result {
 }
 
 func (c Admin) Upload() revel.Result {
-	basePath := filepath.Join(revel.BasePath, filepath.FromSlash("public/uploads/"))
+	basePath := filepath.Join(DataBaseDir(), "uploads/")
 
+	// Loop through all uploads and save them
 	for _, fInfo := range c.Params.Files["file"] {
 
 		fi, err := fInfo.Open()
@@ -198,6 +201,7 @@ func (c Admin) Upload() revel.Result {
 		}
 		defer fi.Close()
 
+		// Append the current date, avoid conflicts
 		var uploadPrefix = time.Now().Format("2006_01_02_")
 		full := filepath.Join(basePath, uploadPrefix+filepath.Base(fInfo.Filename))
 
