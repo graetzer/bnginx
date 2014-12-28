@@ -121,6 +121,9 @@ func (c App) Search(query string, offset int64) revel.Result {
 
 func (c App) Post(postId int64) revel.Result {
 	post := c.getPostById(postId)
+	if post == nil {
+		return c.Redirect(routes.App.Index(0))
+	}
 	var comments []Comment
 	DB.Model(post).Related(&comments, "PostId")
 	recaptchaSiteKey := revel.Config.StringDefault("recaptcha.sitekey", "")
