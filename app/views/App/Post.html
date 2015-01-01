@@ -11,9 +11,9 @@
 		  <div class="panel-heading">
 		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{datetime .post.UpdatedAt}}</small></h3>
 			<small>By {{username .post.UserId}}</small>
-			{{if eq .user.Id .post.UserId}}
-				<a href="/admin/post/{{.post.Id}}" title="Edit this Post">Edit</a>
-			{{end}}
+			{{if .user}}{{if eq .user.Id .post.UserId}}
+			<a href="/admin/post/{{.post.Id}}" title="Edit this Post">Edit</a>
+			{{end}}{{end}}
 		  </div>
 		  <div class="panel-body">
 		    {{markdown .post.Body}}
