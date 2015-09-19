@@ -1,23 +1,33 @@
 {{set . "title" .post.Title}} {{template "header.html" .}} {{template "App/trailer.html" .}}
 
 <div class="row">
-	<div class="col-sm-8" id="globe-container">
-	</div>
-	<div class="col-sm-3">
-		{{range .locations}}
+	<div class="col-sm-8">
+
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">{{.Title}}
-					<small class="pull-right">{{datetime .UpdatedAt}}</small>
+				<h3 class="panel-title">Globe</h3>
+			</div>
+			<div class="panel-body" id="globe-container">
+			</div>
+		</div>
+
+	</div>
+	<div class="col-sm-3">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Where am I now
 				</h3>
 			</div>
 			<div class="panel-body">
-				<img src="{{.ImageURL}}" alt="Project Logo" class="img-circle" />
-				<p>{{.Description}}</p>
-				<a href="{{.RepoURL}}" title="Make a comment">Repository</a>
-			</div>
-		</div>
+		{{range .locations}}
+		<p>{{.Name}}<small class="pull-right">{{datetime .UpdatedAt}}</small>
+				<img src="{{.CoverUrl}}" alt="Project Logo" class="img-circle" />
+				<a href="{{.Url}}">Image Gallery</a></p>
+
 		{{end}}
+	</div>
+</div>
 	</div>
 	<!-- ./col-sm-11 -->
 
@@ -29,7 +39,6 @@
 
 <script type="text/javascript" src="/public/globe/Detector.js"></script>
 <script type="text/javascript" src="/public/globe/three.min.js"></script>
-<!--<script type="text/javascript" src="/public/globe/Tween.js"></script>-->
 <script type="text/javascript" src="/public/globe/globe.js"></script>
 <script type="text/javascript">
 	if (!Detector.webgl) {
@@ -37,9 +46,11 @@
 	} else {
 		var container = document.getElementById('globe-container');
 		var globe = new DAT.Globe(container);
+		container.style.backgroundImage = "/public/globe/loading.gif";
 
 		var globeImg = new Image();
 		globeImg.onload = function() {
+			// In memory drawing
 			var canvas = document.createElement('canvas');
 			canvas.width = globeImg.width;
 			canvas.height = globeImg.height;
@@ -51,7 +62,7 @@
 			globe.setData(imageData, locations);
 			globe.createPoints();
 			globe.animate();
-			document.body.style.backgroundImage = 'none';//remove loading*/
+			container.style.backgroundImage = 'none';//remove loading*/
 		};
 		globeImg.src = "/public/globe/globe.png";
 	}

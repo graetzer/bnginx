@@ -72,7 +72,7 @@ type Project struct {
 
 	Title       string
 	Description string
-	ImageUrl    string
+	CoverUrl    string
 	RepoUrl			string
 	Tags        string
 }
@@ -83,8 +83,8 @@ type Location struct {
 
 	Name  string
 	Url string
-	ImageUrl string
-	Lat   float32
-	Lng   float32
-	Type  int32
+	CoverUrl string
+	Latitude   float32
+	Longitude   float32
+	Color  string
 }

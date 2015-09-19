@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"encoding/json"
 
 	"github.com/graetzer/go-recaptcha"
 	"github.com/microcosm-cc/bluemonday"
@@ -53,6 +54,14 @@ func init() {
 		}
 		return result
 	}
+
+	revel.TemplateFuncs["json"] = func(v interface{}) string {
+		bytes, err := json.Marshal(v)
+		if err != nil {
+			return ""//fmt.Println("error:", err)
+		}
+		return string(bytes)
+	}
 }
 
 var (
@@ -73,7 +82,7 @@ func AppInit() {
 		db.CreateTable(&Comment{})
 		db.CreateTable(&Project{})
 		db.CreateTable(&Location{})
-		//db.AutoMigrate(&Location{}, &Blogpost{}, &Comment{})
+		db.AutoMigrate(&Location{})
 
 		var user User // Add default user
 		if db.First(&user).RecordNotFound() {

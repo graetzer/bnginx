@@ -277,7 +277,7 @@ func (c Admin) DeleteProject(projectId int64) revel.Result {
 	}
 	DB.Delete(project)
 	c.Flash.Success("Deleted Project")
-	return c.Redirect(routes.Admin.Index())
+	return c.Redirect(routes.Admin.Projects())
 }
 
 // ==================== Handle Locations ====================
@@ -294,7 +294,7 @@ func (c Admin) EditLocation(locationId int64) revel.Result {
 		if locationId >= 0 {
 			return c.Redirect(routes.Admin.Index())
 		} else {
-			location = Location{Name:"My new Project"}
+			location = Location{Name:"Current Location"}
 		}
 	}
 	return c.Render(location)
@@ -303,12 +303,13 @@ func (c Admin) EditLocation(locationId int64) revel.Result {
 func (c Admin) SaveLocation() revel.Result {
 	var location Location
 	c.Params.Bind(&location, "location")
+	
 	if !c.connected().IsAdmin {// Check if the user owns this
 		c.Flash.Error("You have no permission to edit this")
 		return c.Redirect(routes.Admin.Index())
 	}
 	DB.Save(&location)
-	return c.Redirect(routes.Admin.Index())
+	return c.Redirect(routes.Admin.Locations())
 }
 
 func (c Admin) DeleteLocation(locationId int64) revel.Result {

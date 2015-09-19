@@ -9,7 +9,7 @@
 </div>
 <div class="row">
   <div class="col-sm-2">
-    {{ set . "pp" 4}} {{template "Admin/adminMenu.html" .}}
+    {{ set . "pp" 5}} {{template "Admin/adminMenu.html" .}}
   </div>
   {{$user := .user}}
   <div class="col-sm-10">
@@ -20,7 +20,7 @@
           <th>Title</th>
           <th>Date</th>
           <th>Image</th>
-          <th>Type</th>
+          <th>Color</th>
           {{if $user.IsAdmin}}<th>Actions</th>{{end}}
         </tr>
       </thead>
@@ -29,12 +29,12 @@
         <tr>
           <td>{{.Name}}</td>
           <td>{{datetime .UpdatedAt}}</td>
-          <td><img src="{{.ImageUrl}}" alt="Location Logo"></td>
-          <td>{{.Type}}</td>
-          {{if eq $user.IsAdmin}}
+          <td><img src="{{.CoverUrl}}" alt="Location Logo"></td>
+          <td><span style="background-color:{{.Color}}; padding:5px">{{.Color}}</span></td>
+          {{if $user.IsAdmin}}
           <td>
             <a href="/admin/locations/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
-            <a href="/admin/v/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+            <a href="/admin/locations/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
           </td>{{end}}
         </tr>
         {{end}}

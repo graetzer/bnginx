@@ -125,8 +125,8 @@ DAT.Globe = function(container, opts) {
   function init() {
 
     var shader, uniforms, material;
-    w = 800//container.offsetWidth || canvas.width;
-    h = 500;//container.offsetHeight || canvas.height;
+    w = opts.width || 600;
+    h = opts.height ||600;
 
     camera = new THREE.PerspectiveCamera(30, w / h, 1, 10000);
     camera.position.z = distance;
@@ -177,7 +177,6 @@ DAT.Globe = function(container, opts) {
     });
     renderer.setSize(w, h);
     renderer.setClearColor( 0xffffff, 1);
-    renderer.domElement.style.position = 'absolute';
     container.appendChild(renderer.domElement);
 
     container.addEventListener('mousedown', onMouseDown, false);
@@ -196,7 +195,7 @@ DAT.Globe = function(container, opts) {
     window.addEventListener('resize', onWindowResize, false);
   }
 
-  function setData(imageData, locations) {
+  function setData(worldMap, locations) {
     var lat, lng, size, i, x, y;
     this.locations = locations;
 
@@ -210,20 +209,20 @@ DAT.Globe = function(container, opts) {
     color1.setRGB(0, 0, 0);
 
     var color2 = new THREE.Color();
-    color2.setRGB(0.5, 0.5, 0.5);
+    color2.setRGB(0.5, 0.5, 0.5, 0.8);
 
-    var data = imageData.data;
-    for (i = 0; i < data.length; i += 4 * 35) {
+    var data = worldMap.data;
+    for (i = 0; i < data.length; i += 4 * 42) {// some skip values work better than others
       var intensity = data[i] + data[i+1] + data[i+2];
 
-      x = Math.floor(i / 4) % imageData.width;
-      y = Math.floor(Math.floor(i/4) / imageData.width);
-      lat = 90 - 180 * (y/imageData.height);// equilateral projection
-      lng = 360 * (x/imageData.width) - 180;
+      x = Math.floor(i / 4) % worldMap.width;
+      y = Math.floor(Math.floor(i/4) / worldMap.width);
+      lat = 90 - 180 * (y/worldMap.height);// equilateral projection
+      lng = 360 * (x/worldMap.width) - 180;
       if (intensity > 0x33 * 3) {
-        addPoint(lat, lng, 1, 4, color1, subgeo);
+        addPoint(lat, lng, 0.7, 5, color1, subgeo);
       } else {
-        addPoint(lat, lng, 0.5, 0.5, color2, subgeo);
+        addPoint(lat, lng, 0.5, 1, color2, subgeo);
       }
     }
 
@@ -328,7 +327,9 @@ DAT.Globe = function(container, opts) {
   }
 
   function onWindowResize(event) { // TODO fix window resize
-    /*camera.aspect = container.offsetWidth / container.offsetHeight;
+    w = container.offsetWidth || 600;
+    h = container.offsetHeight || 600;
+    /*camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize( container.offsetWidth, container.offsetHeight );*/
   }
@@ -345,7 +346,7 @@ DAT.Globe = function(container, opts) {
   }
 
   function render() {
-    zoom(curZoomSpeed);
+    zoom(curZoomSpeed);// modifies distanceTarget
 
     rotation.x += (target.x - rotation.x) * 0.1;
     rotation.y += (target.y - rotation.y) * 0.1;
