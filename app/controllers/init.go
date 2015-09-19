@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/dpapathanasiou/go-recaptcha"
+	"github.com/graetzer/go-recaptcha"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 
@@ -44,7 +44,7 @@ func init() {
 		return user.Name
 	}
 
-	revel.TemplateFuncs["commentCount"] = func(post *Post) int64 {
+	revel.TemplateFuncs["commentCount"] = func(post *Blogpost) int64 {
 		var result int64
 		if post == nil {
 			DB.Model(Comment{}).Where("NOT approved").Count(&result)
@@ -69,12 +69,13 @@ func AppInit() {
 	if err == nil {
 		db.LogMode(revel.DevMode)
 		db.CreateTable(&User{})
-		db.CreateTable(&Post{})
+		db.CreateTable(&Blogpost{})
 		db.CreateTable(&Comment{})
-		db.AutoMigrate(&User{}, &Post{}, &Comment{})
+		db.CreateTable(&Project{})
+		db.CreateTable(&Location{})
+		//db.AutoMigrate(&Location{}, &Blogpost{}, &Comment{})
 
-		var user User
-
+		var user User // Add default user
 		if db.First(&user).RecordNotFound() {
 			user = User{Name: "Simon", Email: "simon@graetzer.org", IsAdmin: true}
 			user.SetPassword("default")

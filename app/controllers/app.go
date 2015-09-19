@@ -16,11 +16,7 @@ type App struct {
 // ================ Helper functions ================
 
 func (c App) addTemplateVars() revel.Result {
-	var pages []*Post
-	DB.Where("published AND is_page").Order("page_order desc").Find(&pages)
-	c.RenderArgs["pages"] = pages
 	c.RenderArgs["user"] = c.connected()
-
 	return nil
 }
 
@@ -31,7 +27,6 @@ func (c App) connected() *User {
 	if email, ok := c.Session["user"]; ok {
 		user := c.getUser(email)
 		if user == nil { // Email seems invalid
-			c.Flash.Error("Invalid email in stored in session")
 			delete(c.Session, "user")
 		}
 		return user
@@ -57,8 +52,8 @@ func (c App) getUserById(userId int64) *User {
 	return &user
 }
 
-func (c App) getPostById(postId int64) *Post {
-	var post Post
+func (c App) getPostById(postId int64) *Blogpost {
+	var post Blogpost
 	if DB.First(&post, postId).RecordNotFound() {
 		c.Flash.Error("This Post does not exist")
 		return nil
@@ -66,9 +61,9 @@ func (c App) getPostById(postId int64) *Post {
 	return &post
 }
 
-func (c App) getPublishedPosts(offset int64) []*Post {
-	var posts []*Post
-	DB.Where("published AND NOT is_page").Order("page_order DESC, updated_at").Limit(5).Offset(offset).Find(&posts)
+func (c App) getPublishedPosts(offset int64) []*Blogpost {
+	var posts []*Blogpost
+	DB.Where("published").Order("updated_at DESC").Limit(5).Offset(offset).Find(&posts)
 	return posts
 }
 
@@ -77,7 +72,7 @@ func (c App) getPublishedPosts(offset int64) []*Post {
 func (c App) Login(email string, password string) revel.Result {
 	c.Validation.Required(email)
 	c.Validation.Required(password)
-	c.Validation.MaxSize(password, 300)
+	c.Validation.MaxSize(password, 300) // Kinda important
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
 		c.FlashParams()
@@ -113,16 +108,16 @@ func (c App) Feed() revel.Result {
 }
 
 func (c App) Search(query string, offset int64) revel.Result {
-	var posts []*Post
+	var posts []*Blogpost
 	q := "%" + query + "%"
 	DB.Where("published AND (body like ? OR title like ?)", q, q).Limit(10).Offset(offset).Find(&posts)
 	return c.Render(posts, query, offset)
 }
 
-func (c App) Post(postId int64) revel.Result {
+func (c App) ShowPost(postId int64) revel.Result {
 	post := c.getPostById(postId)
 	if post == nil {
-		return c.Redirect(routes.App.Index(0))
+		return c.NotFound("Oh no! I couldn't find this page")
 	}
 	var comments []Comment
 	DB.Model(post).Related(&comments, "PostId")
@@ -160,5 +155,17 @@ func (c App) SaveComment(postId int64, name, title, body string) revel.Result {
 		DB.Save(&comment)
 		c.Flash.Success("Thanks for commenting")
 	}
-	return c.Redirect(routes.App.Post(postId))
+	return c.Redirect(routes.App.ShowPost(postId))
+}
+
+func (c App) Projects() revel.Result {
+	var projects []*Project
+	DB.Order("updated_at DESC").Find(&projects)
+	return c.Render(projects)
+}
+
+func (c App) Locations() revel.Result {
+	var locations []*Location
+	DB.Order("updated_at DESC").Find(&locations)
+	return c.Render(locations)
 }

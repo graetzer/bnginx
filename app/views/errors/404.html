@@ -4,17 +4,27 @@
 		<title>Not found</title>
 	</head>
 	<body>
-{{if eq .RunMode "dev"}}
-{{template "errors/404-dev.html" .}}
-{{else}}
-	{{with .Error}}
-	<h1>
-		{{.Title}}
-	</h1>
-	<p>
-		{{.Description}}
-	</p>
-	{{end}}
-{{end}}
+
 	</body>
 </html>
+
+{{template "header.html" .}}
+{{template "App/trailer.html" .}}
+
+<div class="row">
+	<div class="col-sm-11">
+	{{with .Error}}
+		<h1>
+			{{.Title}}
+		</h1>
+		<p>
+			{{.Description}}
+		</p>
+	{{end}}
+	</div>
+	<div class="col-xs-1">
+	{{template "App/social.html" .}}
+	</div>
+</div><!-- /.row -->
+
+{{template "footer.html" .}}

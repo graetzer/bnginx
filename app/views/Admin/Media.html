@@ -13,7 +13,7 @@
 </div>
 <div class="row">
 	<div class="col-sm-2">
-		{{ set . "pp" 2}}
+		{{ set . "pp" 3}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
@@ -23,7 +23,7 @@
 				<tr>
 				    <th>Name</th>
 				    <th>Size</th>
-				    <th>Action</th>				
+				    <th>Action</th>
 				</tr>
 			</thead>
 		    <tbody>
@@ -39,7 +39,7 @@
 				{{end}}
 		    </tbody>
 		</table>
-	
+
 	    <h3>Upload Zone</h3>
 		<form action="/admin/media/upload" class="dropzone" id="myAwesomeDropzone" method="POST" enctype="multipart/form-data">
 			<div class="fallback">
@@ -47,7 +47,7 @@
 				<button type="submit" class="btn btn-default">Save</button>
   			</div>
 		</form>
-		
+
 		<script type="text/javascript" charset="utf-8">
 		/* <![CDATA[ */
 		var uploadPrefix = "{{.uploadPrefix}}";
@@ -56,7 +56,7 @@
 				init: function() {
 					this.on("addedfile", function(file) {
 						var enc = encodeURIComponent(uploadPrefix+file.name);
-						
+
 						$("#filesTable tbody").prepend('<tr>'+
 						'<td>'+file.name+'</td>'+
 						'<td>'+file.size+' Bytes</td>'+

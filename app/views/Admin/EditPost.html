@@ -6,7 +6,7 @@
 
 {{append . "moreScripts" "/public/js/Markdown.Converter.js"}}
 {{append . "moreScripts" "/public/js/Markdown.Extra.js"}}
-{{append . "moreScripts" "//cdn.jsdelivr.net/ace/1.1.8/min/ace.js"}}
+{{append . "moreScripts" "//cdn.jsdelivr.net/ace/1.1.9/min/ace.js"}}
 {{template "header.html" .}}
 
 <div class="row">
@@ -26,28 +26,20 @@
 		{{/*<h3>{{.title}}</h3>*/}}
 		<form role="form" method="POST" action="/admin/post/{{.post.Id}}">
 			<div class="form-group">
-				<label for="inputPostTitle">Post Title</label>
-				<input type="text" class="form-control" id="inputPostTitle" name="title" placeholder="Titel" value="{{.post.Title}}" />
+				<label for="inputTitle">Post Title</label>
+				<input type="text" class="form-control" id="inputTitle" name="post.Title" placeholder="Titel" value="{{.post.Title}}" />
 			</div>
 			<div class="form-group">
 				<label for="editorACE">Content</label>
 				<div id="editorACE">{{.post.Body}}</div>
-				<textarea id="editorTextarea" name="body" style="display:none"></textarea>
+				<textarea id="editorTextarea" name="post.Body" style="display:none"></textarea>
 			</div>
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="published" value="true" {{if .post.Published}}checked{{end}} /> Published (publicly visible)
+					<input type="checkbox" name="post.Published" value="true" {{if .post.Published}}checked{{end}} /> Published (publicly visible)
 				</label>
 			</div>
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" name="isPage" value="true" {{if .post.IsPage}}checked{{end}} /> Is a Page that should appear in the menu
-				</label>
-			</div>
-			<div class="form-group">
-				<label for="inputPostPageOrder">Post Order</label>
-				<input type="number" class="form-control" id="inputPostPageOrder" name="pageOrder" placeholder="0" value="{{.post.PageOrder}}" />
-			</div>
+			<input type="hidden" value="{{.post.Id}}" name="post.Id" />
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
 	</div>
@@ -68,7 +60,7 @@
 	    if (element.addEventListener) element.addEventListener(event, fn, false);
 	    else if (element.attachEvent) element.attachEvent('on' + event, fn);
 	}
-		
+
 	// Initialize the ACE editor
 	var editor = ace.edit("editorACE");
     editor.setTheme("ace/theme/github");
@@ -76,12 +68,12 @@
     session.setMode("ace/mode/markdown");
 	session.setUseWrapMode(true);
 	session.setWrapLimitRange(70, 70);
-	
+
 	window.onload = function() {
 		// Initialize the markdown preview
 		var converter = new Markdown.Converter();
 		Markdown.Extra.init(converter, {extensions: ["tables", "fenced_code_gfm"]});
-		
+
 		var preview = $("#editorPreview");
 		var textarea = $("#editorTextarea");
 		var update = function () {
@@ -91,12 +83,12 @@
 		};
 		editor.getSession().on("change", update);
 		update();
-		
+
 		// Update the Post title
-		$("#inputPostTitle").keyup(function(){
+		$("#inputTitle").keyup(function(){
 			$("#titlePreview").text($(this).val());
 		});
-		$("#inputPostTitle").keyup();
+		$("#inputTitle").keyup();
 		$(".container").css("max-width", "2000px");// Upscale the container
 	};
 </script>

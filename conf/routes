@@ -7,12 +7,23 @@ module:testrunner
 GET     /                                       App.Index
 GET     /feed.rss                               App.Feed
 GET     /search                                 App.Search
-GET     /post/:postId/*                         App.Post
+GET     /post/:postId/*                         App.ShowPost
 POST    /post/comment/:postId                   App.SaveComment
+GET     /projects                               App.Projects
+GET     /locations                              App.Locations
 
 # Login & Logout
 POST    /login                                  App.Login
 POST    /logout                                 App.Logout
+
+# Favicon, ignored
+GET     /favicon.ico                            404
+
+# =========== Some API's ===========
+# GET    /api/blogposts                          API.QueryBlogposts
+GET     /api/projects                           API.QueryProjects
+GET     /api/locations                          API.QueryLocations
+
 
 # =========== Admin section ===========
 GET     /admin                                  Admin.Index
@@ -28,6 +39,13 @@ GET     /admin/post/:postId/delete              Admin.DeletePost
 GET     /admin/post/:postId                     Admin.EditPost
 POST    /admin/post/:postId                     Admin.SavePost
 
+# Project management
+GET     /admin/projects                         Admin.Projects()
+GET     /admin/projects/create                  Admin.EditProject(-1)
+GET     /admin/projects/:projectId/delete       Admin.DeleteProject
+GET     /admin/projects/:projectId              Admin.EditProject
+POST    /admin/projects/:projectId              Admin.SaveProject
+
 # Media upload
 GET     /admin/media                            Admin.Media
 GET     /admin/media/:filename/delete           Admin.DeleteMedia
@@ -38,11 +56,16 @@ GET     /admin/comments                         Admin.Comments
 GET     /admin/comments/update/:commentId       Admin.UpdateComment
 GET     /admin/comments/delete/:commentId       Admin.DeleteComment
 
-# Ignore favicon requests
-GET     /favicon.ico                            404
+# Location management
+GET     /admin/locations                        Admin.Locations()
+GET     /admin/locations/create                 Admin.EditLocation(-1)
+GET     /admin/locations/:locationId/delete     Admin.DeleteLocation
+GET     /admin/locations/:locationId            Admin.EditLocation
+POST    /admin/locations/:locationId            Admin.SaveLocation
+
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/uploads/*filepath               Static.Serve("/home/simon/bnginx-data/uploads")
+#GET     /uploads/*filepath               Static.Serve("/home/simon/bnginx-data/uploads")
 GET     /public/*filepath                       Static.Serve("public")
 
 # Catch all

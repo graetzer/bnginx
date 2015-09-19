@@ -13,14 +13,12 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
-      {{$current := .post}}
-	  {{range .pages}}
-	     <li {{if $current}}{{if eq $current.Id .Id}}class="active"{{end}}{{end}}><a href="/post/{{.Id}}/{{urlquery .Title}}">{{.Title}}</a></li>
-	  {{end}}
-	      
-	  {{if .user}}
-	  <li><a href="/admin">Admin Panel</a></li>
-	  {{end}}
+      <!--<li><a href="/about">About</a></li>-->
+      <li><a href="/projects">Projects</a></li>
+      <li><a href="/locations">Location</a></li>
+  	  {{if .user}}
+  	  <li><a href="/admin">Admin Panel</a></li>
+  	  {{end}}
     </ul>
 	<form class="navbar-form navbar-right" role="search" action="/search">
       <div class="form-group">

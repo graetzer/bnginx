@@ -1,0 +1,51 @@
+{{if eq .project.Id -1}}
+{{set . "title" "Create a new Project"}}
+{{else}}
+{{set . "title" "Modify Project"}}
+{{end}}
+
+{{template "header.html" .}}
+
+<div class="row">
+	<div class="col-sm-10 col-sm-offset-2">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-2">
+		{{ set . "pp" 5}}
+		{{template "Admin/adminMenu.html" .}}
+	</div>
+	<div class="col-sm-8">
+		<h3>{{.title}}</h3>
+		<form role="form" method="POST" action="/admin/project/{{.project.Id}}">
+			<div class="form-group">
+				<label for="inputTitle">Title</label>
+				<input type="text" class="form-control" id="inputTitle" name="project.Title" placeholder="Uberproduct" value="{{.project.Title}}" />
+			</div>
+			<div class="form-group">
+				<label for="inputImage">Image URL</label>
+				<input type="text" class="form-control" id="inputImage" name="project.ImageURL" placeholder="http://..." value="{{.project.ImageURL}}" />
+			</div>
+			<div class="form-group">
+				<label for="inputRepo">Repo URL</label>
+				<input type="text" class="form-control" id="inputRepo" name="project.RepoURL" placeholder="http://..." value="{{.project.RepoURL}}" />
+			</div>
+			<div class="form-group">
+				<label for="inputTags">Tags</label>
+				<input type="text" class="form-control" id="inputTags" name="project.Tags" placeholder="Graphics, Golang" value="{{.project.Tags}}" />
+			</div>
+			<div class="form-group">
+				<label for="textarea">Description</label>
+				<textarea class="form-control" id="textarea" name="project.Description" rows="5">{{.project.Description}}</textarea>
+			</div>
+
+			<button type="submit" class="btn btn-default">Save</button>
+		</form>
+	</div>
+</div>
+
+{{template "footer.html" .}}

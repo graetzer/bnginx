@@ -10,8 +10,8 @@
 		<article>
 		<div class="panel panel-default">
 		  <div class="panel-heading">
-			<h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedTime}}</small></h3>
-			<small>By {{.User.Name}}</small>
+			<h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
+			<small>By {{username .UserId}}</small>
 		  </div>
 		  <div class="panel-body">
 		    {{markdown .Body}}

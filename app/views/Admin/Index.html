@@ -18,10 +18,8 @@
 		<table class="table table-hover">
 		   <thead>
 		       <tr>
-				<th>#ID</th>
 				<th>Title</th>
 				<th>Published</th>
-				<th>Type</th>
 				<th>Last Update Date</th>
 				<th>Author</th>
 				<th>Actions</th>
@@ -31,10 +29,8 @@
 			{{$user := .user}}
 		    {{range .posts}}
 		       	<tr class="{{if .Published}}success{{else}}warning{{end}}">
-					<td>{{.Id}}</td>
 					<td>{{.Title}}</td>
 					<td>{{if not .Published}}Not {{end}}Published</td>
-					<td>{{if .IsPage}}Page{{else}}Blogpost{{end}}</td>
 					<td>{{datetime .UpdatedAt}}</td>
 					<td>{{username .UserId}}</td>
 					<td>
@@ -47,7 +43,7 @@
 			{{end}}
 		   </tbody>
 		</table>
-		
+
 		<h3>Users</h3>
 		<table class="table table-striped">
 		   <thead>
@@ -75,7 +71,6 @@
 				</tr>
 			{{end}}
 		   </tbody>
-		
 		</table>
 	</div>
 </div>

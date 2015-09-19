@@ -1,10 +1,12 @@
 <ul class="nav nav-pills nav-stacked">
 
   <li {{if eq .pp 0 }}class="active"{{end}}><a href="/admin"><span class="glyphicon glyphicon-home"></span> Content</a></li>
-  <li {{if eq .pp 2 }}class="active"{{end}}><a href="/admin/media"><span class="glyphicon glyphicon-arrow-up"></span> Manage Files</a></li>
-  <li {{if eq .pp 3 }}class="active"{{end}}><a href="/admin/comments"><span class="glyphicon glyphicon-envelope"></span> Comments <span class="badge">{{commentCount nil}}</span></a></li>
-  <li {{if eq .pp 1 }}class="active"{{end}}><a href="/admin/post/create"><span class="glyphicon glyphicon-plus"></span> Create Post</a></li>
+  <li {{if eq .pp 1 }}class="active"{{end}}><a href="/admin/post/create"><span class="glyphicon glyphicon-pencil"></span> Write Post</a></li>
+  <li {{if eq .pp 2 }}class="active"{{end}}><a href="/admin/comments"><span class="glyphicon glyphicon-comment"></span> Comments <span class="badge">{{commentCount nil}}</span></a></li>
+  <li {{if eq .pp 3 }}class="active"{{end}}><a href="/admin/media"><span class="glyphicon glyphicon-hdd"></span> Manage Files</a></li>
+  <li {{if eq .pp 4 }}class="active"{{end}}><a href="/admin/projects"><span class="glyphicon glyphicon-piggy-bank"></span> Projects</a></li>
+  <li {{if eq .pp 5 }}class="active"{{end}}><a href="/admin/locations"><span class="glyphicon glyphicon-piggy-bank"></span> Locations</a></li>
   {{if .user.IsAdmin}}
-  	<li {{if eq .pp 4 }}class="active"{{end}}><a href="/admin/user/create"><span class="glyphicon glyphicon-user"></span> Create User</a></li>
+  	<li {{if eq .pp 6 }}class="active"{{end}}><a href="/admin/user/create"><span class="glyphicon glyphicon-user"></span> Add User</a></li>
   {{end}}
 </ul>

@@ -13,7 +13,7 @@ type User struct {
 	Password string
 	IsAdmin  bool
 
-	Posts []Post // One-To-Many relationship (has many)
+	Blogposts []Blogpost // One-To-Many relationship (has many)
 }
 
 func hashPassword(in string) string {
@@ -34,25 +34,21 @@ func (u *User) SetPassword(in string) {
 	u.Password = hashPassword(in)
 }
 
-type Post struct {
-	Id     int64
-	UserId int64 // Foreign key of User
-
+type Blogpost struct {
+	Id        int64
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Published bool
+
 	Title     string
 	Body      string
-
-	IsPage    bool
-	PageOrder int16
-
+	Published bool
+	UserId    int64 // Foreign key of User
 	Comments []Comment // One-To-Many relationship (has many)
 }
 
 // Just the first 200 characters (+"..."), may not be very good
 // considering that this is supposed to contain valid markdown
-func (p Post) Summary() string {
+func (p Blogpost) Summary() string {
 	if len(p.Body) > 200 {
 		return p.Body[0:200] + "..."
 	}
@@ -61,11 +57,34 @@ func (p Post) Summary() string {
 
 type Comment struct {
 	Id     int64
-	PostId int64 // Foreign key of Post
-
 	CreatedAt time.Time
+
+	PostId    int64 // Foreign key of BlogPost
 	Name      string
 	Title     string
 	Body      string
 	Approved  bool
+}
+
+type Project struct {
+	Id        int64
+	UpdatedAt time.Time
+
+	Title       string
+	Description string
+	ImageUrl    string
+	RepoUrl			string
+	Tags        string
+}
+
+type Location struct {
+	Id     int64
+	UpdatedAt time.Time
+
+	Name  string
+	Url string
+	ImageUrl string
+	Lat   float32
+	Lng   float32
+	Type  int32
 }

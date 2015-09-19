@@ -5,8 +5,8 @@
     <link>http://www.graetzer.org</link>
     <description>A blog on iOS, Android, GoLang, 3D Graphics and similar topics</description>
     <language>en-en</language>
-    <copyright>2012-2013 (C) Simon Grätzer</copyright>
-    <pubDate>{{datetime .time}}</pubDate>
+    <copyright>2012-2015 (C) Simon Grätzer</copyright>
+    <pubDate>{{datetime .UpdatedAt}}</pubDate>
     {{/*<image>
       <url>URL einer einzubindenden Grafik</url>
       <title>Bildtitel</title>
@@ -18,7 +18,7 @@
       <title>{{.Title}}</title>
       <description>{{.Summary}}</description>
       <link>http://graetzer.org/post/{{.PostId}}/{{urlquery .Title}}</link>
-      <author>{{.User.Name}}, {{.User.Email}}</author>
+      <author>{{username .UserId}}</author>
       {{/*<guid>Eindeutige Identifikation des Eintrages</guid>*/}}
       <pubDate>Datum des Items</pubDate>
     </item>

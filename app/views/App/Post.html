@@ -22,13 +22,12 @@
 	</article>
 	</main>
 	</div><!-- ./col-sm-11 -->
-	
+
 	<div class="col-sm-1">
 	{{template "App/social.html" .}}
 	</div>
 </div><!-- /.row -->
 
-{{if not .post.IsPage}}
 <section>
 <div class="row">
 	<div class="col-sm-3">
@@ -39,13 +38,13 @@
 		    <input type="text" class="form-control" id="inputName" placeholder="Jon Doe" name="name" value="{{.flash.name}}">
 			<span class="help-block">Maximum of 50 characters.</span>
 		  </div>
-		
+
 		  <div class="form-group {{if .errors.title}}has-error{{end}}">
 		    <label for="inputTitle">Title</label>
 		    <input type="text" class="form-control" id="inputTitle" placeholder="Comment title" name="title" value="{{.flash.title}}">
 			<span class="help-block">Max 100 characters.</span>
 		  </div>
-		
+
 		  <div class="form-group {{if .errors.body}}has-error{{end}}">
 		    <label for="textareaBody">Comment</label>
 			<textarea class="form-control" rows="5" id="textareaBody" name="body">{{.flash.body}}</textarea>
@@ -59,7 +58,7 @@
 		  </div>
 		</form>
 	</div>
-	
+
 	{{if .comments}}
 	<div class="col-sm-8">
 		<h4>Comments ({{len .comments}})</h4>
@@ -80,6 +79,5 @@
 	{{end}}
 </div>
 </section>
-{{end}}
 
 {{template "footer.html" .}}

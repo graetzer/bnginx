@@ -1,40 +1,43 @@
 <!DOCTYPE html>
-
 <html lang="en-US">
-  <head>
-    <title>Simon's Blog{{with .title}} - {{.}}{{end}}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="author" content="Simon Peter Grätzer" />
-	<meta name="keywords" content="iOS, Android, Go, GoLang, Java, OpenGL, C++" />
-	<meta name="description" content="A blog on iOS, Android, GoLang, 3D Graphics and similar topics" />
-	
-	<link rel="shortcut icon" type="image/png" href="/public/img/favicon.png" />
-	<link rel="alternate" type="application/rss+xml" title="Feed of Simon's blog" href="/feed.rss" />
-	
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="/public/css/custom.css" />
-	<link rel="stylesheet" type="text/css" href="/public/css/highlight.css" />
-    {{range .moreStyles}}<link rel="stylesheet" type="text/css" href="{{.}}" />{{end}}
-	
-	<script defer src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js" onLoad="hljs.initHighlightingOnLoad()"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<head>
+  <title>Simon's Blog{{with .title}} - {{.}}{{end}}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Simon Peter Grätzer" />
+  <meta name="keywords" content="{{if .title}}{{.}}{{else}}iOS, Android, Go, GoLang, Java, OpenGL, C++{{end}}" />
+  <meta name="description" content="A blog on iOS, Android, GoLang, 3D Graphics and similar topics" />
 
-    {{range .moreScripts}}<script src="{{.}}"></script>{{end}}
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-33874892-1']);
-	  _gaq.push(['_trackPageview']);
-	
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-  </head>
-  <body>
-    <div class="container">
-	{{template "menu.html" .}}
-	{{template "flash.html" .}}
+  <link rel="shortcut icon" type="image/png" href="/public/img/favicon.png" />
+  <link rel="alternate" type="application/rss+xml" title="Feed of Simon's blog" href="/feed.rss" />
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/default.min.css">
+  <link rel="stylesheet" type="text/css" href="/public/css/custom.css" /> {{range .moreStyles}}
+  <link rel="stylesheet" type="text/css" href="{{.}}" />{{end}}
+
+  <script defer src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js" onLoad="hljs.initHighlightingOnLoad()"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  {{range .moreScripts}}
+  <script src="{{.}}"></script>{{end}}
+  <script>
+    (function(i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'UA-33874892-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    {{template "menu.html" .}} {{template "flash.html" .}}

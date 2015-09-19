@@ -1,32 +1,33 @@
-		<footer class="row">
-			<span style="line-height:35px">&copy; 2013-2015 Simon Peter Grätzer</span>
-			{{if not .user}}
-			<form class="form-inline pull-right" role="form" action="/login" method="POST">
-			  <div class="form-group">
-			    <label class="sr-only" for="loginInputUser">Your Email Address</label>
-			    <input type="email" class="form-control" id="loginInputUser" name="email" placeholder="Email">
-			  </div>
-			  <div class="form-group">
-			    <label class="sr-only" for="loginInputPassword">Password</label>
-			    <input type="password" class="form-control" id="loginInputPassword" name="password" placeholder="Password">
-			  </div>
-			  {{/*<div class="checkbox">
-			    <label><input type="checkbox"> Remember me</label>
-			  </div>*/}}
-			  <button type="submit" class="btn btn-info">Sign in</button>
-			</form>
-			{{else}}
-			<form class="form-inline pull-right" role="form" action="/logout" method="POST">
-				<div class="form-group">
-					Logged in as <a href="/admin/user/{{urlquery .user.Email}}">{{.user.Name}}</a>
-					<button type="submit" class="btn btn-info">Logout</button>
-				</div>
-			</form>
-			{{end}} 
-		</footer>
+<footer class="row">
+	<span style="line-height:35px">&copy; 2015 Simon P. Grätzer</span>
+	{{if not .user}}
+	<form class="form-inline pull-right" role="form" action="/login" method="POST">
+		<div class="form-group">
+			<label class="sr-only" for="loginInputUser">Your Email Address</label>
+			<input type="email" class="form-control" id="loginInputUser" name="email" placeholder="Email">
 		</div>
-		{{if eq .RunMode "dev"}}
-			{{template "debug.html" .}}
-		{{end}}
-	</body>
+		<div class="form-group">
+			<label class="sr-only" for="loginInputPassword">Password</label>
+			<input type="password" class="form-control" id="loginInputPassword" name="password" placeholder="Password">
+		</div>
+		{{/*
+		<div class="checkbox">
+			<label>
+				<input type="checkbox"> Remember me</label>
+		</div>*/}}
+		<button type="submit" class="btn btn-info">Sign in</button>
+	</form>
+	{{else}}
+	<form class="form-inline pull-right" role="form" action="/logout" method="POST">
+		<div class="form-group">
+			Logged in as <a href="/admin/user/{{urlquery .user.Email}}">{{.user.Name}}</a>
+			<button type="submit" class="btn btn-info">Logout</button>
+		</div>
+	</form>
+	{{end}}
+</footer>
+{{/*</div>
+{{if eq .RunMode "dev"}} {{template "debug.html" .}} {{end}}
+</body>*/}}
+
 </html>

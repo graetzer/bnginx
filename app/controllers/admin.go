@@ -27,10 +27,10 @@ func (c Admin) checkUser() revel.Result {
 
 func (c Admin) Index() revel.Result {
 	var (
-		posts []*Post
+		posts []*Blogpost
 		users []*User
 	)
-	DB.Order("page_order DESC, updated_at DESC").Find(&posts)
+	DB.Order("updated_at DESC").Find(&posts)
 	DB.Find(&users)
 	return c.Render(posts, users)
 }
@@ -60,27 +60,26 @@ func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string)
 		c.Validation.Keep()
 		c.FlashParams()
 		if userId == -1 {
-			return c.Redirect(routes.Admin.Index())
+			return c.Redirect(routes.Admin.EditUser("create"))
 		} else {
 			return c.Redirect(routes.Admin.EditUser(email))
 		}
 	}
 
 	var user *User
-	u := c.connected()
 	if userId <= 0 {
 		user = new(User)
 		if c.getUser(email) != nil {
-			c.Flash.Error("This is email address is already used")
+			c.Flash.Error("This email address is already used")
 			return c.Redirect(routes.Admin.EditUser("create"))
 		}
 		delete(c.Flash.Out, "error")
 	} else {
+		u := c.connected()
 		if u.Id != userId && !u.IsAdmin {
 			c.Flash.Error("You have no permission to edit this profile")
 			return c.Redirect(routes.Admin.EditUser("create"))
 		}
-
 		user = c.getUserById(userId)
 		if user == nil || !user.CheckPassword(oldPassword) {
 			c.Flash.Error("Db corruption or the password is incorrect")
@@ -96,7 +95,6 @@ func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string)
 }
 
 func (c Admin) DeleteUser(email string) revel.Result {
-
 	if user := c.getUser(email); user != nil {
 		u := c.connected()
 		if u.Id == user.Id || u.IsAdmin {
@@ -110,55 +108,42 @@ func (c Admin) DeleteUser(email string) revel.Result {
 // ==================== Handle Posts ====================
 
 func (c Admin) EditPost(postId int64) revel.Result {
-	post := new(Post)
-	if postId > 0 {
-		post = c.getPostById(postId)
-		if post == nil {
-			return c.Redirect(routes.Admin.Index())
-		}
-	} else {
+	post := c.getPostById(postId)
+	if post == nil && postId > 0 {
+		return c.Redirect(routes.Admin.Index())
+	} else if post == nil {
+		post = new (Blogpost)
 		post.Title = "A new Blogpost"
 		post.Body = "### Start with something\n\nE.g.\n\n1. Make a List\n2. Of Interesting\n3. Things"
 	}
 	return c.Render(post)
 }
 
-func (c Admin) SavePost(postId int64, published bool, title, body string, isPage bool, pageOrder int16) revel.Result {
-	var post *Post
+func (c Admin) SavePost() revel.Result {
+	var post Blogpost
+	c.Params.Bind(&post, "post")
 	u := c.connected()
-	if postId <= 0 { // Create a new one
-		post = &Post{UserId: u.Id}
-	} else {
-		post = c.getPostById(postId)
-		if post == nil {
-			return c.Redirect(routes.Admin.Index())
-		}
-		if u.Id != post.UserId && !u.IsAdmin {
-			c.Flash.Error("You have not the permission to save this post")
+	if !DB.NewRecord(post) {// Check if the user owns this
+		original := c.getPostById(post.Id)
+		if original == nil || u.Id != post.UserId && !u.IsAdmin {
+			c.Flash.Error("You have no permission to edit this")
 			return c.Redirect(routes.Admin.Index())
 		}
 	}
-	post.Published = published
-	post.Title = title
-	post.Body = body
-	post.IsPage = isPage
-	post.PageOrder = pageOrder
-	DB.Save(post)
-
+	post.UserId = u.Id
+	DB.Save(&post)
 	return c.Redirect(routes.Admin.Index())
 }
 
 func (c Admin) DeletePost(postId int64) revel.Result {
 	post := c.getPostById(postId)
-	if post == nil {
-		return c.Redirect(routes.Admin.Index())
-	}
-
-	u := c.connected()
-	if u.Id == post.UserId || u.IsAdmin {
-		DB.Where("PostId = ?", post.Id).Delete(&Comment{})
-		DB.Delete(post)
-		c.Flash.Success("Deleted post")
+	if post != nil {
+		u := c.connected()
+		if u.Id == post.UserId || u.IsAdmin {
+			DB.Where("PostId = ?", post.Id).Delete(&Comment{})// Delete comments
+			DB.Delete(post)
+			c.Flash.Success("Deleted post")
+		}
 	}
 	return c.Redirect(routes.Admin.Index())
 }
@@ -173,11 +158,10 @@ func (c Admin) Media() revel.Result {
 		c.Flash.Success("Creating uploads directory")
 		os.MkdirAll(basePath, 0777)
 	} else if err != nil {
-		revel.ERROR.Println(err)
-		return c.Redirect(routes.Admin.Index()) //c.RenderError(err)
+		return c.RenderError(err)
 	}
 
-	// Remove hidden files
+	// Exclude hidden files
 	files := make([]os.FileInfo, 0, len(fs))
 	for _, f := range fs {
 		if !strings.HasPrefix(f.Name(), ".") {
@@ -214,9 +198,8 @@ func (c Admin) UploadMedia() revel.Result {
 		if _, err = io.Copy(fo, fi); err != nil {
 			return c.RenderError(err)
 		}
-		return c.RenderJson(struct{ Message string }{"Success"})
 	}
-	return c.Redirect(routes.Admin.Media())
+	return c.RenderJson(struct{ Message string }{"Success"})
 }
 
 func (c Admin) DeleteMedia(filename string) revel.Result {
@@ -253,4 +236,88 @@ func (c Admin) DeleteComment(commentId int64) revel.Result {
 		DB.Delete(&comment)
 	}
 	return c.Redirect(routes.Admin.Comments())
+}
+
+// ==================== Handle Projects ====================
+
+func (c Admin) Projects() revel.Result {
+	var projects []*Project
+	DB.Order("updated_at DESC").Find(&projects)
+	return c.Render(projects)
+}
+
+func (c Admin) EditProject(projectId int64) revel.Result {
+	var project Project
+	if DB.First(&project, projectId).RecordNotFound() {
+		if projectId >= 0 {
+			return c.Redirect(routes.Admin.Index())
+		} else {
+			project = Project{Title:"My new Project"}
+		}
+	}
+	return c.Render(project)
+}
+
+func (c Admin) SaveProject() revel.Result {
+	var project Project
+	c.Params.Bind(&project, "project")
+	if !c.connected().IsAdmin {// Check if the user owns this
+		c.Flash.Error("You have no permission to edit this")
+		return c.Redirect(routes.Admin.Index())
+	}
+	DB.Save(&project)
+	return c.Redirect(routes.Admin.Index())
+}
+
+func (c Admin) DeleteProject(projectId int64) revel.Result {
+	var project Project
+	if DB.First(&project, projectId).RecordNotFound() || !c.connected().IsAdmin {
+		c.Flash.Error("You have no permission to edit this")
+		return c.Redirect(routes.Admin.Index())
+	}
+	DB.Delete(project)
+	c.Flash.Success("Deleted Project")
+	return c.Redirect(routes.Admin.Index())
+}
+
+// ==================== Handle Locations ====================
+
+func (c Admin) Locations() revel.Result {
+	var locations []*Location
+	DB.Order("updated_at DESC").Find(&locations)
+	return c.Render(locations)
+}
+
+func (c Admin) EditLocation(locationId int64) revel.Result {
+	var location Location
+	if DB.First(&location, locationId).RecordNotFound() {
+		if locationId >= 0 {
+			return c.Redirect(routes.Admin.Index())
+		} else {
+			location = Location{Name:"My new Project"}
+		}
+	}
+	return c.Render(location)
+}
+
+func (c Admin) SaveLocation() revel.Result {
+	var location Location
+	c.Params.Bind(&location, "location")
+	if !c.connected().IsAdmin {// Check if the user owns this
+		c.Flash.Error("You have no permission to edit this")
+		return c.Redirect(routes.Admin.Index())
+	}
+	DB.Save(&location)
+	return c.Redirect(routes.Admin.Index())
+}
+
+func (c Admin) DeleteLocation(locationId int64) revel.Result {
+	var location Location
+	if DB.First(&location, locationId).RecordNotFound() || !c.connected().IsAdmin {
+		c.Flash.Error("You have no permission to edit this")
+		return c.Redirect(routes.Admin.Index())
+	}
+	DB.Delete(location)
+	c.Flash.Success("Deleted Location")
+	return c.Redirect(routes.Admin.Index())
 }

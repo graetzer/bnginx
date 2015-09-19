@@ -16,7 +16,7 @@
 </div>
 <div class="row">
 	<div class="col-sm-2">
-		{{ set . "pp" 4}}
+		{{ set . "pp" 6}}
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-5">
@@ -43,9 +43,6 @@
 			<input type="hidden" name="userId" value={{.profile.Id}} />
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
-	</div>
-	<div class="col-xs-5">
-		<div id="wmd-preview"></div>
 	</div>
 </div>
 

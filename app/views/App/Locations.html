@@ -1,0 +1,60 @@
+{{set . "title" .post.Title}} {{template "header.html" .}} {{template "App/trailer.html" .}}
+
+<div class="row">
+	<div class="col-sm-8" id="globe-container">
+	</div>
+	<div class="col-sm-3">
+		{{range .locations}}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{.Title}}
+					<small class="pull-right">{{datetime .UpdatedAt}}</small>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<img src="{{.ImageURL}}" alt="Project Logo" class="img-circle" />
+				<p>{{.Description}}</p>
+				<a href="{{.RepoURL}}" title="Make a comment">Repository</a>
+			</div>
+		</div>
+		{{end}}
+	</div>
+	<!-- ./col-sm-11 -->
+
+	<div class="col-sm-1">
+		{{template "App/social.html" .}}
+	</div>
+</div>
+<!-- /.row -->
+
+<script type="text/javascript" src="/public/globe/Detector.js"></script>
+<script type="text/javascript" src="/public/globe/three.min.js"></script>
+<!--<script type="text/javascript" src="/public/globe/Tween.js"></script>-->
+<script type="text/javascript" src="/public/globe/globe.js"></script>
+<script type="text/javascript">
+	if (!Detector.webgl) {
+		Detector.addGetWebGLMessage();
+	} else {
+		var container = document.getElementById('globe-container');
+		var globe = new DAT.Globe(container);
+
+		var globeImg = new Image();
+		globeImg.onload = function() {
+			var canvas = document.createElement('canvas');
+			canvas.width = globeImg.width;
+			canvas.height = globeImg.height;
+			var context = canvas.getContext('2d');
+			context.drawImage(globeImg, 0, 0 );
+			var imageData = context.getImageData(0, 0, globeImg.width, globeImg.height);
+
+			var locations = [];
+			globe.setData(imageData, locations);
+			globe.createPoints();
+			globe.animate();
+			document.body.style.backgroundImage = 'none';//remove loading*/
+		};
+		globeImg.src = "/public/globe/globe.png";
+	}
+</script>
+
+{{template "footer.html" .}}
