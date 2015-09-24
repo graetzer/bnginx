@@ -59,7 +59,7 @@ func (c Admin) SaveUser(userId int64, name, email, oldPassword, password string)
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
 		c.FlashParams()
-		if userId == -1 {
+		if userId == 0 {
 			return c.Redirect(routes.Admin.EditUser("create"))
 		} else {
 			return c.Redirect(routes.Admin.EditUser(email))
@@ -249,7 +249,7 @@ func (c Admin) Projects() revel.Result {
 func (c Admin) EditProject(projectId int64) revel.Result {
 	var project Project
 	if DB.First(&project, projectId).RecordNotFound() {
-		if projectId >= 0 {
+		if projectId > 0 {
 			return c.Redirect(routes.Admin.Index())
 		} else {
 			project = Project{Title:"My new Project"}
@@ -272,7 +272,7 @@ func (c Admin) SaveProject() revel.Result {
 func (c Admin) DeleteProject(projectId int64) revel.Result {
 	var project Project
 	if DB.First(&project, projectId).RecordNotFound() || !c.connected().IsAdmin {
-		c.Flash.Error("You have no permission to edit this")
+		c.Flash.Error("You have no permission to delete this")
 		return c.Redirect(routes.Admin.Index())
 	}
 	DB.Delete(project)
@@ -280,45 +280,92 @@ func (c Admin) DeleteProject(projectId int64) revel.Result {
 	return c.Redirect(routes.Admin.Projects())
 }
 
-// ==================== Handle Locations ====================
+// ==================== Handle Live places and stays ====================
 
-func (c Admin) Locations() revel.Result {
-	var locations []*Location
-	DB.Order("updated_at DESC").Find(&locations)
-	return c.Render(locations)
+func (c Admin) Live2() revel.Result {
+	var (
+		places []Place
+		stays []Stay
+	)
+	DB.Order("started_at DESC").Find(&stays)
+	DB.Find(&places)
+	return c.Render(places, stays)
 }
 
-func (c Admin) EditLocation(locationId int64) revel.Result {
-	var location Location
-	if DB.First(&location, locationId).RecordNotFound() {
-		if locationId >= 0 {
-			return c.Redirect(routes.Admin.Index())
+func (c Admin) EditPlace(placeId int64) revel.Result {
+	var place Place
+	if DB.First(&place, placeId).RecordNotFound() {
+		if placeId > 0 {
+			return c.Redirect(routes.Admin.Live2())
 		} else {
-			location = Location{Name:"Current Location"}
+			place = Place{Id: 0, Name:"Current Location"}
 		}
 	}
-	return c.Render(location)
+	return c.Render(place)
 }
 
-func (c Admin) SaveLocation() revel.Result {
-	var location Location
-	c.Params.Bind(&location, "location")
-	
+func (c Admin) SavePlace() revel.Result {
+	var place Place
+	c.Params.Bind(&place, "place")
+
 	if !c.connected().IsAdmin {// Check if the user owns this
 		c.Flash.Error("You have no permission to edit this")
-		return c.Redirect(routes.Admin.Index())
+		return c.Redirect(routes.Admin.Live2())
 	}
-	DB.Save(&location)
-	return c.Redirect(routes.Admin.Locations())
+	DB.Save(&place)
+	return c.Redirect(routes.Admin.Live2())
 }
 
-func (c Admin) DeleteLocation(locationId int64) revel.Result {
-	var location Location
-	if DB.First(&location, locationId).RecordNotFound() || !c.connected().IsAdmin {
+func (c Admin) DeletePlace(placeId int64) revel.Result {
+	var place Place
+	if DB.First(&place, placeId).RecordNotFound() || !c.connected().IsAdmin {
+		c.Flash.Error("You have no permission to delete this")
+		return c.Redirect(routes.Admin.Live2())
+	}
+	var stays []Stay
+	DB.Model(&place).Related(&stays).Delete(Stay{})
+	DB.Delete(place)
+	c.Flash.Success("Deleted Location")
+	return c.Redirect(routes.Admin.Live2())
+}
+
+// ==================== Handle Stays ====================
+
+func (c Admin) EditStay(stayId int64) revel.Result {
+	var (
+		stay Stay
+		places []Place
+	)
+	if DB.First(&stay, stayId).RecordNotFound() {
+		if stayId > 0 {
+			return c.Redirect(routes.Admin.Live2())
+		} else {
+			stay.StartedAt = time.Now()
+		}
+	}
+	DB.Find(&places)
+	return c.Render(stay, places)
+}
+
+func (c Admin) SaveStay() revel.Result {
+	var stay Stay
+	c.Params.Bind(&stay, "stay")
+
+	if !c.connected().IsAdmin {// Check if the user owns this
+		c.Flash.Error("You have no permission to edit this")
+		return c.Redirect(routes.Admin.Live2())
+	}
+	DB.Save(&stay)
+	return c.Redirect(routes.Admin.Live2())
+}
+
+func (c Admin) DeleteStay(stayId int64) revel.Result {
+	var stay Stay
+	if DB.First(&stay, stayId).RecordNotFound() || !c.connected().IsAdmin {
 		c.Flash.Error("You have no permission to edit this")
 		return c.Redirect(routes.Admin.Index())
 	}
-	DB.Delete(location)
-	c.Flash.Success("Deleted Location")
-	return c.Redirect(routes.Admin.Index())
+	DB.Delete(stay)
+	c.Flash.Success("Deleted Stay")
+	return c.Redirect(routes.Admin.Live2())
 }

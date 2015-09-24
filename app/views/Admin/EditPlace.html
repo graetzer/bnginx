@@ -1,0 +1,43 @@
+{{if eq .place.Id -1}}{{set . "title" "Create a new Place"}}{{else}}{{set . "title" "Modify Place"}}{{end}}
+{{template "header.html" .}}
+<div class="row">
+	<div class="col-sm-10 col-sm-offset-2">
+		<ol class="breadcrumb">
+		  <li><a href="/admin">Admin Panel</a></li>
+			<li><a href="/admin/live/">Live</a></li>
+		  <li class="active">{{.title}}</li>
+		</ol>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-2">
+		{{ set . "pp" 5}}
+		{{template "Admin/adminMenu.html" .}}
+	</div>
+
+	<div class="col-sm-8">
+		<h3>{{.title}}</h3>
+		<form role="form" method="POST" action="/admin/live/places/{{.place.Id}}">
+			<div class="form-group">
+				<label for="inputName">Name</label>
+				<input type="text" class="form-control" id="inputName" name="place.Name" placeholder="Name" value="{{.place.Name}}" />
+			</div>
+			<div class="form-group">
+				<label for="inputImage">Cover-URL</label>
+				<input type="text" class="form-control" id="inputImage" name="place.CoverUrl" placeholder="http://..." value="{{.place.CoverUrl}}" />
+			</div>
+			<div class="form-group">
+				<label for="inputLatitude">Latitude</label>
+				<input type="number" class="form-control" id="inputLatitude" name="place.Latitude" placeholder="45.12" value="{{.place.Latitude}}" min="-90" max="90" step="0.0000001" />
+			</div>
+      <div class="form-group">
+				<label for="inputLongitude">Longitude</label>
+				<input type="number" class="form-control" id="inputLongitude" name="place.Longitude" placeholder="120.221" value="{{.place.Longitude}}"  min="-180" max="180" step="0.0000001" />
+			</div>
+
+			<input type="hidden" name="place.Id" value="{{.place.Id}}" />
+			<button type="submit" class="btn btn-default">Save</button>
+		</form>
+	</div>
+</div>
+{{template "footer.html" .}}

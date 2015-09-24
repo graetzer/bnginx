@@ -5,7 +5,7 @@
   <li {{if eq .pp 2 }}class="active"{{end}}><a href="/admin/comments"><span class="glyphicon glyphicon-comment"></span> Comments <span class="badge">{{commentCount nil}}</span></a></li>
   <li {{if eq .pp 3 }}class="active"{{end}}><a href="/admin/media"><span class="glyphicon glyphicon-hdd"></span> Manage Files</a></li>
   <li {{if eq .pp 4 }}class="active"{{end}}><a href="/admin/projects"><span class="glyphicon glyphicon-piggy-bank"></span> Projects</a></li>
-  <li {{if eq .pp 5 }}class="active"{{end}}><a href="/admin/locations"><span class="glyphicon glyphicon-globe"></span> Locations</a></li>
+  <li {{if eq .pp 5 }}class="active"{{end}}><a href="/admin/live"><span class="glyphicon glyphicon-globe"></span> Live</a></li>
   {{if .user.IsAdmin}}
   	<li {{if eq .pp 6 }}class="active"{{end}}><a href="/admin/user/create"><span class="glyphicon glyphicon-user"></span> Add User</a></li>
   {{end}}

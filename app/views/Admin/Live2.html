@@ -1,0 +1,70 @@
+{{set . "title" "Admin Panel"}} {{template "header.html" .}}
+
+<div class="row">
+  <div class="col-sm-10 col-sm-offset-2">
+    <ol class="breadcrumb">
+      <li class="active">Admin Panel</li>
+    </ol>
+  </div>
+</div>
+{{$user := .user}}
+
+<div class="row">
+
+  <div class="col-sm-2">
+    {{ set . "pp" 5}} {{template "Admin/adminMenu.html" .}}
+  </div>
+
+  <div class="col-sm-10">
+    <h3>Stays</h3><a href="/admin/live/stays/create">Add a stay</a>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Place</th>
+          <th>From</th>
+          <th>Until</th>
+          <th>Url</th>
+          {{if $user.IsAdmin}}<th>Actions</th>{{end}}
+        </tr>
+      </thead>
+      <tbody>
+        {{range .stays}}{{$place := place .}}
+        <tr>
+          <td>{{$place.Name}}</td>
+          <td>{{date .StartedAt}}</td>
+          <td>{{date .EndedAt}}</td>
+          <td><a href="{{.Url}}" target="_blank">Reference</a></td>
+          {{if $user.IsAdmin}}
+          <td>
+            <a href="/admin/live/stays/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
+            <a href="/admin/live/stays/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+          </td>{{end}}
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-5 col-sm-offset-2"><h3>Places</h3></div>
+<div class="col-sm-5"><a href="/admin/live/places/create">Create Location</a></div></div>
+<div class="row">
+  <div class="col-sm-2 col-sm-offset-2"><strong>Name</strong></div>
+  <div class="col-sm-4"><strong>Cover</strong></div>
+  {{if $user.IsAdmin}}<div class="col-sm-3"><strong>Actions</strong></div>{{end}}
+</div>
+{{range .places}}
+<div class="row" style="margin-top:10px">
+  <div class="col-sm-2 col-sm-offset-2">{{.Name}}</div>
+  <div class="col-sm-4"><img src="{{.CoverUrl}}" alt="Location Logo"></div>
+  {{if $user.IsAdmin}}
+  <div class="col-sm-3">
+    <a href="/admin/live/places/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
+    <a href="/admin/live/places/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+  </div>{{end}}
+</div>
+{{end}}
+
+{{template "footer.html" .}}

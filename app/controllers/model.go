@@ -77,14 +77,20 @@ type Project struct {
 	Tags        string
 }
 
-type Location struct {
-	Id     int64
-	UpdatedAt time.Time
+type Stay struct {
+	Id     int64 `json:"id"`
+	PlaceId    int64 // Foreign key of Place
+	StartedAt time.Time `json:"startedAt"`
+	EndedAt   time.Time `json:"endedAt"`
+	Url string `json:"url"`
+}
 
-	Name  string
-	Url string
-	CoverUrl string
-	Latitude   float32
-	Longitude   float32
-	Color  string
+type Place struct {
+	Id     int64 `json:"id"`
+
+	Name  string `json:"name"`
+	CoverUrl string `json:"coverUrl"`
+	Latitude   float32 `json:"lat"`
+	Longitude   float32 `json:"lng"`
+	Stays []Stay // One-To-Many relationship (has many)
 }

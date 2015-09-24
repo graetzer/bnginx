@@ -10,7 +10,7 @@ GET     /search                                 App.Search
 GET     /post/:postId/*                         App.ShowPost
 POST    /post/comment/:postId                   App.SaveComment
 GET     /projects                               App.Projects
-GET     /locations                              App.Locations
+GET     /live                                   App.Live
 
 # Login & Logout
 POST    /login                                  App.Login
@@ -21,9 +21,8 @@ GET     /favicon.ico                            404
 
 # =========== Some API's ===========
 # GET    /api/blogposts                          API.QueryBlogposts
-GET     /api/projects                           API.QueryProjects
-GET     /api/locations                          API.QueryLocations
-
+# GET      /api/projects                           API.QueryProjects
+# GET      /api/places                          API.QueryLocations
 
 # =========== Admin section ===========
 GET     /admin                                  Admin.Index
@@ -34,14 +33,14 @@ POST     /admin/user/save                       Admin.SaveUser
 GET      /admin/user/:email/delete              Admin.DeleteUser
 
 # Post management
-GET     /admin/post/create                      Admin.EditPost(-1)
+GET     /admin/post/create                      Admin.EditPost(0)
 GET     /admin/post/:postId/delete              Admin.DeletePost
 GET     /admin/post/:postId                     Admin.EditPost
 POST    /admin/post/:postId                     Admin.SavePost
 
 # Project management
 GET     /admin/projects                         Admin.Projects()
-GET     /admin/projects/create                  Admin.EditProject(-1)
+GET     /admin/projects/create                  Admin.EditProject(0)
 GET     /admin/projects/:projectId/delete       Admin.DeleteProject
 GET     /admin/projects/:projectId              Admin.EditProject
 POST    /admin/projects/:projectId              Admin.SaveProject
@@ -56,13 +55,18 @@ GET     /admin/comments                         Admin.Comments
 GET     /admin/comments/update/:commentId       Admin.UpdateComment
 GET     /admin/comments/delete/:commentId       Admin.DeleteComment
 
-# Location management
-GET     /admin/locations                        Admin.Locations()
-GET     /admin/locations/create                 Admin.EditLocation(-1)
-GET     /admin/locations/:locationId/delete     Admin.DeleteLocation
-GET     /admin/locations/:locationId            Admin.EditLocation
-POST    /admin/locations/:locationId            Admin.SaveLocation
+# Live places management
+GET     /admin/live                             Admin.Live2()
+GET     /admin/live/places/create               Admin.EditPlace(0)
+GET     /admin/live/places/:placeId             Admin.EditPlace
+POST    /admin/live/places/:placeId             Admin.SavePlace
+GET     /admin/live/places/:placeId/delete      Admin.DeletePlace
 
+# Stay's at places
+GET     /admin/live/stays/create                Admin.EditStay(0)
+GET     /admin/live/stays/:stayId               Admin.EditStay
+POST    /admin/live/stays/:stayId               Admin.SaveStay
+GET     /admin/live/stays/:stayId/delete        Admin.DeleteStay
 
 # Map static resources from the /app/public folder to the /public path
 #GET     /uploads/*filepath               Static.Serve("/home/simon/bnginx-data/uploads")

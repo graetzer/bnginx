@@ -55,7 +55,18 @@ func init() {
 		return result
 	}
 
+	revel.TemplateFuncs["place"] = func(stay *Stay) *Place {
+		var place Place
+		if DB.First (&place, stay.PlaceId).RecordNotFound() {
+			return nil
+		}
+		return &place
+	}
+
 	revel.TemplateFuncs["json"] = func(v interface{}) string {
+		if v == nil {
+			return "(nil)"
+		}
 		bytes, err := json.Marshal(v)
 		if err != nil {
 			return ""//fmt.Println("error:", err)
@@ -81,8 +92,10 @@ func AppInit() {
 		db.CreateTable(&Blogpost{})
 		db.CreateTable(&Comment{})
 		db.CreateTable(&Project{})
-		db.CreateTable(&Location{})
-		db.AutoMigrate(&Location{})
+		db.CreateTable(&Place{})
+		db.CreateTable(&Stay{})
+
+		//db.AutoMigrate(&Location{}, )
 
 		var user User // Add default user
 		if db.First(&user).RecordNotFound() {

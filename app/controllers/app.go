@@ -164,8 +164,12 @@ func (c App) Projects() revel.Result {
 	return c.Render(projects)
 }
 
-func (c App) Locations() revel.Result {
-	var locations []*Location
-	DB.Order("updated_at DESC").Find(&locations)
-	return c.Render(locations)
+func (c App) Live() revel.Result {
+	var (
+		places []Place
+		stays []Stay
+	)
+	DB.Order("started_at DESC").Find(&stays)
+	DB.Find(&places)
+	return c.Render(places, stays)
 }

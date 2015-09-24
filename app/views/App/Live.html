@@ -1,0 +1,106 @@
+{{set . "title" .post.Title}} {{template "header.html" .}}
+
+<div class="row">
+	<div class="col-sm-11">
+		<div class="row panel panel-default">
+			<div class="col-xs-9" id="globe-container">
+			</div>
+			<div class="col-xs-3" id="stays-list">
+				{{range .stays}}{{$place := place .}}
+				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
+					<div class="col-sm-3">
+						<img src="{{$place.CoverUrl}}" alt="Project Logo" class="img-circle" />
+					</div>
+					<div class="col-sm-8">
+						<h6>{{$place.Name}}</h6>
+						<small>{{date .StartedAt}}</small> <a href="{{.Url}}" target="_blank">Gallery</a>
+					</div>
+				</div>{{end}}
+			</div>
+		</div>
+	</div>
+	<!-- ./col-sm-11 -->
+	<div class="col-sm-1">
+		{{template "App/social.html" .}}
+	</div>
+</div>
+<!-- /.row -->
+
+<script type="text/javascript" src="/public/globe/Detector.js"></script>
+<script type="text/javascript" src="/public/globe/three.min.js"></script>
+<script type="text/javascript" src="/public/globe/globe.js"></script>
+<script type="text/javascript">
+	var globe, places, active;
+	if (!Detector.webgl) {
+		Detector.addGetWebGLMessage();
+	} else {
+		var container = document.getElementById('globe-container');
+
+		container.style.backgroundImage = "/public/globe/loading.gif";
+		places = JSON.parse("{{json .places}}");
+		var globeImg = new Image();
+		globeImg.onload = function() {
+			// In memory drawing
+			var canvas = document.createElement('canvas');
+			canvas.width = globeImg.width;
+			canvas.height = globeImg.height;
+			var context = canvas.getContext('2d');
+			context.drawImage(globeImg, 0, 0);
+			var mapData = context.getImageData(0, 0, globeImg.width, globeImg.height);
+
+			var opts;
+			if (places.length > 0) opts = places[0];// works because keys match
+
+			globe = new DAT.Globe(container, opts);
+			globe.setData(mapData, places);
+			globe.animate();
+			container.style.backgroundImage = 'none'; //remove loading*/
+		};
+		globeImg.src = "/public/globe/globe.png";
+	}
+
+	function showPlace(stayId, placeId) {
+		var place;
+		for (var i = 0; i < places.length; i++) {
+			if (places[i].id == placeId) {
+				place = places[i];
+				break;
+			}
+		}
+		if (place) globe.showLatLng(place.lat, place.lng);
+
+		if (active) active.removeClass("active");
+		active = $('#stay-' + stayId);
+		active.addClass("active");
+	}
+</script>
+<style type="text/css">
+	#globe-container {
+		padding-left: 0px;
+		padding-right: 0px;
+		border-right: 1px solid #DDD;
+	}
+	#stays-list img {
+		width: 100%;
+	}
+
+	#stays-list {
+		padding: 5px 20px 5px 20px;
+	}
+
+	#stays-list .row {
+		padding-top: 5px;
+		border-radius: 4px;
+	}
+
+	#stays-list .row:hover {
+		background-color: #EEE;
+	}
+
+	#stays-list .row.active,
+	#stays-list .row.active a {
+		color: #fff;
+		background-color: #337AB7;
+	}
+</style>
+{{template "footer.html" .}}
