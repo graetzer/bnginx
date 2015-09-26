@@ -11,60 +11,7 @@ import (
 
 type App struct {
 	*revel.Controller
-}
-
-// ================ Helper functions ================
-
-func (c App) addTemplateVars() revel.Result {
-	c.RenderArgs["user"] = c.connected()
-	return nil
-}
-
-func (c App) connected() *User {
-	if c.RenderArgs["user"] != nil {
-		return c.RenderArgs["user"].(*User)
-	}
-	if email, ok := c.Session["user"]; ok {
-		user := c.getUser(email)
-		if user == nil { // Email seems invalid
-			delete(c.Session, "user")
-		}
-		return user
-	}
-	return nil
-}
-
-func (c App) getUser(email string) *User {
-	var user User
-	if DB.Where("email = ?", email).First(&user).RecordNotFound() {
-		c.Flash.Error("You are not logged in")
-		return nil
-	}
-	return &user
-}
-
-func (c App) getUserById(userId int64) *User {
-	var user User
-	if DB.First(&user, userId).RecordNotFound() {
-		c.Flash.Error("No user with this id")
-		return nil
-	}
-	return &user
-}
-
-func (c App) getPostById(postId int64) *Blogpost {
-	var post Blogpost
-	if DB.First(&post, postId).RecordNotFound() {
-		c.Flash.Error("This Post does not exist")
-		return nil
-	}
-	return &post
-}
-
-func (c App) getPublishedPosts(offset int64) []*Blogpost {
-	var posts []*Blogpost
-	DB.Where("published").Order("updated_at DESC").Limit(5).Offset(offset).Find(&posts)
-	return posts
+	Base
 }
 
 // ================ Actions ================
@@ -114,7 +61,7 @@ func (c App) Search(query string, offset int64) revel.Result {
 	return c.Render(posts, query, offset)
 }
 
-func (c App) ShowPost(postId int64) revel.Result {
+func (c App) Post(postId int64) revel.Result {
 	post := c.getPostById(postId)
 	if post == nil {
 		return c.NotFound("Oh no! I couldn't find this page")
@@ -155,7 +102,7 @@ func (c App) SaveComment(postId int64, name, title, body string) revel.Result {
 		DB.Save(&comment)
 		c.Flash.Success("Thanks for commenting")
 	}
-	return c.Redirect(routes.App.ShowPost(postId))
+	return c.Redirect(routes.App.Post(postId))
 }
 
 func (c App) Projects() revel.Result {
@@ -164,7 +111,7 @@ func (c App) Projects() revel.Result {
 	return c.Render(projects)
 }
 
-func (c App) Live() revel.Result {
+func (c App) About() revel.Result {
 	var (
 		places []Place
 		stays []Stay
@@ -172,4 +119,8 @@ func (c App) Live() revel.Result {
 	DB.Order("started_at DESC").Find(&stays)
 	DB.Find(&places)
 	return c.Render(places, stays)
+}
+
+func (c App) Imprint() revel.Result {
+	return c.Render()
 }

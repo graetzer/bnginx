@@ -18,13 +18,13 @@ import (
 
 func init() {
 	revel.OnAppStart(AppInit)
-	revel.InterceptMethod((*App).addTemplateVars, revel.BEFORE)
+	revel.InterceptMethod((*Base).addTemplateVars, revel.BEFORE)
 	revel.InterceptMethod((*Admin).checkUser, revel.BEFORE)
 
 	revel.TemplateFuncs["markdown"] = func(input string) template.HTML {
 		return template.HTML(string(blackfriday.MarkdownCommon([]byte(input))))
 	}
-
+	// Use for user supplied content, sanitizes html input and javascript
 	revel.TemplateFuncs["markdownSave"] = func(input string) template.HTML {
 		return template.HTML(string(SecureMarkdown([]byte(input))))
 	}

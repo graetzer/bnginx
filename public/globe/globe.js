@@ -51,14 +51,14 @@ DAT.Globe = function(container, opts) {
   //support different inital position
   if (opts.lat && opts.lng) {
     showLatLng(opts.lat, opts.lng);
-    distanceTarget = 50000;// don't zoom in so far
+    distanceTarget = 50000; // don't zoom in so far
   }
 
   function init() {
 
     var shader, uniforms, material;
     w = opts.width || 600;
-    h = opts.height || 600;
+    h = opts.height || 500;
 
     camera = new THREE.PerspectiveCamera(25, w / h, 1, 10000);
     camera.position.z = distance;
@@ -93,6 +93,9 @@ DAT.Globe = function(container, opts) {
     container.addEventListener('mousemove', onMouseMove, false);
     container.addEventListener('mouseup', onMouseUp, false);
     container.addEventListener('wheel', onMouseWheel, false);
+    container.addEventListener("touchstart", onMouseDown, false);
+    container.addEventListener("touchend", onMouseUp, false);
+    container.addEventListener("touchmove", onMouseMove, false);
     container.addEventListener('mouseover', function() {
       overRenderer = true;
     }, false);
@@ -102,11 +105,11 @@ DAT.Globe = function(container, opts) {
     }, false);
 
     document.addEventListener('keydown', onDocumentKeyDown, false);
-    window.addEventListener('resize', onWindowResize, false);
+    //window.addEventListener('resize', onWindowResize, false);
   }
 
   function setData(worldMap, places) {
-    var lat, lng, step, i, x, y;
+    var lat, lng, step, i, x, y, intensity;
 
     var subgeo = new THREE.Geometry();
     var color1 = new THREE.Color(0, 0, 0);
@@ -116,11 +119,21 @@ DAT.Globe = function(container, opts) {
 
     var xx = 0;
     for (y = 0; y < worldMap.height; y += 4) {
-      step = Math.floor(35 * Math.pow(2 * y / worldMap.height - 1, 4) + 4);
-
-      for (x = 0; x < worldMap.width; x += step) {
+      //step = Math.floor(35 * Math.pow(2 * y / worldMap.height - 1, 4) + 4);
+      ys = y / worldMap.height;
+      x = 0;
+      if (0.128 < ys && ys < 0.72) step = 5;
+      else {
+        if (ys <= 0.128) {// 2^(3 + distBorder) at least 8, doubles every 5 px
+          step = Math.floor(Math.pow(2, (0.128 * worldMap.height - y) / 7) + 3);
+        } else {
+          step = Math.floor(Math.pow(2, (y - 0.72*worldMap.height) / 7) + 3);
+        }
+        x = Math.floor(step);
+      }
+      for (; x < worldMap.width; x += step) {
         i = (y * worldMap.width + x) * 4;
-        var intensity = data[i] + data[i + 1] + data[i + 2];
+        intensity = data[i] + data[i + 1] + data[i + 2];
 
         lat = 90 - 180 * (y / worldMap.height); // equilateral projection
         lng = 360 * (x / worldMap.width) - 180;
@@ -132,7 +145,9 @@ DAT.Globe = function(container, opts) {
         xx++;
       }
     }
-    console.log("%d nodes", xx);
+    addPoint(90, 0, 0.5, 1, color2, subgeo);// northpole
+    addPoint(-90, 0, 0.5, 1, color2, subgeo);//southpole
+    console.log("%d nodes", xx+2);
     this.points = new THREE.Mesh(subgeo, new THREE.MeshBasicMaterial({
       color: 0xffffff,
       vertexColors: THREE.FaceColors,
@@ -189,6 +204,7 @@ DAT.Globe = function(container, opts) {
 
   function onMouseDown(event) {
     event.preventDefault();
+    if (event.touches) event = event.touches[0];// has clientXY
 
     mouseOnDown.x = -event.clientX;
     mouseOnDown.y = event.clientY;
@@ -200,6 +216,8 @@ DAT.Globe = function(container, opts) {
   }
 
   function onMouseMove(event) {
+    if (event.touches) event = event.touches[0];// has clientXY
+
     mouse.x = -event.clientX;
     mouse.y = event.clientY;
     if (mouseDown) {
@@ -228,23 +246,29 @@ DAT.Globe = function(container, opts) {
   function onDocumentKeyDown(event) {
     var key = event.which || event.keyCode || 0;
     switch (key) {
-      case 87:// w
-      case 38:// up arrow
+      case 38: // up arrow
         zoom(100);
         event.preventDefault();
         break;
-      case 83:// s
-      case 40:// down arrow
+      case 40: // down arrow
         zoom(-100);
         event.preventDefault();
         break;
-      case 65:// a
-      case 37://left arrow
+      case 87: // w
+        target.y += 0.1;
+        event.preventDefault();
+        break;
+      case 83: // s
+        target.y -= 0.1;
+        event.preventDefault();
+        break;
+      case 65: // a
+      case 37: //left arrow
         target.x -= 0.1;
         event.preventDefault();
         break;
-      case 68:// d
-      case 39://right arrow
+      case 68: // d
+      case 39: //right arrow
         target.x += 0.1;
         event.preventDefault();
         break;
@@ -253,7 +277,7 @@ DAT.Globe = function(container, opts) {
 
   function onWindowResize(event) { // TODO fix window resize
     w = container.offsetWidth || 600;
-    h = container.offsetHeight || 600;
+    h = container.offsetHeight || 500;
     /*camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize( container.offsetWidth, container.offsetHeight );*/
@@ -266,8 +290,8 @@ DAT.Globe = function(container, opts) {
   }
 
   function animate() {
-    requestAnimationFrame(animate);
     render();
+    requestAnimationFrame(animate);
   }
 
   function render() {
@@ -285,7 +309,7 @@ DAT.Globe = function(container, opts) {
     renderer.render(scene, camera);
   }
 
-  function showLatLng(lat, lng) {// No idea why this works
+  function showLatLng(lat, lng) { // No idea why this works
     target.x = lng * Math.PI / 180 - PI_HALF;
     target.y = lat * Math.PI / 180;
     distanceTarget = 500;

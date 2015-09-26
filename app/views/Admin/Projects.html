@@ -31,8 +31,7 @@
           <td>{{datetime .UpdatedAt}}</td>
           <td><img src="{{.CoverUrl}}" alt="Project Logo"></td>
           <td>{{.Tags}}</td>
-          {{if eq $user.IsAdmin}}
-          <td>
+          {{if $user.IsAdmin}}<td>
             <a href="/admin/projects/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
             <a href="/admin/projects/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
           </td>{{end}}

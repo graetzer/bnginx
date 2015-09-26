@@ -1,11 +1,22 @@
 {{set . "title" .post.Title}} {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-11">
-		<div class="row panel panel-default">
+	<div class="col-sm-11 panel panel-default">
+		<h3 class="panel-title">About me</h3>
+		<p>My name is Simon Grätzer and I’m a 23 year old software developer living in Aachen (Germany). I started learning programming when I was around 12 years old, I started working as a developer when I was 16. Currently I am mostly busy with building apps
+			for mobile devices (
+			<strong>iOS</strong> and
+			<strong>Android</strong> based) but I have experience with
+			<strong>Java</strong> and
+			<strong>C#</strong> as well. In addition to working, I am doing my Master Degree in computer science at the RWTH Aachen University.</p>
+		<p>Contact me at: simon(at)graetzer.org</p>
+
+		<div class="row">
 			<div class="col-xs-9" id="globe-container">
+
 			</div>
 			<div class="col-xs-3" id="stays-list">
+				<h6>Trips & Locations</h6>
 				{{range .stays}}{{$place := place .}}
 				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
 					<div class="col-sm-3">
@@ -13,7 +24,7 @@
 					</div>
 					<div class="col-sm-8">
 						<h6>{{$place.Name}}</h6>
-						<small>{{date .StartedAt}}</small> <a href="{{.Url}}" target="_blank">Gallery</a>
+						<small>{{date .StartedAt}}</small> <a href="{{.Url}}" target="_blank" title="Pictures of my stay">Gallery</a>
 					</div>
 				</div>{{end}}
 			</div>
@@ -46,15 +57,42 @@
 			canvas.height = globeImg.height;
 			var context = canvas.getContext('2d');
 			context.drawImage(globeImg, 0, 0);
-			var mapData = context.getImageData(0, 0, globeImg.width, globeImg.height);
+			var worldMap = context.getImageData(0, 0, globeImg.width, globeImg.height);
+
+			// Visualize sampling pattern
+			/*var data = worldMap.data, xx = 0, ys, yy;
+			for (y = 0; y < worldMap.height; y += 5) {
+				ys = y / worldMap.height;
+	      x = 0;
+	      if (0.123 < ys && ys < 0.72) step = 5;
+	      else {
+	        if (ys <= 0.123) {// 2^(3 + distBorder) at least 8, doubles every 5 px
+	          step = Math.floor(Math.pow(2, (0.123 * worldMap.height - y) / 5) + 3);
+	        } else {
+	          step = Math.floor(Math.pow(2, (y - 0.72*worldMap.height) / 10) + 3);
+	        }
+	        x = Math.floor(step);
+	      }
+
+	      for (x = 0; x < worldMap.width; x += step) {
+	        i = (y * worldMap.width + x) * 4;
+					data[i] = 0;
+					data[i + 1] = 255;
+					data[i + 2] = 255;
+					xx++;
+	      }
+	    }
+			console.log("%d nodes", xx);
+			context.putImageData(worldMap, 0, 0);
+			container.appendChild(canvas);//*/
 
 			var opts;
-			if (places.length > 0) opts = places[0];// works because keys match
+			if (places.length > 0) opts = places[0]; // works because keys match
 
 			globe = new DAT.Globe(container, opts);
-			globe.setData(mapData, places);
+			globe.setData(worldMap, places);
 			globe.animate();
-			container.style.backgroundImage = 'none'; //remove loading*/
+			container.style.backgroundImage = 'none';//*/
 		};
 		globeImg.src = "/public/globe/globe.png";
 	}
@@ -80,6 +118,7 @@
 		padding-right: 0px;
 		border-right: 1px solid #DDD;
 	}
+
 	#stays-list img {
 		width: 100%;
 	}
@@ -101,6 +140,9 @@
 	#stays-list .row.active a {
 		color: #fff;
 		background-color: #337AB7;
+	}
+	canvas {
+		background-color:#fff;
 	}
 </style>
 {{template "footer.html" .}}

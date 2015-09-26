@@ -1,20 +1,24 @@
-{{set . "title" .post.Title}} {{template "header.html" .}} {{template "App/trailer.html" .}}
+{{set . "title" .post.Title}} {{template "header.html" .}}
 
 <div class="row">
 	<div class="col-sm-11">
-		<main>
+		<main id="project-list">
 			{{range .projects}}
 			<article>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">{{.Title}}
+						<h3 class="panel-title">{{.Title}}{{/*
 							<small class="pull-right">{{datetime .UpdatedAt}}</small>
-						</h3>
+						*/}}</h3>
 					</div>
 					<div class="panel-body">
-						<img src="{{.CoverUrl}}" alt="Project Logo" class="img-circle" />
-						<p>{{.Description}}</p>
-						<a href="{{.RepoUrl}}" title="Make a comment">Repository</a>
+						<div class="col-sm-3">
+							<img src="{{.CoverUrl}}" alt="Project Logo" class="img-square" />
+						</div>
+						<div class="col-sm-7">
+							{{markdown .Description}}
+							<a href="{{.RepoUrl}}" title="Repository or project website" target="_blank">More Information</a>
+						</div>
 					</div>
 				</div>
 			</article>
@@ -27,6 +31,9 @@
 		{{template "App/social.html" .}}
 	</div>
 </div>
-<!-- /.row -->
-
+<style type="text/css">
+	#project-list img {
+		width: 100%;
+	}
+</style>
 {{template "footer.html" .}}

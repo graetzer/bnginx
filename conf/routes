@@ -7,10 +7,11 @@ module:testrunner
 GET     /                                       App.Index
 GET     /feed.rss                               App.Feed
 GET     /search                                 App.Search
-GET     /post/:postId/*                         App.ShowPost
+GET     /post/:postId/*                         App.Post
 POST    /post/comment/:postId                   App.SaveComment
 GET     /projects                               App.Projects
-GET     /live                                   App.Live
+GET     /about                                  App.About
+GET     /imprint                                App.Imprint
 
 # Login & Logout
 POST    /login                                  App.Login
@@ -55,22 +56,22 @@ GET     /admin/comments                         Admin.Comments
 GET     /admin/comments/update/:commentId       Admin.UpdateComment
 GET     /admin/comments/delete/:commentId       Admin.DeleteComment
 
-# Live places management
-GET     /admin/live                             Admin.Live2()
-GET     /admin/live/places/create               Admin.EditPlace(0)
-GET     /admin/live/places/:placeId             Admin.EditPlace
-POST    /admin/live/places/:placeId             Admin.SavePlace
-GET     /admin/live/places/:placeId/delete      Admin.DeletePlace
+# About places management
+GET     /admin/about                            Admin.About()
+GET     /admin/about/places/create              Admin.EditPlace(0)
+GET     /admin/about/places/:placeId            Admin.EditPlace
+POST    /admin/about/places/:placeId            Admin.SavePlace
+GET     /admin/about/places/:placeId/delete     Admin.DeletePlace
 
 # Stay's at places
-GET     /admin/live/stays/create                Admin.EditStay(0)
-GET     /admin/live/stays/:stayId               Admin.EditStay
-POST    /admin/live/stays/:stayId               Admin.SaveStay
-GET     /admin/live/stays/:stayId/delete        Admin.DeleteStay
+GET     /admin/about/stays/create               Admin.EditStay(0)
+GET     /admin/about/stays/:stayId              Admin.EditStay
+POST    /admin/about/stays/:stayId              Admin.SaveStay
+GET     /admin/about/stays/:stayId/delete       Admin.DeleteStay
 
 # Map static resources from the /app/public folder to the /public path
-#GET     /uploads/*filepath               Static.Serve("/home/simon/bnginx-data/uploads")
-GET     /public/*filepath                       Static.Serve("public")
+#GET     /uploads/*filepath                    Static.Serve("/home/simon/bnginx-data/uploads")
+GET     /public/*filepath                      Static.Serve("public")
 
 # Catch all
 # *       /:controller/:action                  :controller.:action

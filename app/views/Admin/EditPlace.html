@@ -4,7 +4,7 @@
 	<div class="col-sm-10 col-sm-offset-2">
 		<ol class="breadcrumb">
 		  <li><a href="/admin">Admin Panel</a></li>
-			<li><a href="/admin/live/">Live</a></li>
+			<li><a href="/admin/about/">About</a></li>
 		  <li class="active">{{.title}}</li>
 		</ol>
 	</div>
@@ -17,7 +17,7 @@
 
 	<div class="col-sm-8">
 		<h3>{{.title}}</h3>
-		<form role="form" method="POST" action="/admin/live/places/{{.place.Id}}">
+		<form role="form" method="POST" action="/admin/about/places/{{.place.Id}}">
 			<div class="form-group">
 				<label for="inputName">Name</label>
 				<input type="text" class="form-control" id="inputName" name="place.Name" placeholder="Name" value="{{.place.Name}}" />
