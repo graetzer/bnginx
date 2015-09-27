@@ -307,7 +307,7 @@ DAT.Globe = function(container, opts) {
   function zoom(delta) {
     distanceTarget -= delta;
     distanceTarget = distanceTarget > 1000 ? 1000 : distanceTarget;
-    distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
+    distanceTarget = distanceTarget < 275 ? 275 : distanceTarget;
   }
 
   function animate() {
@@ -333,7 +333,7 @@ DAT.Globe = function(container, opts) {
   function showLatLng(lat, lng) { // No idea why this works
     target.x = lng * Math.PI / 180 - PI_HALF;
     target.y = lat * Math.PI / 180;
-    distanceTarget = 500;
+    distanceTarget = 350;
   }
 
   init();
