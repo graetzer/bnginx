@@ -1,6 +1,6 @@
 package tests
 
-import "github.com/revel/revel"
+/*import "github.com/revel/revel"
 
 type AppTest struct {
 	revel.TestSuite
@@ -19,3 +19,4 @@ func (t *AppTest) TestThatIndexPageWorks() {
 func (t *AppTest) After() {
 	println("Tear down")
 }
+*/
