@@ -7,15 +7,16 @@
 			<article>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">{{.Title}}{{/*
-							<small class="pull-right">{{datetime .UpdatedAt}}</small>
-						*/}}</h3>
+						<h3 class="panel-title">{{.Title}}
+							<small class="pull-right">{{.Tags}}</small>
+						</h3>
 					</div>
 					<div class="panel-body">
-						<div class="col-sm-3">
-							<img src="{{.CoverUrl}}" alt="Project Logo" class="img-square" />
+						<div class="col-sm-4">
+							{{if .CoverUrl}}<img src="{{.CoverUrl}}" alt="Project Logo" class="img-square" />
+							{{else}}<div class="pattern" style="background:url('{{pattern .Id}}')"></div>{{end}}
 						</div>
-						<div class="col-sm-7">
+						<div class="col-sm-8">
 							{{markdown .Description}}
 							{{if .RepoUrl}}<a href="{{.RepoUrl}}" title="Repository or project website" target="_blank">More Information</a>{{end}}
 						</div>
@@ -33,7 +34,12 @@
 </div>
 <style type="text/css">
 	#project-list img {
-		width: 100%;
+		max-width: 100%;
+		max-height: 250px;
+	}
+	.pattern {
+		width:100%;
+		height:150px;
 	}
 </style>
 {{template "footer.html" .}}

@@ -30,7 +30,7 @@ func (c Admin) Index() revel.Result {
 		posts []*Blogpost
 		users []*User
 	)
-	DB.Order("updated_at DESC").Find(&posts)
+	DB.Order("created_at DESC").Find(&posts)
 	DB.Find(&users)
 	return c.Render(posts, users)
 }

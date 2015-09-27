@@ -10,8 +10,8 @@
 			<div class="panel panel-default">
 			  <div class="panel-heading">
 			    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
-				<small>By {{username .UserId}}</small>
 				{{if $user}}
+				<small>By {{username .UserId}}</small>
 					{{if eq $user.Id .UserId}}
 						<a href="/admin/post/{{.Id}}" title="Edit this Post">Edit</a>
 					{{end}}
@@ -19,7 +19,7 @@
 			  </div>
 			  <div class="panel-body">
 			    {{markdown .Body}}
-				
+
 				<p><a href="/post/{{.Id}}/{{urlquery .Title}}#commentForm" title="Make a comment">
 				{{$count := commentCount .}}
 				{{if eq $count 0}}Comment on this article{{else}}
@@ -29,7 +29,7 @@
 			</div>
 		</article>
 		{{end}}
-		
+
 		{{/* Handling of next/back/empty */}}
 		{{if eq .offset 0 | not}}
 			<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
@@ -44,7 +44,7 @@
 		{{end}}
 	</main>
 	</div><!-- ./col-sm-11 -->
-	
+
 	<div class="col-xs-12 col-sm-1">
 	{{template "App/social.html" .}}
 	</div>

@@ -1,76 +1,69 @@
-{{set . "title" "Admin Panel"}}
-{{template "header.html" .}}
+{{set . "title" "Admin Panel"}} {{template "header.html" .}}
 
 <div class="row">
 	<div class="col-sm-10 col-sm-offset-2">
 		<ol class="breadcrumb">
-		  <li class="active">Admin Panel</li>
+			<li class="active">Admin Panel</li>
 		</ol>
 	</div>
 </div>
 <div class="row">
 	<div class="col-sm-2">
-		{{ set . "pp" 0}}
-		{{template "Admin/adminMenu.html" .}}
+		{{ set . "pp" 0}} {{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-10">
-	    <h3>Posts</h3>
+		<h3>Posts</h3>
 		<table class="table table-hover">
-		   <thead>
-		       <tr>
-				<th>Title</th>
-				<th>Published</th>
-				<th>Last Update Date</th>
-				<th>Author</th>
-				<th>Actions</th>
-		       </tr>
-		   </thead>
-		   <tbody>
-			{{$user := .user}}
-		    {{range .posts}}
-		       	<tr class="{{if .Published}}success{{else}}warning{{end}}">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Created</th>
+					<th>Updated</th>
+					<th>Author</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{$user := .user}} {{range .posts}}
+				<tr class="{{if .Published}}success{{else}}info{{end}}">
 					<td>{{.Title}}</td>
-					<td>{{if not .Published}}Not {{end}}Published</td>
-					<td>{{datetime .UpdatedAt}}</td>
+					<td>{{date .CreatedAt}}</td>
+					<td>{{date .UpdatedAt}}</td>
 					<td>{{username .UserId}}</td>
 					<td>
-						<a href="/admin/post/{{.Id}}" class="btn btn-primary btn-sm">Edit</a>
-						{{if eq $user.Id .UserId}}
-							<a href="/admin/post/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a>
-						{{end}}
+						<a href="/admin/post/{{.Id}}" class="btn btn-primary btn-sm">Edit</a> {{if eq $user.Id .UserId}}
+						<a href="/admin/post/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
 					</td>
 				</tr>
-			{{end}}
-		   </tbody>
+				{{end}}
+			</tbody>
 		</table>
 
 		<h3>Users</h3>
 		<table class="table table-striped">
-		   <thead>
-		       <tr>
-				<th>#ID</th>
-				<th>Name</th>
-				<th>Email</th>
-				<th>Type</th>
-				<th>Actions</th>
-		       </tr>
-		   </thead>
-		   <tbody>
-		    {{range .users}}
-		       	<tr>
+			<thead>
+				<tr>
+					<th>#ID</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Type</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{range .users}}
+				<tr>
 					<td>{{.Id}}</td>
 					<td>{{.Name}}</td>
 					<td>{{.Email}}</td>
 					<td>{{if .IsAdmin}}Administrator{{else}}User{{end}}</td>
 					<td>
-						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a>
-						{{if and ($user.IsAdmin) (not (eq $user.Id .Id))}}
-							<a href="/admin/user/{{.Email}}/delete" class="btn btn-danger btn-sm">Delete</a>
-						{{end}}
+						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a> {{if and ($user.IsAdmin) (not (eq $user.Id .Id))}}
+						<a href="/admin/user/{{.Email}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
 					</td>
 				</tr>
-			{{end}}
-		   </tbody>
+				{{end}}
+			</tbody>
 		</table>
 	</div>
 </div>

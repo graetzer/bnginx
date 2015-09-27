@@ -78,6 +78,13 @@ func init() {
 	revel.TemplateFuncs["eqtime"] = func(t1 time.Time, t2 time.Time) bool {
 		return t1.Equal(t2)
 	}
+	// not pretty but effective
+	patterns := [...]string {"0.png", "1.gif", "2.jpg", "3.png", "4.png",
+	"5.png", "6.jpg", "7.png", "8.png", "9.png"}
+	revel.TemplateFuncs["pattern"] = func(id int64) string {
+		i := int(id) % len(patterns)
+		return "/public/patterns/pattern" + patterns[i]
+	}
 }
 
 var (
@@ -154,6 +161,6 @@ func DataBaseDir() string {
 		}
 		base = filepath.Join(base, "/bnginx-data")
 	}
-	revel.INFO.Println("Using basepath " + base)
+	//revel.INFO.Println("Using basepath " + base)
 	return base
 }

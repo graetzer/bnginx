@@ -110,7 +110,7 @@ func (c App) Projects(hidden bool) revel.Result {
 	if hidden {
 		DB.Order("updated_at DESC").Find(&projects)
 	} else {
-		DB.Where("!hidden").Order("updated_at DESC").Find(&projects)
+		DB.Where("NOT hidden").Order("updated_at DESC").Find(&projects)
 	}
 	return c.Render(projects)
 }

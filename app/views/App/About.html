@@ -1,5 +1,8 @@
-{{set . "title" .post.Title}} {{template "header.html" .}}
-
+{{set . "title" .post.Title}}
+{{append . "moreScripts" "/public/globe/Detector.js"}}
+{{append . "moreScripts" "/public/globe/three.min.js"}}
+{{append . "moreScripts" "/public/globe/globe.js"}}
+{{template "header.html" .}}
 <div class="row">
 	<div class="col-sm-12 panel panel-default">
 		<p>I’m a 23 year old software developer living in Germany. I started learning programming when I was around 12 years old, I started working as a developer when I was 16. Currently I am mostly concerned with mobile app development for
@@ -14,7 +17,7 @@
 		<div class="row">
 			<div class="col-sm-10" id="globe-container"></div>
 			<div class="col-sm-2" id="stays-list">
-				<h6>Trips &auml; Locations</h6>
+				<h6>Trips &amp; Locations</h6>
 				{{range .stays}}{{$place := place .}}
 				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
 					<div class="col-xs-5" style="padding:0">
@@ -30,10 +33,6 @@
 	</div>
 </div>
 <!-- /.row -->
-
-<script type="text/javascript" src="/public/globe/Detector.js"></script>
-<script type="text/javascript" src="/public/globe/three.min.js"></script>
-<script type="text/javascript" src="/public/globe/globe.js"></script>
 <script type="text/javascript">
 	var globe, places, active;
 	if (!Detector.webgl) {
