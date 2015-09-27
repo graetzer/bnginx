@@ -17,7 +17,7 @@
 						</div>
 						<div class="col-sm-7">
 							{{markdown .Description}}
-							<a href="{{.RepoUrl}}" title="Repository or project website" target="_blank">More Information</a>
+							{{if .RepoUrl}}<a href="{{.RepoUrl}}" title="Repository or project website" target="_blank">More Information</a>{{end}}
 						</div>
 					</div>
 				</div>

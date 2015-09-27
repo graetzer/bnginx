@@ -19,7 +19,7 @@ DAT.Globe = function(container, opts) {
   var camera, scene, renderer, w, h;
   var mesh, atmosphere, point;
 
-  var overRenderer, mouseDown;
+  var overRenderer, mouseDown, zoomTouchSpread;
 
   var curZoomSpeed = 0;
   var zoomSpeed = 50;
@@ -204,7 +204,16 @@ DAT.Globe = function(container, opts) {
 
   function onMouseDown(event) {
     event.preventDefault();
-    if (event.touches) event = event.touches[0];// has clientXY
+    if (event.targetTouches) {
+      var tts = event.targetTouches;
+      if (tts.length == 2) {// pinch to zoom
+        var xx = tts[0].clientX - tts[1].clientX;
+        var yy = tts[0].clientY - tts[1].clientY;
+        zoomTouchSpread = Math.sqrt(xx*xx  + yy*yy);
+        return;
+      }
+      event = event.targetTouches[0];// has clientXY
+    }
 
     mouseOnDown.x = -event.clientX;
     mouseOnDown.y = event.clientY;
@@ -216,7 +225,17 @@ DAT.Globe = function(container, opts) {
   }
 
   function onMouseMove(event) {
-    if (event.touches) event = event.touches[0];// has clientXY
+    if (event.targetTouches) {
+      var tts = event.targetTouches;
+      if (tts.length == 2) {// pinch to zoom
+        var xx = tts[0].clientX - tts[1].clientX;
+        var yy = tts[0].clientY - tts[1].clientY;
+        var zoomDelta = Math.sqrt(xx*xx  + yy*yy) - zoomTouchSpread;
+        zoom(zoomDelta * 0.4);// 0.4 feels smooth on an iphone 6
+        return;
+      }
+      event = event.targetTouches[0];// has clientXY
+    }
 
     mouse.x = -event.clientX;
     mouse.y = event.clientY;
@@ -273,6 +292,8 @@ DAT.Globe = function(container, opts) {
         event.preventDefault();
         break;
     }
+    target.y = target.y > PI_HALF ? PI_HALF : target.y;
+    target.y = target.y < -PI_HALF ? -PI_HALF : target.y;
   }
 
   function onWindowResize(event) { // TODO fix window resize

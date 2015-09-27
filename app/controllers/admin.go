@@ -341,6 +341,7 @@ func (c Admin) EditStay(stayId int64) revel.Result {
 			return c.Redirect(routes.Admin.About())
 		} else {
 			stay.StartedAt = time.Now()
+			stay.EndedAt = stay.StartedAt
 		}
 	}
 	DB.Find(&places)

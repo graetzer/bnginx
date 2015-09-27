@@ -18,7 +18,6 @@
       <thead>
         <tr>
           <th>Title</th>
-          <th>Date</th>
           <th>Image</th>
           <th>Tags</th>
           {{if $user.IsAdmin}}<th>Actions</th>{{end}}
@@ -26,9 +25,8 @@
       </thead>
       <tbody>
         {{range .projects}}
-        <tr>
+        <tr {{if .Hidden}}class="info"{{end}}>
           <td>{{.Title}}</td>
-          <td>{{datetime .UpdatedAt}}</td>
           <td><img src="{{.CoverUrl}}" alt="Project Logo"></td>
           <td>{{.Tags}}</td>
           {{if $user.IsAdmin}}<td>

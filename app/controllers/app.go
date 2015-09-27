@@ -105,9 +105,13 @@ func (c App) SaveComment(postId int64, name, title, body string) revel.Result {
 	return c.Redirect(routes.App.Post(postId))
 }
 
-func (c App) Projects() revel.Result {
+func (c App) Projects(hidden bool) revel.Result {
 	var projects []*Project
-	DB.Order("updated_at DESC").Find(&projects)
+	if hidden {
+		DB.Order("updated_at DESC").Find(&projects)
+	} else {
+		DB.Where("!hidden").Order("updated_at DESC").Find(&projects)
+	}
 	return c.Render(projects)
 }
 

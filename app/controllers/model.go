@@ -75,6 +75,7 @@ type Project struct {
 	CoverUrl    string
 	RepoUrl			string
 	Tags        string
+	Hidden      bool
 }
 
 type Stay struct {

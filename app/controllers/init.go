@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
 	"encoding/json"
 
 	"github.com/graetzer/go-recaptcha"
@@ -73,6 +74,10 @@ func init() {
 		}
 		return string(bytes)
 	}
+
+	revel.TemplateFuncs["eqtime"] = func(t1 time.Time, t2 time.Time) bool {
+		return t1.Equal(t2)
+	}
 }
 
 var (
@@ -95,7 +100,7 @@ func AppInit() {
 		db.CreateTable(&Place{})
 		db.CreateTable(&Stay{})
 
-		//db.AutoMigrate(&Location{}, )
+		db.AutoMigrate(&Project{})
 
 		var user User // Add default user
 		if db.First(&user).RecordNotFound() {

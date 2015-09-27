@@ -42,6 +42,11 @@
 				<label for="textarea">Description</label>
 				<textarea class="form-control" id="textarea" name="project.Description" rows="5">{{.project.Description}}</textarea>
 			</div>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="project.Hidden" value="true" {{if .project.Hidden}}checked{{end}} /> Hidden Project
+				</label>
+			</div>
 
 			<input type="hidden" name="project.Id" value="{{.project.Id}}" />
 			<button type="submit" class="btn btn-default">Save</button>

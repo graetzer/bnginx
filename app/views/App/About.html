@@ -1,38 +1,32 @@
 {{set . "title" .post.Title}} {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-11 panel panel-default">
-		<h3 class="panel-title">About me</h3>
-		<p>My name is Simon Grätzer and I’m a 23 year old software developer living in Aachen (Germany). I started learning programming when I was around 12 years old, I started working as a developer when I was 16. Currently I am mostly busy with building apps
-			for mobile devices (
+	<div class="col-sm-12 panel panel-default">
+		<p>I’m a 23 year old software developer living in Germany. I started learning programming when I was around 12 years old, I started working as a developer when I was 16. Currently I am mostly concerned with mobile app development for
 			<strong>iOS</strong> and
-			<strong>Android</strong> based) but I have experience with
-			<strong>Java</strong> and
-			<strong>C#</strong> as well. In addition to working, I am doing my Master Degree in computer science at the RWTH Aachen University.</p>
-		<p>Contact me at: simon(at)graetzer.org</p>
+			<strong>Android</strong>. I also have an active interest in
+			<strong>Computer Graphics</strong>,
+			<strong>Machine Learning</strong> and
+			<strong>web development</strong>. If you want to see what I'm up to you can look at a list of my <a href="/projects" title="Project List">projects</a> or go to my <a href="https://github.com/graetzer/" title="My Github profile">github profile</a>. I am currently
+			working towards my master degree in computer science at the RWTH Aachen University.</p>
+		<p>If you want to get in touch you can see my current approximate location on the map below. Shoot me an email at: simon(at)graetzer.org</p>
 
 		<div class="row">
-			<div class="col-xs-9" id="globe-container">
-
-			</div>
-			<div class="col-xs-3" id="stays-list">
-				<h6>Trips & Locations</h6>
+			<div class="col-sm-10" id="globe-container"></div>
+			<div class="col-sm-2" id="stays-list">
+				<h6>Trips &auml; Locations</h6>
 				{{range .stays}}{{$place := place .}}
 				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
-					<div class="col-sm-3">
+					<div class="col-xs-5" style="padding:0">
 						<img src="{{$place.CoverUrl}}" alt="Project Logo" class="img-circle" />
 					</div>
-					<div class="col-sm-8">
-						<h6>{{$place.Name}}</h6>
-						<small>{{date .StartedAt}}</small> <a href="{{.Url}}" target="_blank" title="Pictures of my stay">Gallery</a>
+					<div class="col-xs-7">
+						<h6><a href="{{.Url}}" target="_blank" title="Pictures of my stay">{{$place.Name}}</a></h6>
+						<small>{{if eqtime .StartedAt .EndedAt}}{{date .StartedAt}}{{else}}{{date .StartedAt}} - {{date .EndedAt}}{{end}}</small>
 					</div>
 				</div>{{end}}
 			</div>
 		</div>
-	</div>
-	<!-- ./col-sm-11 -->
-	<div class="col-sm-1">
-		{{template "App/social.html" .}}
 	</div>
 </div>
 <!-- /.row -->
@@ -85,14 +79,12 @@
 			console.log("%d nodes", xx);
 			context.putImageData(worldMap, 0, 0);
 			container.appendChild(canvas);//*/
-
 			var opts;
-			if (places.length > 0) opts = places[0]; // works because keys match
-
+			if (places && places.length > 0) opts = places[0];
 			globe = new DAT.Globe(container, opts);
 			globe.setData(worldMap, places);
 			globe.animate();
-			container.style.backgroundImage = 'none';//*/
+			container.style.backgroundImage = 'none'; //*/
 		};
 		globeImg.src = "/public/globe/globe.png";
 	}
@@ -141,8 +133,9 @@
 		color: #fff;
 		background-color: #337AB7;
 	}
+
 	canvas {
-		background-color:#fff;
+		background-color: #fff;
 	}
 </style>
 {{template "footer.html" .}}

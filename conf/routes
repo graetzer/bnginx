@@ -70,8 +70,8 @@ POST    /admin/about/stays/:stayId              Admin.SaveStay
 GET     /admin/about/stays/:stayId/delete       Admin.DeleteStay
 
 # Map static resources from the /app/public folder to the /public path
-#GET     /uploads/*filepath                    Static.Serve("/home/simon/bnginx-data/uploads")
-GET     /public/*filepath                      Static.Serve("public")
+GET     /uploads/*filepath                      Uploads.ServeUpload
+GET     /public/*filepath                       Static.Serve("public")
 
 # Catch all
 # *       /:controller/:action                  :controller.:action

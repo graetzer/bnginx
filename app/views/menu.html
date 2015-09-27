@@ -14,8 +14,8 @@
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
       <!--<li><a href="/about">About</a></li>-->
-      <li><a href="/about">About</a></li>
-      <li><a href="/projects">Projects</a></li>
+      <li {{if .stays}}class="active"{{end}}><a href="/about">About</a></li>
+      <li {{if .projects}}class="active"{{end}}><a href="/projects">Projects</a></li>
       <li><a href="/imprint">Imprint</a></li>
   	  {{if .user}}
   	  <li><a href="/admin">Admin Panel</a></li>
