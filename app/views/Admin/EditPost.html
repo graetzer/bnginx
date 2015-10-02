@@ -4,11 +4,18 @@
 {{append . "moreScripts" "//cdn.jsdelivr.net/ace/1.1.9/min/ace.js"}}
 {{template "header.html" .}}
 <div class="row">
-	<div class="col-sm-12">
+	<div class="col-sm-7 col-md-9">
 		<ol class="breadcrumb">
 			<li><a href="/admin">Admin Panel</a></li>
 			<li class="active">{{.title}}</li>
 		</ol>
+	</div>
+	<div class="col-sm-5 col-md-3">
+		<div class="btn-group" role="group" aria-label="Preview Mode">
+  		<button id="mode-edit" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span> Edit</button>
+		  <button id="mode-split" type="button" class="btn btn-default active"><span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span> Split</button>
+		  <button id="mode-preview" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Preview</button>
+		</div>
 	</div>
 </div>
 <div class="row">
@@ -16,12 +23,10 @@
 	<div class="col-sm-2">
 		{{set . "pp" 1}} {{template "Admin/adminMenu.html" .}}
 	</div>*/}}
-	<div class="col-sm-6">
-		{{/*
-		<h3>{{.title}}</h3>*/}}
+	<div class="col-sm-6" id="container-editor">
 		<form role="form" method="POST" action="/admin/post/{{.post.Id}}">
 			<div class="form-group">
-				<label for="inputTitle">Post Title</label>
+				<label for="inputTitle">Title</label>
 				<input type="text" class="form-control" id="inputTitle" name="post.Title" placeholder="Titel" value="{{.post.Title}}" />
 			</div>
 			<div class="form-group">
@@ -42,11 +47,10 @@
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
 	</div>
-	<div class="col-sm-6">
+	<div class="col-sm-6"  id="container-preview">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2 class="panel-title" id="titlePreview"></h2>
-				<small>By {{.user.Name}}</small>
 			</div>
 			<div class="panel-body" id="editorPreview">
 			</div>
@@ -77,15 +81,18 @@
 
 		var preview = $("#editorPreview");
 		var textarea = $("#editorTextarea");
-		var update = function() {
-			textarea.val(editor.getSession().getValue());
-			preview.html(converter.makeHtml(editor.getSession().getValue()));
-			$('pre code').each(function(i, e) {
-				hljs.highlightBlock(e)
-			});
+		var enablePreview = true;
+		var updatePreview = function() {
+			if (enablePreview) {
+				textarea.val(editor.getSession().getValue());
+				preview.html(converter.makeHtml(editor.getSession().getValue()));
+				$('pre code').each(function(i, e) {
+					hljs.highlightBlock(e)
+				});
+			}
 		};
-		editor.getSession().on("change", update);
-		update();
+		editor.getSession().on("change", updatePreview);
+		updatePreview();
 
 		// Update the Post title
 		$("#inputTitle").keyup(function() {
@@ -93,6 +100,40 @@
 		});
 		$("#inputTitle").keyup();
 		$(".container").css("max-width", "2000px"); // Upscale the container
+
+		var activeButton = $("#mode-split");
+		editorContainer = $('#container-editor');
+		previewContainer = $('#container-preview');
+		$("#mode-edit, #mode-split, #mode-preview").click(function(event) {
+			enablePreview = true;
+			if (event.target.id === "mode-edit") {
+				editorContainer.show();
+				editorContainer.removeClass('col-sm-6');
+				editorContainer.addClass('col-sm-12');
+				previewContainer.hide();
+			} else if (event.target.id === "mode-split") {
+				editorContainer.show();
+				editorContainer.removeClass('col-sm-12');
+				editorContainer.addClass('col-sm-6');
+				previewContainer.show();
+				previewContainer.removeClass('col-sm-12');
+				previewContainer.addClass('col-sm-6');
+			} else if (event.target.id === "mode-preview") {
+				editorContainer.hide();
+				previewContainer.show();
+				previewContainer.removeClass('col-sm-6');
+				previewContainer.addClass('col-sm-12');
+				enablePreview = false;
+			}
+
+			if (activeButton) activeButton.removeClass("active");
+			activeButton = $( event.target );
+			activeButton.addClass("active");
+		});
+		// Hack to default to no preview on phones
+		if (window.innerWidth < 1000) {
+			$("#mode-edit").click();
+		}
 	};
 </script>
 {{template "footer.html" .}}

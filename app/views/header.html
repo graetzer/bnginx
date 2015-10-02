@@ -19,8 +19,7 @@
   <script defer src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js" onLoad="hljs.initHighlightingOnLoad()"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  {{range .moreScripts}}
-  <script src="{{.}}"></script>{{end}}
+  {{range .moreScripts}}<script src="{{.}}"></script>{{end}}
   <script>
     (function(i, s, o, g, r, a, m) {
       i['GoogleAnalyticsObject'] = r;
