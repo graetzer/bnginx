@@ -48,17 +48,12 @@ DAT.Globe = function(container, opts) {
   var distance = 100000,
     distanceTarget = 100000;
   var PI_HALF = Math.PI / 2;
-  //support different inital position
-  if (opts.lat && opts.lng) {
-    showLatLng(opts.lat, opts.lng);
-    distanceTarget = 50000; // don't zoom in so far
-  }
 
   function init() {
 
     var shader, uniforms, material;
-    w = opts.width || 600;
-    h = opts.height || 500;
+    w = container.clientWidth || 600;
+    h = Math.max(container.clientHeight, w) || 600;
 
     camera = new THREE.PerspectiveCamera(25, w / h, 1, 10000);
     camera.position.z = distance;
@@ -297,11 +292,11 @@ DAT.Globe = function(container, opts) {
   }
 
   function onWindowResize(event) { // TODO fix window resize
-    w = container.offsetWidth || 600;
-    h = container.offsetHeight || 500;
-    /*camera.aspect = w / h;
+    w = container.clientWidth || 600;
+    h = Math.max(container.clientHeight, w) || 600;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize( container.offsetWidth, container.offsetHeight );*/
+    renderer.setSize( w, h );
   }
 
   function zoom(delta) {
@@ -337,6 +332,11 @@ DAT.Globe = function(container, opts) {
   }
 
   init();
+  //support different inital position
+  if (opts.lat && opts.lng) {
+    showLatLng(opts.lat, opts.lng);
+    distanceTarget = 50000; // don't zoom in so far
+  }
   this.animate = animate;
 
   this.setData = setData;

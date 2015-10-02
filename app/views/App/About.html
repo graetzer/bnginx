@@ -78,7 +78,7 @@
 			context.putImageData(worldMap, 0, 0);
 			container.appendChild(canvas);//*/
 			var opts;
-			if (places && places.length > 0) opts = places[0];
+			if (places && places.length > 0) opts = places[places.length-1];
 			globe = new DAT.Globe(container, opts);
 			globe.setData(worldMap, places);
 			globe.animate();
@@ -96,7 +96,6 @@
 			}
 		}
 		if (place) globe.showLatLng(place.lat, place.lng);
-
 		if (active) active.removeClass("active");
 		active = $('#stay-' + stayId);
 		active.addClass("active");
