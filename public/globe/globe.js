@@ -52,8 +52,9 @@ DAT.Globe = function(container, opts) {
   function init() {
 
     var shader, uniforms, material;
+    //600 is enough to get the globe in full and have a good render performance
     w = container.clientWidth || 600;
-    h = Math.max(container.clientHeight, w) || 600;
+    h = Math.min(600, w) || 600;
 
     camera = new THREE.PerspectiveCamera(25, w / h, 1, 10000);
     camera.position.z = distance;
@@ -293,7 +294,7 @@ DAT.Globe = function(container, opts) {
 
   function onWindowResize(event) { // TODO fix window resize
     w = container.clientWidth || 600;
-    h = Math.max(container.clientHeight, w) || 600;
+    h = Math.min(600, w) || 600;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize( w, h );
@@ -328,14 +329,14 @@ DAT.Globe = function(container, opts) {
   function showLatLng(lat, lng) { // No idea why this works
     target.x = lng * Math.PI / 180 - PI_HALF;
     target.y = lat * Math.PI / 180;
-    distanceTarget = 350;
+    distanceTarget = 500;
   }
 
   init();
   //support different inital position
   if (opts.lat && opts.lng) {
     showLatLng(opts.lat, opts.lng);
-    distanceTarget = 50000; // don't zoom in so far
+    distanceTarget = 50000; // don't zoom in quite so far
   }
   this.animate = animate;
 

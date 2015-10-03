@@ -4,7 +4,7 @@
 {{append . "moreScripts" "/public/globe/globe.js"}}
 {{template "header.html" .}}
 <div class="row">
-	<div class="col-sm-12 panel panel-default">
+	<div class="col-sm-11 panel panel-default">
 		<p>My name is Simon and I'm a software developer from Germany. I mostly work on mobile app's (<strong>iOS</strong> and
 		<strong>Android</strong>). I also have an active interest in
 			<strong>Computer Graphics</strong>,
@@ -14,8 +14,8 @@
 		<strong>Some recent trips I went on are visualized here</strong>
 
 		<div class="row">
-			<div class="col-sm-10" id="globe-container"></div>
-			<div class="col-sm-2" id="stays-list">
+			<div class="col-sm-9" id="globe-container"></div>
+			<div class="col-sm-3" id="stays-list">
 				<h6>Trips &amp; Locations</h6>
 				{{range .stays}}{{$place := place .}}
 				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
@@ -29,6 +29,11 @@
 				</div>{{end}}
 			</div>
 		</div>
+	</div>
+	<!-- ./col-sm-11 -->
+
+	<div class="col-sm-1">
+		{{template "App/social.html" .}}
 	</div>
 </div>
 <!-- /.row -->
