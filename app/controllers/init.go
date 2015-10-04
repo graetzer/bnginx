@@ -56,7 +56,7 @@ func init() {
 		return result
 	}
 
-	revel.TemplateFuncs["place"] = func(stay *Stay) *Place {
+	revel.TemplateFuncs["place"] = func(stay Stay) *Place {
 		var place Place
 		if DB.First (&place, stay.PlaceId).RecordNotFound() {
 			return nil

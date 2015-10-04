@@ -82,8 +82,11 @@
 			console.log("%d nodes", xx);
 			context.putImageData(worldMap, 0, 0);
 			container.appendChild(canvas);//*/
-			var opts;
-			if (places && places.length > 0) opts = places[places.length-1];
+			var opts = {};
+			//{{if .stays}}{{$place := index .stays 0 | place}}
+			opts.lat = parseFloat("{{$place.Latitude}}");
+			opts.lng = parseFloat("{{$place.Longitude}}");
+			//{{end}}
 			globe = new DAT.Globe(container, opts);
 			globe.setData(worldMap, places);
 			globe.animate();

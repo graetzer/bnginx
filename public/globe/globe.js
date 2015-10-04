@@ -118,12 +118,12 @@ DAT.Globe = function(container, opts) {
       //step = Math.floor(35 * Math.pow(2 * y / worldMap.height - 1, 4) + 4);
       ys = y / worldMap.height;
       x = 0;
-      if (0.128 < ys && ys < 0.72) step = 5;
+      if (0.128 < ys && ys < 0.76) step = 5;
       else {
         if (ys <= 0.128) {// 2^(3 + distBorder) at least 8, doubles every 5 px
           step = Math.floor(Math.pow(2, (0.128 * worldMap.height - y) / 7) + 3);
         } else {
-          step = Math.floor(Math.pow(2, (y - 0.72*worldMap.height) / 7) + 3);
+          step = Math.floor(Math.pow(2, (y - 0.76*worldMap.height) / 7) + 3);
         }
         x = Math.floor(step);
       }
