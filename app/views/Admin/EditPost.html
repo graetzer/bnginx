@@ -11,7 +11,7 @@
 		</ol>
 	</div>
 	<div class="col-sm-5 col-md-3">
-		<div class="btn-group" role="group" aria-label="Preview Mode">
+		<div class="btn-group pull-right" role="group" aria-label="Preview Mode">
   		<button id="mode-edit" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span> Edit</button>
 		  <button id="mode-split" type="button" class="btn btn-default active"><span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span> Split</button>
 		  <button id="mode-preview" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Preview</button>
@@ -26,11 +26,11 @@
 	<div class="col-sm-6" id="container-editor">
 		<form role="form" method="POST" action="/admin/post/{{.post.Id}}">
 			<div class="form-group">
-				<label for="inputTitle">Title</label>
+				<label for="inputTitle" class="sr-only">Title</label>
 				<input type="text" class="form-control" id="inputTitle" name="post.Title" placeholder="Titel" value="{{.post.Title}}" />
 			</div>
 			<div class="form-group">
-				<label for="editorACE">Content</label>
+				<label for="editorACE" class="sr-only">Content</label>
 				<div id="editorACE">{{.post.Body}}</div>
 				<textarea id="editorTextarea" name="post.Body" style="display:none"></textarea>
 			</div>

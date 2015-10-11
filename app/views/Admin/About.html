@@ -31,8 +31,8 @@
         {{range .stays}}{{$place := place .}}
         <tr>
           <td>{{$place.Name}}</td>
-          <td>{{datetime .StartedAt}}</td>
-          <td>{{datetime .EndedAt}}</td>
+          <td>{{date .StartedAt}}</td>
+          <td>{{date .EndedAt}}</td>
           <td><a href="{{.Url}}" target="_blank">Reference</a></td>
           {{if $user.IsAdmin}}
           <td>

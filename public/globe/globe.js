@@ -105,31 +105,40 @@ DAT.Globe = function(container, opts) {
   }
 
   function setData(worldMap, places) {
-    var lat, lng, step, i, x, y, intensity;
+    var lat, lng, step, i, x, y, intensity, xx, yy;
 
     var subgeo = new THREE.Geometry();
     var color1 = new THREE.Color(0, 0, 0);
     var color2 = new THREE.Color(0.5, 0.5, 0.5, 0.8);
 
     var data = worldMap.data;
+    var evaluatePoint = function(x, y) {
+      if (x == 0 || y == 0) {
+        i = (y * worldMap.width + x) * 4;
+        return data[i] + data[i + 1] + data[i + 2];
+      }
+      intensity = 0;
+      for (xx = x-1; xx <= x+1; xx++) {
+        for (yy = y - 1; yy <= y+1; yy++) {
+          i = (y * worldMap.width + x) * 4;
+          intensity += data[i] + data[i + 1] + data[i + 2];
+        }
+      }
+      return intensity / 9;
+    }
 
-    var xx = 0;
+    var nodeCount = 0;// now use this to count nodes
     for (y = 0; y < worldMap.height; y += 4) {
       //step = Math.floor(35 * Math.pow(2 * y / worldMap.height - 1, 4) + 4);
-      ys = y / worldMap.height;
-      x = 0;
-      if (0.128 < ys && ys < 0.76) step = 5;
-      else {
-        if (ys <= 0.128) {// 2^(3 + distBorder) at least 8, doubles every 5 px
-          step = Math.floor(Math.pow(2, (0.128 * worldMap.height - y) / 7) + 3);
-        } else {
-          step = Math.floor(Math.pow(2, (y - 0.76*worldMap.height) / 7) + 3);
-        }
-        x = Math.floor(step);
-      }
-      for (; x < worldMap.width; x += step) {
-        i = (y * worldMap.width + x) * 4;
-        intensity = data[i] + data[i + 1] + data[i + 2];
+      yy = y / worldMap.height;// now use as scaled y coordinate
+
+      if (yy <= 0.07) continue; // don't care about arctica, it's not on my map
+      else if (yy <= 0.14) step = Math.floor(Math.pow(2, (0.14 * worldMap.height - y) / 6) + 3);
+      else if (yy < 0.81) step = 5;
+      else continue;// Don't care about antarctica, it's not on my map
+
+      for (x = 0; x < worldMap.width; x += step) {
+        intensity = evaluatePoint(x,y);
 
         lat = 90 - 180 * (y / worldMap.height); // equilateral projection
         lng = 360 * (x / worldMap.width) - 180;
@@ -138,12 +147,12 @@ DAT.Globe = function(container, opts) {
         } else {
           addPoint(lat, lng, 0.5, 1, color2, subgeo);
         }
-        xx++;
+        nodeCount++;
       }
     }
     addPoint(90, 0, 0.5, 1, color2, subgeo);// northpole
     addPoint(-90, 0, 0.5, 1, color2, subgeo);//southpole
-    console.log("%d nodes", xx+2);
+    console.log("%d nodes", nodeCount+2);
     this.points = new THREE.Mesh(subgeo, new THREE.MeshBasicMaterial({
       color: 0xffffff,
       vertexColors: THREE.FaceColors,

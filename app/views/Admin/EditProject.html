@@ -20,11 +20,10 @@
 		{{template "Admin/adminMenu.html" .}}
 	</div>
 	<div class="col-sm-8">
-		<h3>{{.title}}</h3>
-		<form role="form" method="POST" action="/admin/projects/{{.project.Id}}">
+		<form method="POST" action="/admin/projects/{{.project.Id}}">
 			<div class="form-group">
 				<label for="inputTitle">Title</label>
-				<input type="text" class="form-control" id="inputTitle" name="project.Title" placeholder="Uberproduct" value="{{.project.Title}}" />
+				<input type="text" class="form-control" id="inputTitle" name="project.Title" placeholder="Title" value="{{.project.Title}}" />
 			</div>
 			<div class="form-group">
 				<label for="inputImage">Image URL</label>

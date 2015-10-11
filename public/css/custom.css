@@ -1,31 +1,53 @@
 /* Copyrigth Simon Peter Grätzer simon(at)graetzer.org */
 
-body {background:url('../img/tile.png');}
+
+/*body {background:url('../img/tile.png');}*/
+
 #trailer {
-	background:url('../img/trailer.png') no-repeat;
-	background-size: auto 100%;
+  background: url('../img/trailer.png') no-repeat;
+  background-size: auto 100%;
 }
 footer {
-	margin-top:50px;
-	background-color: #F8F8F8;
-	border: 1px solid #E7E7E7;
-	border-radius: 4px;
-	padding: 5px 10px;
+  margin-top: 50px;
+  background-color: #F8F8F8;
+  border: 1px solid #E7E7E7;
+  border-radius: 4px;
+  padding: 5px 10px;
 }
 .panel-body img {
-	max-width:100%;
+  max-width: 100%;
 }
 .table tbody > tr > td {
-	vertical-align:middle !important;
+  vertical-align: middle !important;
 }
-#editorACE {height:560px;}
+#editorACE {
+  height: 560px;
+}
 #editorPreview {
-	height:600px;
-	overflow:auto;
+  height: 600px;
+  overflow: auto;
 }
 #social {
-	margin-left:25px
+  margin-left: 25px
 }
-#social ul li {
-	padding: 7px 0;
+#social div {
+  padding-top: 7px;
+}
+#globe-container {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+#stays-list img {
+  width: 100%;
+}
+#stays-list .row {
+  padding-top: 5px;
+  border-radius: 4px;
+}
+#stays-list .row:hover {
+  background-color: #EEE;
+}
+#stays-list .row.active, #stays-list .row.active a {
+  color: #fff;
+  background-color: #337AB7;
 }
