@@ -1,8 +1,6 @@
 /* Copyrigth Simon Peter Grätzer simon(at)graetzer.org */
 
-
 /*body {background:url('../img/tile.png');}*/
-
 #trailer {
   background: url('../img/trailer.png') no-repeat;
   background-size: auto 100%;
@@ -26,9 +24,6 @@ footer {
 #editorPreview {
   height: 600px;
   overflow: auto;
-}
-#social {
-  margin-left: 25px
 }
 #social div {
   padding-top: 7px;
