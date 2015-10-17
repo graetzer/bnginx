@@ -348,7 +348,6 @@ DAT.Globe = function(container, opts) {
     distanceTarget = 50000; // don't zoom in quite so far
   }
   this.animate = animate;
-
   this.setData = setData;
   this.renderer = renderer;
   this.scene = scene;

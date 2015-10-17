@@ -21,7 +21,7 @@
 		</div>
 
 		<div class="row">
-			<div class="col-sm-3 hidden-xs" id="stays-list" style="padding: 10px 15px 0 20px">
+			<div class="col-sm-3 hidden-xs" id="stays-list" style="padding: 10px 20px 0 20px">
 				Trips &amp; Locations
 				{{range .stays}}{{$place := place .}}
 				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
@@ -35,6 +35,7 @@
 				</div>{{end}}
 			</div>
 			<div class="col-sm-9" id="globe-container">
+				<div id="globe-placeholder" style="width:100%;height:300px;background:transparent url('/public/globe/loading.gif') no-repeat center center"></div>
 			</div>
 		</div>
 	</div>
@@ -48,13 +49,12 @@
 <script type="text/javascript">
 	var globe, places, active;
 	window.onload = function() {
-		console.log("onload");
 
 		var container = document.getElementById('globe-container');
+		var placeholder = document.getElementById('globe-placeholder');
 		if (!Detector.webgl) {
 			Detector.addGetWebGLMessage({parent:container});
 		} else {
-			container.style.backgroundImage = "/public/globe/loading.gif";
 			places = JSON.parse('{{json .places}}');
 			var globeImg = new Image();
 			globeImg.onload = function() {
@@ -76,7 +76,7 @@
 				globe = new DAT.Globe(container, opts);
 				globe.setData(worldMap, places);
 				globe.animate();
-				container.style.backgroundImage = 'none'; //*/
+				container.removeChild(placeholder);// get rid of space placeholder
 			};
 			globeImg.src = "/public/globe/globe.png";
 		}
