@@ -26,7 +26,7 @@
 				{{range .stays}}{{$place := place .}}
 				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
 					<div class="col-xs-4" style="padding:0">
-						<img src="{{$place.CoverUrl}}" alt="Project Logo" class="img-circle" />
+						<img src="{{$place.CoverUrl}}" alt="{{$place.Name}}" class="img-circle" />
 					</div>
 					<div class="col-xs-8">
 						<h6><a href="{{.Url}}" target="_blank" title="Pictures of my stay">{{$place.Name}}</a></h6>

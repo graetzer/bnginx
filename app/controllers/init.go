@@ -21,6 +21,7 @@ func init() {
 	revel.OnAppStart(AppInit)
 	revel.InterceptMethod((*Base).addTemplateVars, revel.BEFORE)
 	revel.InterceptMethod((*Admin).checkUser, revel.BEFORE)
+	revel.InterceptMethod((*App).addCacheHeaders, revel.AFTER)
 
 	revel.TemplateFuncs["markdown"] = func(input string) template.HTML {
 		return template.HTML(string(blackfriday.MarkdownCommon([]byte(input))))

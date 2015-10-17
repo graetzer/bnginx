@@ -14,6 +14,12 @@ type App struct {
 	Base
 }
 
+// ============== Interceptor ==============
+func (c App) addCacheHeaders() revel.Result {
+	c.Response.Out.Header().Set("Cache-Control", "public,max-age=1800")
+	return nil
+}
+
 // ================ Actions ================
 
 func (c App) Login(email string, password string) revel.Result {
