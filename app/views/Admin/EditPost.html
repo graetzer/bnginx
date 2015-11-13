@@ -68,10 +68,11 @@
 		// Initialize the ACE editor
 		var editor = ace.edit("editorACE");
 		editor.setTheme("ace/theme/github");
+		editor.setShowPrintMargin(false);
 		var session = editor.getSession();
 		session.setMode("ace/mode/markdown");
 		session.setUseWrapMode(true);
-		session.setWrapLimitRange(70, 140);
+		//session.setWrapLimitRange(70, 250);
 
 		// Initialize the markdown preview
 		var converter = new Markdown.Converter();
