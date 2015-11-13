@@ -53,6 +53,7 @@
 		var container = document.getElementById('globe-container');
 		var placeholder = document.getElementById('globe-placeholder');
 		if (!Detector.webgl) {
+			container.removeChild(placeholder);// get rid of space placeholder
 			Detector.addGetWebGLMessage({parent:container});
 		} else {
 			places = JSON.parse('{{json .places}}');
@@ -78,7 +79,7 @@
 				globe.animate();
 				container.removeChild(placeholder);// get rid of space placeholder
 			};
-			globeImg.src = "/public/globe/globe.png";
+			globeImg.src = "/public/globe/globe.png";// starts loading heightmap
 		}
 	};
 
