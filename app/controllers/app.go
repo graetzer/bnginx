@@ -73,7 +73,7 @@ func (c App) Post(postId int64) revel.Result {
 		return c.NotFound("Oh no! I couldn't find this page")
 	}
 	var comments []Comment
-	DB.Model(post).Related(&comments, "PostId")
+	DB.Where(&Comment{PostId:postId, Approved:true}).Find(&comments)
 	recaptchaSiteKey := revel.Config.StringDefault("recaptcha.sitekey", "")
 	return c.Render(post, comments, recaptchaSiteKey)
 }
