@@ -2,7 +2,6 @@
 {{append . "moreStyles" "/public/css/dropzone.css"}}
 {{append . "moreScripts" "/public/js/dropzone.js"}}
 {{template "header.html" .}}
-
 <div class="row">
 	<div class="col-sm-10 col-sm-offset-2">
 		<ol class="breadcrumb">
@@ -39,8 +38,7 @@
 				{{end}}
 		    </tbody>
 		</table>
-
-	    <h3>Upload Zone</h3>
+	  <h3>Upload Zone</h3>
 		<form action="/admin/media/upload" class="dropzone" id="myAwesomeDropzone" method="POST" enctype="multipart/form-data">
 			<div class="fallback">
     			<input name="file" type="file" multiple />
@@ -51,7 +49,7 @@
 		<script type="text/javascript" charset="utf-8">
 		/* <![CDATA[ */
 		var uploadPrefix = "{{.uploadPrefix}}";
-	    (function() {
+		window.onload = function() {
 			Dropzone.options.myAwesomeDropzone = {
 				init: function() {
 					this.on("addedfile", function(file) {
@@ -66,7 +64,7 @@
 					});
 				}
 			};
-	    })();
+	    };
 	    /* ]]> */
 		</script>
 	</div>
