@@ -13,17 +13,14 @@
 
 var DAT = DAT || {};
 
-DAT.Globe = function(container, opts) {
+DAT.Globe = function(container, worldMap, places, opts) {
   opts = opts || {};
 
   var camera, scene, renderer, w, h;
-  var mesh, atmosphere, point;
-
-  var overRenderer, mouseDown, zoomTouchSpread;
-
-  var curZoomSpeed = 0;
+  var globeMesh, point;
+  var mouseOver, mouseDown, zoomTouchSpread;
   var zoomSpeed = 50;
-
+  var originPos = new THREE.Vector3(0,0,0);
   var mouse = {
       x: 0,
       y: 0
@@ -61,17 +58,8 @@ DAT.Globe = function(container, opts) {
 
     scene = new THREE.Scene();
 
-    var geometry = new THREE.SphereGeometry(200, 40, 30);
-    var material = new THREE.MeshBasicMaterial({
-      color: 0xffffff
-    });
-
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.rotation.y = Math.PI;
-    scene.add(mesh);
-
     // Prototype for the dots
-    geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
+    var geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
     geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, -0.5));
     point = new THREE.Mesh(geometry);
 
@@ -93,72 +81,62 @@ DAT.Globe = function(container, opts) {
     container.addEventListener("touchend", onMouseUp, false);
     container.addEventListener("touchmove", onMouseMove, false);
     container.addEventListener('mouseover', function() {
-      overRenderer = true;
+      mouseOver = true;
     }, false);
     container.addEventListener('mouseout', function() {
-      overRenderer = false;
+      mouseOver = false;
       mouseDown = false;
     }, false);
 
     document.addEventListener('keydown', onDocumentKeyDown, false);
     //window.addEventListener('resize', onWindowResize, false);
-  }
-
-  function setData(worldMap, places) {
-    var lat, lng, step, i, x, y, intensity, xx, yy;
-
+    
+    var data = worldMap.data;
     var subgeo = new THREE.Geometry();
     var color1 = new THREE.Color(0, 0, 0);
-    var color2 = new THREE.Color(0.5, 0.5, 0.5, 0.8);
-
-    var data = worldMap.data;
-    var evaluatePoint = function(x, y) {
-      if (x == 0 || y == 0) {
-        i = (y * worldMap.width + x) * 4;
-        return data[i] + data[i + 1] + data[i + 2];
-      }
-      intensity = 0;
-      for (xx = x-1; xx <= x+1; xx++) {
-        for (yy = y - 1; yy <= y+1; yy++) {
-          i = (y * worldMap.width + x) * 4;
-          intensity += data[i] + data[i + 1] + data[i + 2];
-        }
-      }
-      return intensity / 9;
-    }
-
-    var nodeCount = 0;// now use this to count nodes
-    for (y = 0; y < worldMap.height; y += 4) {
+    var color2 = new THREE.Color( 0x666666);
+    var step, x, y, nodeCount = 0;
+    for (y = 0; y < worldMap.height; y += 3) {
       //step = Math.floor(35 * Math.pow(2 * y / worldMap.height - 1, 4) + 4);
-      yy = y / worldMap.height;// now use as scaled y coordinate
+      var yy = y / worldMap.height;// now use as scaled y coordinate
 
       if (yy <= 0.07) continue; // don't care about arctica, it's not on my map
       else if (yy <= 0.14) step = Math.floor(Math.pow(2, (0.14 * worldMap.height - y) / 6) + 3);
-      else if (yy < 0.81) step = 5;
+      else if (yy < 0.81) step = 3;
       else continue;// Don't care about antarctica, it's not on my map
 
       for (x = 0; x < worldMap.width; x += step) {
-        intensity = evaluatePoint(x,y);
-
-        lat = 90 - 180 * (y / worldMap.height); // equilateral projection
-        lng = 360 * (x / worldMap.width) - 180;
+        var i = (y * worldMap.width + x) * 4;
+        var intensity = data[i] + data[i + 1] + data[i + 2];
+        var lat = 90 - 180 * (y / worldMap.height); // equilateral projection
+        var lng = 360 * (x / worldMap.width) - 180;
         if (intensity > 0x33 * 3) {
-          addPoint(lat, lng, 0.8, 5, color1, subgeo);
-        } else {
-          addPoint(lat, lng, 0.5, 1, color2, subgeo);
+          addPoint(lat, lng, 0.8, 7, color1, subgeo);
+          nodeCount++;
+        } else if (x % 4 == 0 && y % 4 == 0) { 
+          addPoint(lat, lng, 0.8, 1, color2, subgeo);nodeCount++;
         }
-        nodeCount++;
       }
     }
     addPoint(90, 0, 0.5, 1, color2, subgeo);// northpole
     addPoint(-90, 0, 0.5, 1, color2, subgeo);//southpole
     console.log("%d nodes", nodeCount+2);
+    
     this.points = new THREE.Mesh(subgeo, new THREE.MeshBasicMaterial({
       color: 0xffffff,
       vertexColors: THREE.FaceColors,
       morphTargets: false
     }));
     scene.add(this.points);
+    
+    geometry = new THREE.SphereGeometry(200, 40, 30);
+    var material = new THREE.MeshBasicMaterial({
+      //wireframe: true
+      color: 0xffffff
+    });
+    globeMesh = new THREE.Mesh(geometry, material);
+    globeMesh.rotation.y = Math.PI;
+    scene.add(globeMesh);
 
     // Add the Places
     for (i = 0; i < places.length; i++) {
@@ -191,12 +169,11 @@ DAT.Globe = function(container, opts) {
 
   function addPoint(lat, lng, xy, h, color, subgeo) {
     convertLatLng(lat, lng, point.position, 200);
-    point.lookAt(mesh.position);
+    point.lookAt(originPos);
 
     point.scale.x = xy;
     point.scale.y = xy;
     point.scale.z = h; // avoid non-invertible matrix
-    point.updateMatrix();
 
     for (var i = 0; i < point.geometry.faces.length; i++) {
       point.geometry.faces[i].color = color;
@@ -261,7 +238,7 @@ DAT.Globe = function(container, opts) {
 
   function onMouseWheel(event) {
     event.preventDefault();
-    if (overRenderer) {
+    if (mouseOver) {
       zoom(-event.deltaY * 0.3);
     }
     return false;
@@ -321,7 +298,7 @@ DAT.Globe = function(container, opts) {
   }
 
   function render() {
-    zoom(curZoomSpeed); // modifies distanceTarget
+    zoom(0); // modifies distanceTarget
 
     rotation.x += (target.x - rotation.x) * 0.1;
     rotation.y += (target.y - rotation.y) * 0.1;
@@ -330,7 +307,7 @@ DAT.Globe = function(container, opts) {
     camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
     camera.position.y = distance * Math.sin(rotation.y);
     camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
-    camera.lookAt(mesh.position);
+    camera.lookAt(originPos);
 
     renderer.render(scene, camera);
   }
@@ -348,7 +325,6 @@ DAT.Globe = function(container, opts) {
     distanceTarget = 50000; // don't zoom in quite so far
   }
   this.animate = animate;
-  this.setData = setData;
   this.renderer = renderer;
   this.scene = scene;
   this.showLatLng = showLatLng;

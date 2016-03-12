@@ -74,8 +74,7 @@
 				active = $('#stay-{{$stay.Id}}');
 				active.addClass("active");
 				//{{end}}
-				globe = new DAT.Globe(container, opts);
-				globe.setData(worldMap, places);
+				globe = new DAT.Globe(container, worldMap, places, opts);
 				globe.animate();
 				container.removeChild(placeholder);// get rid of space placeholder
 			};
