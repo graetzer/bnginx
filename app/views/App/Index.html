@@ -30,14 +30,14 @@
 
 		{{/* Handling of next/back/empty */}}
 		{{if eq .offset 0 | not}}
-			<a href="/?offset={{ sub .offset 5}}">&laquo; Back</a>
+			<a href="/?offset={{ sub .offset 3}}">&laquo; Back</a>
 		{{end}}
 		{{if len .posts | eq 0}}
 			<h2>Oops!</h2>
 			<p>There seems to be no content here</p>
 		{{else}}
 			{{if len .posts | eq 5}}
-				<a href="/?offset={{add .offset 5}}">Next &raquo;</a>
+				<a href="/?offset={{add .offset 3}}">Next &raquo;</a>
 			{{end}}
 		{{end}}
 	</main>

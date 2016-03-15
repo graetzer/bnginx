@@ -54,8 +54,8 @@ func (c Base) getPostByID(postID int64) *Blogpost {
 	return &post
 }
 
-func (c Base) getPublishedPosts(offset int) []*Blogpost {
+func (c Base) getPublishedPosts(offset int, limit int) []*Blogpost {
 	var posts []*Blogpost
-	DB.Where("published").Order("created_at DESC").Limit(5).Offset(offset).Find(&posts)
+	DB.Where("published").Order("created_at DESC").Limit(limit).Offset(offset).Find(&posts)
 	return posts
 }

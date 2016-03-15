@@ -50,19 +50,19 @@ func (c App) Logout() revel.Result {
 
 // Index serves the frontpage including the last stay
 func (c App) Index(offset int) revel.Result {
-	posts := c.getPublishedPosts(offset)
-    var place Place 
-    var stay Stay
+	posts := c.getPublishedPosts(offset, 3)
+	var place Place
+	var stay Stay
 	DB.Order("started_at DESC").First(&stay)
-    if DB.Model(&stay).Related(&place).RecordNotFound() {
-        return c.Render(posts, offset)
-    }
-    return c.Render(place, posts, offset)
+	if DB.Model(&stay).Related(&place).RecordNotFound() {
+		return c.Render(posts, offset)
+	}
+	return c.Render(place, posts, offset)
 }
 
 // Feed serves the current RSS feed
 func (c App) Feed() revel.Result {
-	c.RenderArgs["posts"] = c.getPublishedPosts(0)
+	c.RenderArgs["posts"] = c.getPublishedPosts(0, 5)
 	c.RenderArgs["time"] = time.Now()
 	c.Response.ContentType = "application/rss+xml"
 	return c.RenderTemplate("App/Feed.xml")
@@ -72,7 +72,7 @@ func (c App) Feed() revel.Result {
 func (c App) Search(query string, offset int) revel.Result {
 	var posts []*Blogpost
 	q := "%" + query + "%"
-	DB.Where("published AND (body like ? OR title like ?)", q, q).Limit(10).Offset(offset).Find(&posts)
+	DB.Where("published AND (body like ? OR title like ?)", q, q).Limit(5).Offset(offset).Find(&posts)
 	return c.Render(posts, query, offset)
 }
 
@@ -83,7 +83,7 @@ func (c App) Post(postID int64) revel.Result {
 		return c.NotFound("Oh no! I couldn't find this page")
 	}
 	var comments []Comment
-	DB.Where(&Comment{PostID:postID, Approved:true}).Find(&comments)
+	DB.Where(&Comment{PostID: postID, Approved: true}).Find(&comments)
 	recaptchaSiteKey := revel.Config.StringDefault("recaptcha.sitekey", "")
 	return c.Render(post, comments, recaptchaSiteKey)
 }
@@ -135,7 +135,7 @@ func (c App) Projects(hidden bool) revel.Result {
 func (c App) About() revel.Result {
 	var (
 		places []Place
-		stays []Stay
+		stays  []Stay
 	)
 	DB.Order("started_at DESC").Find(&stays)
 	DB.Find(&places)

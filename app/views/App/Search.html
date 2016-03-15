@@ -26,9 +26,9 @@
 		<ul class="pagination">
 		  <li class="disabled"><a href="#">&laquo;</a></li>
 		  <li {{if eq .offset 0}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=0">1</a></li>
-		  <li {{if eq .offset 10}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=10">2</a></li>
-		  <li {{if eq .offset 20}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=20">3</a></li>
-		  <li {{if eq .offset 30}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=30">4</a></li>
+		  <li {{if eq .offset 10}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=5">2</a></li>
+		  <li {{if eq .offset 20}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=10">3</a></li>
+		  <li {{if eq .offset 30}}class="active"{{end}}><a href="?query={{$uq}}&amp;offset=15">4</a></li>
 		  <li><a href="#">&raquo;</a></li>
 		</ul>
 	{{end}}
