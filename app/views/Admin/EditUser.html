@@ -1,4 +1,4 @@
-{{if eq .profile.Id -1}}
+{{if eq .profile.ID -1}}
 {{set . "title" "Create a new User"}}
 {{else}}
 {{set . "title" "Modify User Profile"}}
@@ -40,7 +40,7 @@
 				<label for="inputUserPassword">New Password (At least 8 characters)</label>
 				<input type="password" class="form-control" id="inputUserPassword" name="password" placeholder="Password" value="" />
 			</div>
-			<input type="hidden" name="userId" value={{.profile.Id}} />
+			<input type="hidden" name="userID" value={{.profile.ID}} />
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
 	</div>

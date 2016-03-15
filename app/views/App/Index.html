@@ -1,6 +1,4 @@
-{{template "header.html" .}}
 {{template "App/trailer.html" .}}
-
 <div class="row">
 	<div class="col-sm-11">
 	<main>
@@ -11,16 +9,16 @@
 			  <div class="panel-heading">
 			    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
 				{{if $user}}
-				<small>By {{username .UserId}}</small>
-					{{if eq $user.Id .UserId}}
-						<a href="/admin/post/{{.Id}}" title="Edit this Post">Edit</a>
+				<small>By {{username .UserID}}</small>
+					{{if eq $user.ID .UserID}}
+						<a href="/admin/post/{{.ID}}" title="Edit this Post">Edit</a>
 					{{end}}
 				{{end}}
 			  </div>
 			  <div class="panel-body">
 			    {{markdown .Body}}
 
-				<p><a href="/post/{{.Id}}/{{urlquery .Title}}#commentForm" title="Make a comment">
+				<p><a href="/post/{{.ID}}/{{urlquery .Title}}#commentForm" title="Make a comment">
 				{{$count := commentCount .}}
 				{{if eq $count 0}}Comment on this article{{else}}
 				{{if eq $count 1}}One comment so far{{else}}

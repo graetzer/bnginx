@@ -1,17 +1,17 @@
 package controllers
 
 import (
+	"encoding/json"
 	"html/template"
 	"os"
 	"path/filepath"
 	"runtime"
 	"time"
-	"encoding/json"
 
 	"github.com/graetzer/go-recaptcha"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
-
+	// importing database driver
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/revel/revel"
@@ -28,20 +28,20 @@ func init() {
 	}
 	// Use for user supplied content, sanitizes html input and javascript
 	revel.TemplateFuncs["markdownSave"] = func(input string) template.HTML {
-		return template.HTML(string(SecureMarkdown([]byte(input))))
+		return template.HTML(string(secureMarkdown([]byte(input))))
 	}
 
-	revel.TemplateFuncs["sub"] = func(a, b int64) int64 {
+	revel.TemplateFuncs["sub"] = func(a, b int) int {
 		return a - b
 	}
 
-	revel.TemplateFuncs["add"] = func(a, b int64) int64 {
+	revel.TemplateFuncs["add"] = func(a, b int) int {
 		return a + b
 	}
 
-	revel.TemplateFuncs["username"] = func(userId int64) string {
+	revel.TemplateFuncs["username"] = func(userID int64) string {
 		var user User
-		if DB.First(&user, userId).RecordNotFound() {
+		if DB.First(&user, userID).RecordNotFound() {
 			return ""
 		}
 		return user.Name
@@ -52,14 +52,14 @@ func init() {
 		if post == nil {
 			DB.Model(Comment{}).Where("NOT approved").Count(&result)
 		} else {
-			DB.Model(Comment{}).Where("post_id = ? AND approved", post.Id).Count(&result)
+			DB.Model(Comment{}).Where("post_id = ? AND approved", post.ID).Count(&result)
 		}
 		return result
 	}
 
 	revel.TemplateFuncs["place"] = func(stay Stay) *Place {
 		var place Place
-		if DB.First (&place, stay.PlaceId).RecordNotFound() {
+		if DB.First(&place, stay.PlaceID).RecordNotFound() {
 			return nil
 		}
 		return &place
@@ -71,7 +71,7 @@ func init() {
 		}
 		bytes, err := json.Marshal(v)
 		if err != nil {
-			return ""//fmt.Println("error:", err)
+			return "" //fmt.Println("error:", err)
 		}
 		return string(bytes)
 	}
@@ -80,8 +80,8 @@ func init() {
 		return t1.Equal(t2)
 	}
 	// not pretty but effective
-	patterns := [...]string {"0.png", "1.gif", "2.jpg", "3.png", "4.png",
-	"5.png", "6.jpg", "7.png", "8.png", "9.gif"}
+	patterns := [...]string{"0.png", "1.gif", "2.jpg", "3.png", "4.png",
+		"5.png", "6.jpg", "7.png", "8.png", "9.gif"}
 	revel.TemplateFuncs["pattern"] = func(id int64) string {
 		i := int(id) % len(patterns)
 		return "/public/patterns/pattern" + patterns[i]
@@ -89,6 +89,7 @@ func init() {
 }
 
 var (
+	// global DB instance
 	DB     *gorm.DB
 	policy *bluemonday.Policy
 )
@@ -101,30 +102,30 @@ func AppInit() {
 	db, err := gorm.Open("sqlite3", filepath.Join(DataBaseDir(), "sqlite_bnginx.db"))
 	if err == nil {
 		db.LogMode(revel.DevMode)
-		db.CreateTable(&User{})
-		db.CreateTable(&Blogpost{})
-		db.CreateTable(&Comment{})
-		db.CreateTable(&Project{})
-		db.CreateTable(&Place{})
-		db.CreateTable(&Stay{})
+		if !db.HasTable(&User{}) {
+			db.CreateTable(&User{})
+			db.CreateTable(&Blogpost{})
+			db.CreateTable(&Comment{})
+			db.CreateTable(&Project{})
+			db.CreateTable(&Place{})
+			db.CreateTable(&Stay{})
+		}
 
-		db.AutoMigrate(&Project{})
-
-		var user User // Add default user
+		var user User // Add default admin user
 		if db.First(&user).RecordNotFound() {
 			user = User{Name: "Simon", Email: "simon@graetzer.org", IsAdmin: true}
 			user.SetPassword("default")
-			db.Save(&user)
+			DB.Save(&user)
 		}
-		DB = &db
 	}
+	DB = db
 
 	if secret, found := revel.Config.String("recaptcha.secret"); found {
 		recaptcha.Init(secret)
 	}
 }
 
-func SecureMarkdown(input []byte) []byte {
+func secureMarkdown(input []byte) []byte {
 	// set up the HTML renderer
 	htmlFlags := 0
 	htmlFlags |= blackfriday.HTML_USE_XHTML
@@ -149,6 +150,7 @@ func SecureMarkdown(input []byte) []byte {
 	return policy.SanitizeBytes(unsafe)
 }
 
+// DataBaseDir returns the path where to store locale data
 func DataBaseDir() string {
 	base, found := revel.Config.String("databasedir")
 	if !found {

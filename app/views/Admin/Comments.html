@@ -30,18 +30,18 @@
 			{{$user := .user}}
 		    {{range .comments}}
 		       	<tr class="{{if .Approved}}success{{else}}danger{{end}}" >
-					<td>{{.PostId}}</td>
+					<td>{{.PostID}}</td>
 					<td>{{datetime .CreatedAt}}</td>
 					<td>{{.Title}}</td>
 					<td>{{.Body}}</td>
 					<td>
 						{{if $user.IsAdmin}}
 							{{if .Approved}}
-							<a href="/admin/comments/update/{{.Id}}?approved=false" class="btn btn-warning btn-sm">Reject</a>
+							<a href="/admin/comments/update/{{.ID}}?approved=false" class="btn btn-warning btn-sm">Reject</a>
 							{{else}}
-							<a href="/admin/comments/update/{{.Id}}?approved=true" class="btn btn-success btn-sm">Approve</a>
+							<a href="/admin/comments/update/{{.ID}}?approved=true" class="btn btn-success btn-sm">Approve</a>
 							{{end}}
-							<a href="/admin/comments/delete/{{.Id}}" class="btn btn-danger btn-sm">Delete</a>
+							<a href="/admin/comments/delete/{{.ID}}" class="btn btn-danger btn-sm">Delete</a>
 						{{end}}
 					</td>
 				</tr>

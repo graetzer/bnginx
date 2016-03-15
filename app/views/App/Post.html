@@ -1,6 +1,5 @@
 {{set . "title" .post.Title}}
 {{append . "moreScripts" "https://www.google.com/recaptcha/api.js"}}
-{{template "header.html" .}}
 {{template "App/trailer.html" .}}
 
 <div class="row">
@@ -10,9 +9,9 @@
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{datetime .post.UpdatedAt}}</small></h3>
-			<small>By {{username .post.UserId}}</small>
-			{{if .user}}{{if eq .user.Id .post.UserId}}
-			<a href="/admin/post/{{.post.Id}}" title="Edit this Post">Edit</a>
+			<small>By {{username .post.UserID}}</small>
+			{{if .user}}{{if eq .user.ID .post.UserID}}
+			<a href="/admin/post/{{.post.ID}}" title="Edit this Post">Edit</a>
 			{{end}}{{end}}
 		  </div>
 		  <div class="panel-body">
@@ -32,7 +31,7 @@
 <div class="row">
 	<div class="col-sm-3">
 		<h4>Leave a comment</h4>
-		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.Id}}">
+		<form id="commentForm" role="form" method="POST" action="/post/comment/{{.post.ID}}">
 		  <div class="form-group {{if .errors.name}}has-error{{end}}">
 		    <label for="inputName">Name</label>
 		    <input type="text" class="form-control" id="inputName" placeholder="Jon Doe" name="name" value="{{.flash.name}}">

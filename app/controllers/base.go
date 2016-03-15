@@ -36,25 +36,25 @@ func (c Base) getUser(email string) *User {
 	return &user
 }
 
-func (c Base) getUserById(userId int64) *User {
+func (c Base) getUserByID(userID int64) *User {
 	var user User
-	if DB.First(&user, userId).RecordNotFound() {
+	if DB.First(&user, userID).RecordNotFound() {
 		c.Flash.Error("No user with this id")
 		return nil
 	}
 	return &user
 }
 
-func (c Base) getPostById(postId int64) *Blogpost {
+func (c Base) getPostByID(postID int64) *Blogpost {
 	var post Blogpost
-	if DB.First(&post, postId).RecordNotFound() {
+	if DB.First(&post, postID).RecordNotFound() {
 		c.Flash.Error("This Post does not exist")
 		return nil
 	}
 	return &post
 }
 
-func (c Base) getPublishedPosts(offset int64) []*Blogpost {
+func (c Base) getPublishedPosts(offset int) []*Blogpost {
 	var posts []*Blogpost
 	DB.Where("published").Order("created_at DESC").Limit(5).Offset(offset).Find(&posts)
 	return posts

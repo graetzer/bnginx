@@ -1,53 +1,53 @@
-{{set . "title" "About"}}
-{{append . "moreScripts" "/public/globe/Detector.js"}}
+{{set . "title" "About"}} 
+{{append . "moreScripts" "/public/globe/Detector.js"}} 
 {{append . "moreScripts" "/public/globe/three.min.js"}}
 {{append . "moreScripts" "/public/globe/globe.js"}}
 {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-11">
-		<div class="row">
-			<div class="col-xs-3 col-sm-2 col-lg-1">
-				<img src="/public/img/profile.jpg" alt="Profile image" class="img-circle" style="max-width:100%" />
-			</div>
-			<div class="col-xs-9 col-sm-10 col-lg-11">
-			  My name is Simon and I'm a software developer from Germany. I mostly work on mobile app's (<strong>iOS</strong> and
-				<strong>Android</strong>), but I also have an active interest in
-					<strong>Computer Graphics</strong>,
-					<strong>Machine Learning</strong> and
-					<strong>Web Development</strong>. If you want to know what I'm up to, look at this <a href="/projects" title="Project List">list of projects</a> or go to <a href="https://github.com/graetzer/" title="My Github profile">Github</a>.
-					I am currently pursuing a master degree in Computer Science at the RWTH Aachen University.<br/>If you want to get in touch shoot me an email at <strong>simon(at)graetzer.org</strong>
-			</div>
-		</div>
+    <div class="col-sm-11">
+        <div class="row">
+            <div class="col-xs-3 col-sm-2 col-lg-1">
+                <img src="/public/img/profile.jpg" alt="Profile image" class="img-circle" style="max-width:100%" />
+            </div>
+            <div class="col-xs-9 col-sm-10 col-lg-11">
+                My name is Simon and I'm a software developer from Germany. I mostly work on mobile app's (<strong>iOS</strong>                and
+                <strong>Android</strong>), but I also have an active interest in
+                <strong>Computer Graphics</strong>,
+                <strong>Machine Learning</strong> and
+                <strong>Web Development</strong>. If you want to know what I'm up to, look at this <a href="/projects" title="Project List">list of projects</a>                or go to <a href="https://github.com/graetzer/" title="My Github profile">Github</a>. I am currently pursuing
+                a master degree in Computer Science at the RWTH Aachen University.
+                <br/>If you want to get in touch shoot me an email at <strong>simon(at)graetzer.org</strong>
+            </div>
+        </div>
 
-		<div class="row">
-			<div class="col-sm-3 hidden-xs" id="stays-list" style="padding: 10px 20px 0 20px">
-				Trips &amp; Locations
-				{{range .stays}}{{$place := place .}}
-				<div class="row" onclick="javascript:showPlace({{.Id}}, {{$place.Id}})" id="stay-{{.Id}}">
-					<div class="col-xs-4" style="padding:0">
-						<img src="{{$place.CoverUrl}}" alt="{{$place.Name}}" class="img-circle" />
-					</div>
-					<div class="col-xs-8">
-						<h6><a href="{{.Url}}" target="_blank" title="Pictures of my stay">{{$place.Name}}</a></h6>
-						<small>{{if eqtime .StartedAt .EndedAt}}{{date .StartedAt}} - <strong>Now</strong>{{else}}{{date .StartedAt}} - {{date .EndedAt}}{{end}}</small>
-					</div>
-				</div>{{end}}
-			</div>
-			<div class="col-sm-9" id="globe-container">
-				<div id="globe-placeholder" style="width:100%;height:300px;background:transparent url('/public/globe/loading.gif') no-repeat center center"></div>
-			</div>
-		</div>
-	</div>
-	<!-- ./col-sm-11 -->
+        <div class="row">
+            <div class="col-sm-3 hidden-xs" id="stays-list" style="padding: 10px 20px 0 20px">
+                Trips &amp; Locations {{range .stays}}{{$place := place .}}
+                <div class="row" onclick="javascript:showPlace({{.ID}}, {{$place.ID}})" id="stay-{{.ID}}">
+                    <div class="col-xs-4" style="padding:0">
+                        <img src="{{$place.CoverUrl}}" alt="{{$place.Name}}" class="img-circle" />
+                    </div>
+                    <div class="col-xs-8">
+                        <h6><a href="{{.Url}}" target="_blank" title="Pictures of my stay">{{$place.Name}}</a></h6>
+                        <small>{{if eqtime .StartedAt .EndedAt}}{{date .StartedAt}} - <strong>Now</strong>{{else}}{{date .StartedAt}} - {{date .EndedAt}}{{end}}</small>
+                    </div>
+                </div>{{end}}
+            </div>
+            <div class="col-sm-9" id="globe-container">
+                <div id="globe-placeholder" style="width:100%;height:300px;background:transparent url('/public/globe/loading.gif') no-repeat center center"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ./col-sm-11 -->
 
-	<div class="col-sm-1">
-		{{template "App/social.html" .}}
-	</div>
+    <div class="col-sm-1">
+        {{template "App/social.html" .}}
+    </div>
 </div>
 <!-- /.row -->
 <script type="text/javascript">
-	var globe, places, active;
+    var globe, places, active;
 	window.onload = function() {
 
 		var container = document.getElementById('globe-container');
@@ -56,7 +56,6 @@
 			container.removeChild(placeholder);// get rid of space placeholder
 			Detector.addGetWebGLMessage({parent:container});
 		} else {
-			places = JSON.parse('{{json .places}}');
 			var globeImg = new Image();
 			globeImg.onload = function() {
 				// In memory drawing
@@ -68,31 +67,30 @@
 				var worldMap = context.getImageData(0, 0, globeImg.width, globeImg.height);
 
 				var opts = {};
-				//{{if .stays}}{{$stay := index .stays 0}}{{$place := place $stay}}
-				opts.lat = parseFloat("{{$place.Latitude}}");
-				opts.lng = parseFloat("{{$place.Longitude}}");
-				active = $('#stay-{{$stay.Id}}');
-				active.addClass("active");
-				//{{end}}
-				globe = new DAT.Globe(container, worldMap, places, opts);
+                places = JSON.parse('{{json .places}}');
+                opts.places = places;
+				globe = new DAT.Globe(container, worldMap, opts);
 				globe.animate();
 				container.removeChild(placeholder);// get rid of space placeholder
+                //{{if .stays}}{{$stay := index .stays 0}}
+                showPlace(parseInt("{{$stay.ID}}"), parseInt("{{$stay.PlaceID}}"), 850);
+				//{{end}}
 			};
 			globeImg.src = "/public/globe/globe.png";// starts loading heightmap
 		}
 	};
 
-	function showPlace(stayId, placeId) {
+	function showPlace(stayID, placeID) {
 		var place;
 		for (var i = 0; i < places.length; i++) {
-			if (places[i].id == placeId) {
+			if (places[i].id == placeID) {
 				place = places[i];
 				break;
 			}
 		}
-		if (place) globe.showLatLng(place.lat, place.lng);
+		if (place) globe.showLatLng(place.lat, place.lng, active?700:1000);
 		if (active) active.removeClass("active");
-		active = $('#stay-' + stayId);
+		active = $('#stay-' + stayID);
 		active.addClass("active");
 	}
 </script>

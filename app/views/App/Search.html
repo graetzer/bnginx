@@ -1,7 +1,5 @@
 {{set . "title" "Home"}}
 {{template "header.html" .}}
-{{template "App/trailer.html" .}}
-
 <div class="row">
 	<div class="col-sm-11">
 	<main>
@@ -11,7 +9,7 @@
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 			<h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
-			<small>By {{username .UserId}}</small>
+			<small>By {{username .UserID}}</small>
 		  </div>
 		  <div class="panel-body">
 		    {{markdown .Body}}

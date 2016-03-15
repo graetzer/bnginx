@@ -1,4 +1,4 @@
-{{if eq .place.Id -1}}{{set . "title" "Create a new Place"}}{{else}}{{set . "title" "Modify Place"}}{{end}}
+{{if eq .place.ID -1}}{{set . "title" "Create a new Place"}}{{else}}{{set . "title" "Modify Place"}}{{end}}
 {{template "header.html" .}}
 <div class="row">
 	<div class="col-sm-10 col-sm-offset-2">
@@ -17,7 +17,7 @@
 
 	<div class="col-sm-8">
 		<h3>{{.title}}</h3>
-		<form role="form" method="POST" action="/admin/about/places/{{.place.Id}}">
+		<form role="form" method="POST" action="/admin/about/places/{{.place.ID}}">
 			<div class="form-group">
 				<label for="inputName">Name</label>
 				<input type="text" class="form-control" id="inputName" name="place.Name" placeholder="Name" value="{{.place.Name}}" />
@@ -35,7 +35,7 @@
 				<input type="number" class="form-control" id="inputLongitude" name="place.Longitude" placeholder="120.221" value="{{.place.Longitude}}"  min="-180" max="180" step="0.0000001" />
 			</div>
 
-			<input type="hidden" name="place.Id" value="{{.place.Id}}" />
+			<input type="hidden" name="place.ID" value="{{.place.ID}}" />
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
 	</div>

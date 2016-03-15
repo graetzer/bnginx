@@ -1,6 +1,40 @@
-<header role="banner" class="row">
-<div class="jumbotron" id="trailer">
-   <h1>Technical Notebook</h1>
-   <p class="lead">Thoughts on iOS, Android, GoLang and more.</p>
-</div>
+{{append . "moreScripts" "/public/globe/Detector.js"}} {{append . "moreScripts" "/public/globe/three.min.js"}}
+{{append . "moreScripts" "/public/globe/globe.js"}} {{template "header.html" .}}
+<header role="banner" class="row jumbotron" id="trailer">
+    <h1>Technical Notebook</h1>
+    <p class="lead">Thoughts on iOS, Android, GoLang and more.</p>
 </header>
+<script type="text/javascript">
+    var globe, globeImg;
+	window.onload = function() {
+		var container = document.getElementById('trailer');
+		if (Detector.webgl) {
+            globeImg = new Image();
+            globeImg.onload = function() {
+				// In memory drawing
+				var canvas = document.createElement('canvas');
+				canvas.width = globeImg.width;
+				canvas.height = globeImg.height;
+				var context = canvas.getContext('2d');
+				context.drawImage(globeImg, 0, 0);
+				var worldMap = context.getImageData(0, 0, globeImg.width, globeImg.height);//#ABCDEF
+                var opts = {height: 500, color:"#4C8DA1", angle: 17.5, disableMouseZoom:true, disableTouch:true};
+                //{{if .place}}
+                opts.places =[JSON.parse('{{json .place}}')];
+				//{{end}}
+				globe = new DAT.Globe(container, worldMap, opts);
+                container.style.backgroundImage = "none";
+                globe.canvas.style.zIndex = -1;
+                globe.canvas.style.position = 'absolute';
+                globe.canvas.style.top = 0;
+                globe.canvas.style.left = 0;
+				globe.animate();
+                //{{if .place}}
+                globe.showLatLng(parseFloat("{{.place.Latitude}}"), parseFloat("{{.place.Longitude}}"), 750);
+				//{{end}}
+			};
+			globeImg.src = "/public/globe/globe.png";// starts loading heightmap
+		}
+	};
+
+</script>

@@ -1,4 +1,4 @@
-{{if eq .post.Id -1}}{{set . "title" "Create a new Post"}}{{else}}{{set . "title" "Edit Post"}}{{end}}
+{{if eq .post.ID -1}}{{set . "title" "Create a new Post"}}{{else}}{{set . "title" "Edit Post"}}{{end}}
 {{append . "moreScripts" "/public/js/Markdown.Converter.js"}}
 {{append . "moreScripts" "/public/js/Markdown.Extra.js"}}
 {{append . "moreScripts" "//cdn.jsdelivr.net/ace/1.1.9/min/ace.js"}}
@@ -24,7 +24,7 @@
 		{{set . "pp" 1}} {{template "Admin/adminMenu.html" .}}
 	</div>*/}}
 	<div class="col-sm-6" id="container-editor">
-		<form role="form" method="POST" action="/admin/post/{{.post.Id}}">
+		<form role="form" method="POST" action="/admin/post/{{.post.ID}}">
 			<div class="form-group">
 				<label for="inputTitle" class="sr-only">Title</label>
 				<input type="text" class="form-control" id="inputTitle" name="post.Title" placeholder="Titel" value="{{.post.Title}}" />
@@ -43,7 +43,7 @@
 				<label for="inputCreatedAt">Creation Date (Used for sorting)</label>
 				<input type="text" class="form-control" id="inputCreatedAt" name="post.CreatedAt" placeholder="2015.01.20" value="{{date .post.CreatedAt}}" />
 			</div>
-			<input type="hidden" value="{{.post.Id}}" name="post.Id" />
+			<input type="hidden" value="{{.post.ID}}" name="post.ID" />
 			<button type="submit" class="btn btn-default">Save</button>
 		</form>
 	</div>

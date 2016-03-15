@@ -5,9 +5,9 @@ import (
 	"encoding/base64"
 	"time"
 )
-
+// User model
 type User struct {
-	Id       int64
+	ID       int64
 	Name     string
 	Email    string
 	Password string
@@ -26,23 +26,26 @@ func hashPassword(in string) string {
 	return base64.StdEncoding.EncodeToString(buffer)
 }
 
+// CheckPassword hashes and compares the passwords
 func (u User) CheckPassword(in string) bool {
 	return hashPassword(in) == u.Password
 }
 
+// SetPassword hashes and sets the password
 func (u *User) SetPassword(in string) {
 	u.Password = hashPassword(in)
 }
 
+// Blogpost contains the text and metadata of a post
 type Blogpost struct {
-	Id        int64
+	ID        int64 `gorm:"primary_key"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
 	Title     string
 	Body      string
 	Published bool
-	UserId    int64 // Foreign key of User
+	UserID    int64 // Foreign key of User
 	Comments []Comment // One-To-Many relationship (has many)
 }
 
@@ -55,19 +58,21 @@ func (p Blogpost) Summary() string {
 	return p.Body
 }
 
+// Comment contains user comments
 type Comment struct {
-	Id     int64
+	ID     int64
 	CreatedAt time.Time
 
-	PostId    int64 // Foreign key of BlogPost
+	PostID    int64 // Foreign key of BlogPost
 	Name      string
 	Title     string
 	Body      string
 	Approved  bool
 }
 
+// Contains info about my pet projects
 type Project struct {
-	Id        int64
+	ID        int64
 	UpdatedAt time.Time
 
 	Title       string
@@ -78,16 +83,18 @@ type Project struct {
 	Hidden      bool
 }
 
+// Stay documents where I was at a point
 type Stay struct {
-	Id     int64 `json:"id"`
-	PlaceId    int64 // Foreign key of Place
+	ID     int64 `json:"id"`
+	PlaceID    int64 // Foreign key of Place
 	StartedAt time.Time `json:"startedAt"`
 	EndedAt   time.Time `json:"endedAt"`
 	Url string `json:"url"`
 }
 
+// Place is somwhere in the world
 type Place struct {
-	Id     int64 `json:"id"`
+	ID     int64 `json:"id"`
 
 	Name  string `json:"name"`
 	CoverUrl string `json:"coverUrl"`

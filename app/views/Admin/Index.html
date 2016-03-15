@@ -29,10 +29,10 @@
 					<td>{{.Title}}</td>
 					<td>{{date .CreatedAt}}</td>
 					<td>{{date .UpdatedAt}}</td>
-					<td>{{username .UserId}}</td>
+					<td>{{username .UserID}}</td>
 					<td>
-						<a href="/admin/post/{{.Id}}" class="btn btn-primary btn-sm">Edit</a> {{if eq $user.Id .UserId}}
-						<a href="/admin/post/{{.Id}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
+						<a href="/admin/post/{{.ID}}" class="btn btn-primary btn-sm">Edit</a> {{if eq $user.ID .UserId}}
+						<a href="/admin/post/{{.ID}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
 					</td>
 				</tr>
 				{{end}}
@@ -53,12 +53,12 @@
 			<tbody>
 				{{range .users}}
 				<tr>
-					<td>{{.Id}}</td>
+					<td>{{.ID}}</td>
 					<td>{{.Name}}</td>
 					<td>{{.Email}}</td>
 					<td>{{if .IsAdmin}}Administrator{{else}}User{{end}}</td>
 					<td>
-						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a> {{if and ($user.IsAdmin) (not (eq $user.Id .Id))}}
+						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a> {{if and ($user.IsAdmin) (not (eq $user.ID .ID))}}
 						<a href="/admin/user/{{.Email}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
 					</td>
 				</tr>

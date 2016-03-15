@@ -48,11 +48,19 @@ func (c App) Logout() revel.Result {
 	return c.Redirect(routes.App.Index(0))
 }
 
-func (c App) Index(offset int64) revel.Result {
+// Index serves the frontpage including the last stay
+func (c App) Index(offset int) revel.Result {
 	posts := c.getPublishedPosts(offset)
-	return c.Render(posts, offset)
+    var place Place 
+    var stay Stay
+	DB.Order("started_at DESC").First(&stay)
+    if DB.Model(&stay).Related(&place).RecordNotFound() {
+        return c.Render(posts, offset)
+    }
+    return c.Render(place, posts, offset)
 }
 
+// Feed serves the current RSS feed
 func (c App) Feed() revel.Result {
 	c.RenderArgs["posts"] = c.getPublishedPosts(0)
 	c.RenderArgs["time"] = time.Now()
@@ -60,28 +68,31 @@ func (c App) Feed() revel.Result {
 	return c.RenderTemplate("App/Feed.xml")
 }
 
-func (c App) Search(query string, offset int64) revel.Result {
+// Search serrves matching blogposts
+func (c App) Search(query string, offset int) revel.Result {
 	var posts []*Blogpost
 	q := "%" + query + "%"
 	DB.Where("published AND (body like ? OR title like ?)", q, q).Limit(10).Offset(offset).Find(&posts)
 	return c.Render(posts, query, offset)
 }
 
-func (c App) Post(postId int64) revel.Result {
-	post := c.getPostById(postId)
+// Post renders the post identified by postID
+func (c App) Post(postID int64) revel.Result {
+	post := c.getPostByID(postID)
 	if post == nil {
 		return c.NotFound("Oh no! I couldn't find this page")
 	}
 	var comments []Comment
-	DB.Where(&Comment{PostId:postId, Approved:true}).Find(&comments)
+	DB.Where(&Comment{PostID:postID, Approved:true}).Find(&comments)
 	recaptchaSiteKey := revel.Config.StringDefault("recaptcha.sitekey", "")
 	return c.Render(post, comments, recaptchaSiteKey)
 }
 
-func (c App) SaveComment(postId int64, name, title, body string) revel.Result {
-	recaptcha_response := c.Params.Get("g-recaptcha-response")
+// SaveComment validates and stores user comments
+func (c App) SaveComment(postID int64, name, title, body string) revel.Result {
+	recaptchaResponse := c.Params.Get("g-recaptcha-response")
 
-	c.Validation.Required(postId)
+	c.Validation.Required(postID)
 	c.Validation.Required(name)
 	c.Validation.MaxSize(name, 50)
 	//c.Validation.Match(email, regexp.MustCompile(`(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})`))
@@ -89,26 +100,26 @@ func (c App) SaveComment(postId int64, name, title, body string) revel.Result {
 	c.Validation.MaxSize(title, 100)
 	c.Validation.Required(body)
 	c.Validation.MaxSize(body, 500)
-	c.Validation.Required(recaptcha_response)
+	c.Validation.Required(recaptchaResponse)
 
 	// Get client IP, optional
-	client_ip := c.Request.Header.Get("X-Real-IP")
-	if client_ip == "" {
-		client_ip = strings.Split(c.Request.RemoteAddr, ":")[0]
+	clientIP := c.Request.Header.Get("X-Real-IP")
+	if clientIP == "" {
+		clientIP = strings.Split(c.Request.RemoteAddr, ":")[0]
 	}
 
 	if c.Validation.HasErrors() {
 		c.Flash.Error("Could not validate your input")
 		c.Validation.Keep()
 		c.FlashParams()
-	} else if ok := recaptcha.Confirm(client_ip, recaptcha_response); !ok {
+	} else if ok := recaptcha.Confirm(clientIP, recaptchaResponse); !ok {
 		c.Flash.Error("Wrong captcha")
-	} else if post := c.getPostById(postId); post != nil {
-		comment := Comment{PostId: postId, Name: name, Title: title, Body: body}
+	} else if post := c.getPostByID(postID); post != nil {
+		comment := Comment{PostID: postID, Name: name, Title: title, Body: body}
 		DB.Save(&comment)
 		c.Flash.Success("Thanks for commenting")
 	}
-	return c.Redirect(routes.App.Post(postId))
+	return c.Redirect(routes.App.Post(postID))
 }
 
 func (c App) Projects(hidden bool) revel.Result {
