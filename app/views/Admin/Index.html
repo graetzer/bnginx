@@ -31,7 +31,7 @@
 					<td>{{date .UpdatedAt}}</td>
 					<td>{{username .UserID}}</td>
 					<td>
-						<a href="/admin/post/{{.ID}}" class="btn btn-primary btn-sm">Edit</a> {{if eq $user.ID .UserId}}
+						<a href="/admin/post/{{.ID}}" class="btn btn-primary btn-sm">Edit</a> {{if eq $user.ID .UserID}}
 						<a href="/admin/post/{{.ID}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
 					</td>
 				</tr>

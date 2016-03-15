@@ -42,6 +42,7 @@ func (c App) Login(email string, password string) revel.Result {
 	return c.Redirect(routes.Admin.Index())
 }
 
+// Logout the user
 func (c App) Logout() revel.Result {
 	delete(c.Session, "user")
 	delete(c.RenderArgs, "user")
