@@ -70,7 +70,7 @@
                 places = JSON.parse('{{json .places}}');
                 opts.places = places;
 				globe = new DAT.Globe(container, worldMap, opts);
-				globe.animate();
+				globe.render();
 				container.removeChild(placeholder);// get rid of space placeholder
                 //{{if .stays}}{{$stay := index .stays 0}}
                 showPlace(parseInt("{{$stay.ID}}"), parseInt("{{$stay.PlaceID}}"), 850);

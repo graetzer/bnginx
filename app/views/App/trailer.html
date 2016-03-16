@@ -28,7 +28,7 @@
                 globe.canvas.style.position = 'absolute';
                 globe.canvas.style.top = 0;
                 globe.canvas.style.left = 0;
-				globe.animate();
+				globe.render();
                 //{{if .place}}
                 globe.showLatLng(parseFloat("{{.place.Latitude}}"), parseFloat("{{.place.Longitude}}"), 750);
 				//{{end}}

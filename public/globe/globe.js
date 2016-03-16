@@ -10,6 +10,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+"use strict";
 
 var DAT = DAT || {};
 
@@ -17,7 +18,7 @@ DAT.Globe = function(container, worldMap, opts) {
     opts = opts || {};
     opts.places = opts.places || [];
 
-    var camera, scene, renderer, w, h;
+    var camera, scene, renderer;
     var globeMesh, point;
     var mouseOver, mouseDown, zoomTouchSpread;
     var originPos = new THREE.Vector3(0, 0, 0);
@@ -30,24 +31,19 @@ DAT.Globe = function(container, worldMap, opts) {
 
         var shader, uniforms, material;
         //600 is enough to get the globe in full and have a good render performance
-        w = opts.width || container.clientWidth || 600;
-        h = opts.height || Math.min(600, w) || 600;
+        var w = opts.width || container.clientWidth || 600;
+        var h = opts.height || Math.min(600, w) || 600;
 
         camera = new THREE.PerspectiveCamera(opts.angle || 25, w / h, 1, 10000);
         camera.position.z = distance;
         scene = new THREE.Scene();
 
-        // Prototype for the dots
-        var geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
-        geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, -0.5));
-        point = new THREE.Mesh(geometry);
-
         // Setup renderer
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(w, h);
         renderer.setClearColor(0xffffff, 1);
-        renderer.domElement.style.width = opts.width ? opts.width+"px" : "100%";
-        renderer.domElement.style.height = opts.height ? opts.height+"px" : "auto";
+        renderer.domElement.style.width = opts.width ? opts.width + "px" : "100%";
+        renderer.domElement.style.height = opts.height ? opts.height + "px" : "auto";
         container.appendChild(renderer.domElement);
 
         // Add all event listeners
@@ -71,6 +67,11 @@ DAT.Globe = function(container, worldMap, opts) {
         }, false);
         document.addEventListener('keydown', onDocumentKeyDown, false);
         //window.addEventListener('resize', onWindowResize, false);
+        
+        // Prototype for the dots
+        var geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
+        geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, -0.5));
+        point = new THREE.Mesh(geometry);
 
         //var globeTexData = new Uint8Array(worldMap.width*worldMap.height*3);
         //globeTexData.fill(0xFF);
@@ -107,13 +108,13 @@ DAT.Globe = function(container, worldMap, opts) {
         addPoint(-90, 0, 0.5, 1, color2, subgeo);//southpole
         console.log("%d nodes", nodeCount + 2);
 
-        this.points = new THREE.Mesh(subgeo, new THREE.MeshBasicMaterial({
+        var points = new THREE.Mesh(subgeo, new THREE.MeshBasicMaterial({
             color: 0xffffff,
             vertexColors: THREE.FaceColors,
             morphTargets: false
         }));
-        scene.add(this.points);
-        
+        scene.add(points);
+
         /*var globeTex = new THREE.DataTexture(globeTexData, worldMap.width, worldMap.height, THREE.RGBFormat);
         globeTex.needsUpdate = true;
         globeTex.flipY = true;*/
@@ -267,8 +268,8 @@ DAT.Globe = function(container, worldMap, opts) {
     }
 
     function onWindowResize(event) { // TODO fix window resize
-        w = container.clientWidth || 600;
-        h = Math.min(600, w) || 600;
+        var w = container.clientWidth || 600;
+        var h = Math.min(600, w) || 600;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
@@ -278,11 +279,6 @@ DAT.Globe = function(container, worldMap, opts) {
         distanceTarget -= delta;
         distanceTarget = distanceTarget > 1000 ? 1000 : distanceTarget;
         distanceTarget = distanceTarget < 275 ? 275 : distanceTarget;
-    }
-
-    function animate() {
-        render();
-        requestAnimationFrame(animate);
     }
 
     function render() {
@@ -298,10 +294,11 @@ DAT.Globe = function(container, worldMap, opts) {
         camera.lookAt(originPos);
 
         renderer.render(scene, camera);
+        requestAnimationFrame(render);
     }
 
     init();
-    this.animate = animate;
+    this.render = render;
     this.renderer = renderer;
     this.canvas = renderer.domElement;
     this.showLatLng = function(lat, lng, zoomTarget) { // No idea why this works
