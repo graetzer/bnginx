@@ -6,18 +6,14 @@
 	<div class="col-sm-11">
 	<main>
 	<article>
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-		    <h3 class="panel-title">{{.post.Title}}<small class="pull-right">{{datetime .post.UpdatedAt}}</small></h3>
-			<small>By {{username .post.UserID}}</small>
-			{{if .user}}{{if eq .user.ID .post.UserID}}
-			<a href="/admin/post/{{.post.ID}}" title="Edit this Post">Edit</a>
-			{{end}}{{end}}
-		  </div>
-		  <div class="panel-body">
-		    {{markdown .post.Body}}
-		  </div>
-		</div>
+		<div class="card">
+			  <div class="card-header">
+			    <h3 class=" card-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
+				<h6 class="card-subtitle">By {{username .UserID}}</h6>
+			  <div class="card-body">
+			    <p class="card-text">{{markdown .Body}}</p>
+			  </div>
+			</div>
 	</article>
 	</main>
 	</div><!-- ./col-sm-11 -->
@@ -53,7 +49,7 @@
 			<div class="g-recaptcha" data-sitekey="{{.recaptchaSiteKey}}"></div>
 
 		  <div class="form-group">
-		    <button type="submit" class="btn btn-default">Send</button>
+		    <button type="submit" class="btn btn-secondary">Send</button>
 		  </div>
 		</form>
 	</div>

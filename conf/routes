@@ -11,10 +11,12 @@ GET     /post/:postID/*                         App.Post
 POST    /post/comment/:postID                   App.SaveComment
 GET     /projects                               App.Projects
 GET     /about                                  App.About
+GET     /experience                             App.Experience
 GET     /imprint                                App.Imprint
 
 # Login & Logout
-POST    /login                                  App.Login
+GET     /login                                  App.Login
+POST    /login                                  App.LoginPost
 POST    /logout                                 App.Logout
 
 # Favicon, ignored
@@ -31,43 +33,43 @@ GET     /admin                                  Admin.Index
 # User management
 GET      /admin/user/:email                     Admin.EditUser
 POST     /admin/user/save                       Admin.SaveUser
-GET      /admin/user/:email/delete              Admin.DeleteUser
+DELETE   /admin/user/:email                     Admin.DeleteUser
 
 # Post management
 GET     /admin/post/create                      Admin.EditPost(0)
-GET     /admin/post/:postID/delete              Admin.DeletePost
+DELETE  /admin/post/:postID                     Admin.DeletePost
 GET     /admin/post/:postID                     Admin.EditPost
 POST    /admin/post/:postID                     Admin.SavePost
 
 # Project management
 GET     /admin/projects                         Admin.Projects()
 GET     /admin/projects/create                  Admin.EditProject(0)
-GET     /admin/projects/:projectID/delete       Admin.DeleteProject
+DELETE  /admin/projects/:projectID              Admin.DeleteProject
 GET     /admin/projects/:projectID              Admin.EditProject
 POST    /admin/projects/:projectID              Admin.SaveProject
 
 # Media upload
 GET     /admin/media                            Admin.Media
-GET     /admin/media/:filename/delete           Admin.DeleteMedia
+DELETE     /admin/media/:filename           Admin.DeleteMedia
 POST    /admin/media/upload                     Admin.UploadMedia
 
 # Comment management
 GET     /admin/comments                         Admin.Comments
 GET     /admin/comments/update/:commentID       Admin.UpdateComment
-GET     /admin/comments/delete/:commentID       Admin.DeleteComment
+DELETE     /admin/comments/delete/:commentID       Admin.DeleteComment
 
 # About places management
 GET     /admin/about                            Admin.About()
 GET     /admin/about/places/create              Admin.EditPlace(0)
 GET     /admin/about/places/:placeID            Admin.EditPlace
 POST    /admin/about/places/:placeID            Admin.SavePlace
-GET     /admin/about/places/:placeID/delete     Admin.DeletePlace
+DELETE  /admin/about/places/:placeID            Admin.DeletePlace
 
 # Stay's at places
 GET     /admin/about/stays/create               Admin.EditStay(0)
 GET     /admin/about/stays/:stayID              Admin.EditStay
 POST    /admin/about/stays/:stayID              Admin.SaveStay
-GET     /admin/about/stays/:stayID/delete       Admin.DeleteStay
+DELETE  /admin/about/stays/:stayID              Admin.DeleteStay
 
 # Map static resources from the /app/public folder to the /public path
 GET     /uploads/*filepath                      Uploads.ServeUpload

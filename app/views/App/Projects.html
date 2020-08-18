@@ -1,41 +1,40 @@
-{{set . "title" .post.Title}}{{template "header.html" .}}
+{{set . "title" "Projects & Work"}}{{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-11">
-		<main id="project-list">
-			{{range .projects}}
-			<article>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">{{.Title}}
-							<small class="pull-right">{{.Tags}}</small>
-						</h3>
+	<div class="col-9" id="project-list">
+		{{range .projects}}
+			<div class="card">
+				<h2 class="card-header">
+					{{.Title}}
+				</h2>
+				<div class="card-body">
+					<div class="col-sm-4">
+						{{if .CoverUrl}}<img src="{{.CoverUrl}}" alt="Project Logo" class="img-square" />
+						{{else}}<div class="pattern" style="background:url('{{pattern .ID}}')"></div>{{end}}
 					</div>
-					<div class="panel-body">
-						<div class="col-sm-4">
-							{{if .CoverUrl}}<img src="{{.CoverUrl}}" alt="Project Logo" class="img-square" />
-							{{else}}<div class="pattern" style="background:url('{{pattern .ID}}')"></div>{{end}}
-						</div>
-						<div class="col-sm-8">
-							{{markdown .Description}}
-							{{if .RepoUrl}}<a class="btn btn-info" role="button" href="{{.RepoUrl}}" title="Repository or project website" target="_blank">More Information</a>{{end}}
-						</div>
+					<div class="col-sm-8">
+						{{markdown .Description}}
+						{{if .RepoUrl}}<a class="btn btn-info" role="button" href="{{.RepoUrl}}" title="Repository or project website" target="_blank">More Information</a>{{end}}
 					</div>
 				</div>
-			</article>
-			{{end}}
-		</main>
+				<div class="card-footer text-muted">{{.Tags}}</div>
+			</div>
+		{{end}}
 	</div>
 	<!-- ./col-sm-11 -->
 
-	<div class="col-sm-1">
+	<div class="col-3">
 		{{template "App/social.html" .}}
 	</div>
 </div>
+<!--TODO remove-->
 <style type="text/css">
 	#project-list img {
 		max-width: 100%;
 		max-height: 250px;
+	}
+	#project-list .card {
+		margin-top: 15px;
 	}
 	.pattern {
 		width:100%;

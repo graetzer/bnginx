@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bnginx/app/models"
 	"encoding/json"
 	"html/template"
 	"os"
@@ -11,9 +12,11 @@ import (
 	"github.com/graetzer/go-recaptcha"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+
 	// importing database driver
 	"github.com/jinzhu/gorm"
-	_ "github.com/mattn/go-sqlite3"
+	// import dialect
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/revel/revel"
 )
 
@@ -40,25 +43,25 @@ func init() {
 	}
 
 	revel.TemplateFuncs["username"] = func(userID int64) string {
-		var user User
+		var user models.User
 		if DB.First(&user, userID).RecordNotFound() {
 			return ""
 		}
 		return user.Name
 	}
 
-	revel.TemplateFuncs["commentCount"] = func(post *Blogpost) int64 {
+	revel.TemplateFuncs["commentCount"] = func(post *models.Blogpost) int64 {
 		var result int64
 		if post == nil {
-			DB.Model(Comment{}).Where("NOT approved").Count(&result)
+			DB.Model(models.Comment{}).Where("NOT approved").Count(&result)
 		} else {
-			DB.Model(Comment{}).Where("post_id = ? AND approved", post.ID).Count(&result)
+			DB.Model(models.Comment{}).Where("post_id = ? AND approved", post.ID).Count(&result)
 		}
 		return result
 	}
 
-	revel.TemplateFuncs["place"] = func(stay Stay) *Place {
-		var place Place
+	revel.TemplateFuncs["place"] = func(stay models.Stay) *models.Place {
+		var place models.Place
 		if DB.First(&place, stay.PlaceID).RecordNotFound() {
 			return nil
 		}
@@ -102,20 +105,20 @@ func AppInit() {
 	db, err := gorm.Open("sqlite3", filepath.Join(DataBaseDir(), "sqlite_bnginx.db"))
 	if err == nil {
 		db.LogMode(revel.DevMode)
-		if !db.HasTable(&User{}) {
-			db.CreateTable(&User{})
-			db.CreateTable(&Blogpost{})
-			db.CreateTable(&Comment{})
-			db.CreateTable(&Project{})
-			db.CreateTable(&Place{})
-			db.CreateTable(&Stay{})
+		if !db.HasTable(&models.User{}) {
+			db.CreateTable(&models.User{})
+			db.CreateTable(&models.Blogpost{})
+			db.CreateTable(&models.Comment{})
+			db.CreateTable(&models.Project{})
+			db.CreateTable(&models.Place{})
+			db.CreateTable(&models.Stay{})
 		}
 
-		var user User // Add default admin user
+		var user models.User // Add default admin user
 		if db.First(&user).RecordNotFound() {
-			user = User{Name: "Simon", Email: "simon@graetzer.org", IsAdmin: true}
+			user = models.User{Name: "Simon", Email: "simon@graetzer.org", IsAdmin: true}
 			user.SetPassword("default")
-			DB.Save(&user)
+			db.Create(&user)
 		}
 	}
 	DB = db

@@ -7,12 +7,13 @@
 {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-10 col-sm-offset-2">
-		<ol class="breadcrumb">
-		  <li><a href="/admin">Admin Panel</a></li>
-      <li><a href="/admin/about/">About</a></li>
-		  <li class="active">{{.title}}</li>
-		</ol>
+	<div class="col-sm-12">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+			  <li class="breadcrumb-item"><a href="/admin">Admin Panel</a></li>
+			  <li class="breadcrumb-item active" aria-current="page">{{.title}}</li>
+			</ol>
+		  </nav>
 	</div>
 </div>
 <div class="row">
@@ -26,28 +27,31 @@
 		<form role="form" method="POST" action="/admin/about/stays/{{.stay.ID}}">
 			<div class="form-group">
 				<label for="selectorStay">Place</label>
-        <select class="form-control" id="selectorStay" name="stay.PlaceID">
+				<select class="form-control" id="selectorStay" name="stay.PlaceID">
 					{{$selected := .stay.PlaceID}}
-          {{range .places}}
-          <option value="{{.ID}}" {{if eq .ID $selected}}selected{{end}}>{{.Name}}</option>
-          {{end}}
-        </select>
+					{{range .places}}
+					<option value="{{.ID}}" {{if eq .ID $selected}}selected{{end}}>{{.Name}}</option>
+					{{end}}
+				</select>
 			</div>
 			<div class="form-group">
 				<label for="inputFrom">From</label>
-				<input type="text" class="form-control" id="inputFrom" name="stay.StartedAt" placeholder="25.05.1992" value="{{date .stay.StartedAt}}" />
+				<input type="text" class="form-control" id="inputFrom" name="stay.StartedAt" placeholder="25.05.1992"
+					value="{{date .stay.StartedAt}}" />
 			</div>
 			<div class="form-group">
 				<label for="inputUntil">Until</label>
-        <input type="text" class="form-control" id="inputUntil" name="stay.EndedAt" placeholder="25.05.1992" value="{{date .stay.EndedAt}}" />
+				<input type="text" class="form-control" id="inputUntil" name="stay.EndedAt" placeholder="25.05.1992"
+					value="{{date .stay.EndedAt}}" />
 			</div>
-      <div class="form-group">
+			<div class="form-group">
 				<label for="inputUrl">Url</label>
-				<input type="text" class="form-control" id="inputUrl" name="stay.Url" placeholder="http://" value="{{.stay.Url}}" />
+				<input type="text" class="form-control" id="inputUrl" name="stay.Url" placeholder="http://"
+					value="{{.stay.Url}}" />
 			</div>
 
 			<input type="hidden" name="stay.ID" value="{{.stay.ID}}" />
-			<button type="submit" class="btn btn-default">Save</button>
+			<button type="submit" class="btn btn-secondary">Save</button>
 		</form>
 	</div>
 </div>

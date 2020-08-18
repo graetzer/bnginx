@@ -1,11 +1,11 @@
 {{if eq .place.ID -1}}{{set . "title" "Create a new Place"}}{{else}}{{set . "title" "Modify Place"}}{{end}}
 {{template "header.html" .}}
 <div class="row">
-	<div class="col-sm-10 col-sm-offset-2">
+	<div class="col-12">
 		<ol class="breadcrumb">
-		  <li><a href="/admin">Admin Panel</a></li>
+			<li><a href="/admin">Admin Panel</a></li>
 			<li><a href="/admin/about/">About</a></li>
-		  <li class="active">{{.title}}</li>
+			<li class="active">{{.title}}</li>
 		</ol>
 	</div>
 </div>
@@ -20,23 +20,27 @@
 		<form role="form" method="POST" action="/admin/about/places/{{.place.ID}}">
 			<div class="form-group">
 				<label for="inputName">Name</label>
-				<input type="text" class="form-control" id="inputName" name="place.Name" placeholder="Name" value="{{.place.Name}}" />
+				<input type="text" class="form-control" id="inputName" name="place.Name" placeholder="Name"
+					value="{{.place.Name}}" />
 			</div>
 			<div class="form-group">
 				<label for="inputImage">Cover-URL</label>
-				<input type="text" class="form-control" id="inputImage" name="place.CoverUrl" placeholder="http://..." value="{{.place.CoverUrl}}" />
+				<input type="text" class="form-control" id="inputImage" name="place.CoverUrl" placeholder="http://..."
+					value="{{.place.CoverUrl}}" />
 			</div>
 			<div class="form-group">
 				<label for="inputLatitude">Latitude</label>
-				<input type="number" class="form-control" id="inputLatitude" name="place.Latitude" placeholder="45.12" value="{{.place.Latitude}}" min="-90" max="90" step="0.0000001" />
+				<input type="number" class="form-control" id="inputLatitude" name="place.Latitude" placeholder="45.12"
+					value="{{.place.Latitude}}" min="-90" max="90" step="0.0000001" />
 			</div>
-      <div class="form-group">
+			<div class="form-group">
 				<label for="inputLongitude">Longitude</label>
-				<input type="number" class="form-control" id="inputLongitude" name="place.Longitude" placeholder="120.221" value="{{.place.Longitude}}"  min="-180" max="180" step="0.0000001" />
+				<input type="number" class="form-control" id="inputLongitude" name="place.Longitude"
+					placeholder="120.221" value="{{.place.Longitude}}" min="-180" max="180" step="0.0000001" />
 			</div>
 
 			<input type="hidden" name="place.ID" value="{{.place.ID}}" />
-			<button type="submit" class="btn btn-default">Save</button>
+			<button type="submit" class="btn btn-secondary">Save</button>
 		</form>
 	</div>
 </div>

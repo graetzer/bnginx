@@ -1,32 +1,33 @@
-<nav class="navbar navbar-default row" role="navigation">
-  <!-- Brand and toggle get grouped for better mobile display -->
-  <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="/">Simon's Blog</a>
-  </div>
+<div class="row"><div class="col-sm-12">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Simon's Blog</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse navbar-ex1-collapse">
-    <ul class="nav navbar-nav">
-      <!--<li><a href="/about">About</a></li>-->
-      <li {{if .stays}}class="active"{{end}}><a href="/about">About</a></li>
-      <li {{if .projects}}class="active"{{end}}><a href="/projects">Work</a></li>
-      <li><a href="/imprint">Imprint</a></li>
-  	  {{if .user}}
-  	  <li><a href="/admin">Admin Panel</a></li>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item {{if .stays}}active{{end}}">
+        <a class="nav-link" href="/about">About{{if .stays}}<span class="sr-only">(current)</span>{{end}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {{if .projects}}active{{end}}" href="/projects">Projects</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/experience">Experience</a>
+      </li>
+      {{if .user}}
+      <li class="nav-item">
+        <a class="nav-link" href="/admin">Admin Panel</a>
+      </li>
   	  {{end}}
     </ul>
-	<form class="navbar-form navbar-right" role="search" action="/search">
-      <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search" name="query" value="{{.query}}">
-      </div>
-      <button type="submit" class="btn btn-default">Search</button>
+    <form class="form-inline my-2 my-lg-0" action="/search">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value="{{.query}}">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
-
-  </div><!-- /.navbar-collapse -->
+  </div>
 </nav>
+</div></div>
+<br />

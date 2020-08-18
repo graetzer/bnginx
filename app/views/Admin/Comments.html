@@ -1,12 +1,15 @@
 {{set . "title" "Comments"}}
+{{append . "moreScripts" "/public/js/admin.js"}}
 {{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-10 col-sm-offset-2">
-		<ol class="breadcrumb">
-		  <li><a href="/admin">Admin Panel</a></li>
-		  <li class="active">{{.title}}</li>
-		</ol>
+	<div class="col-12">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/admin">Admin Panel</a></li>
+				<li class="breadcrumb-item active" aria-current="page">{{.title}}</li>
+			</ol>
+		</nav>
 	</div>
 </div>
 <div class="row">
@@ -41,7 +44,7 @@
 							{{else}}
 							<a href="/admin/comments/update/{{.ID}}?approved=true" class="btn btn-success btn-sm">Approve</a>
 							{{end}}
-							<a href="/admin/comments/delete/{{.ID}}" class="btn btn-danger btn-sm">Delete</a>
+							<div href="/admin/comments/delete/{{.ID}}" class="btn btn-danger btn-sm btn-delete">Delete</a>
 						{{end}}
 					</td>
 				</tr>

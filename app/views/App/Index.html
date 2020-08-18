@@ -1,49 +1,45 @@
 {{template "App/trailer.html" .}}
+
 <div class="row">
-	<div class="col-sm-11">
-	<main>
-		{{$user := .user}}
-		{{range .posts}}
-		<article>
-			<div class="panel panel-default">
-			  <div class="panel-heading">
-			    <h3 class="panel-title">{{.Title}}<small class="pull-right">{{datetime .UpdatedAt}}</small></h3>
-				{{if $user}}
-				<small>By {{username .UserID}}</small>
-					{{if eq $user.ID .UserID}}
-						<a href="/admin/post/{{.ID}}" title="Edit this Post">Edit</a>
-					{{end}}
-				{{end}}
-			  </div>
-			  <div class="panel-body">
-			    {{markdown .Body}}
+	<div class="col-9">
+	{{$user := .user}}
+	{{range .posts}}
+	<div class="card">
+		<h3 class="card-header">{{.Title}}</h3>
+		<div class="card-body">
+			<p class="card-text">{{markdown .Body}}
+		</div>
+		<div class="card-footer text-muted">
+			Last Updated {{datetime .UpdatedAt}}
+			<a class="card-link" href="/post/{{.ID}}/{{urlquery .Title}}#commentForm" title="Make a comment">
+			{{$count := commentCount .}}
+			{{if eq $count 0}}Comment on this article{{else}}
+			{{if eq $count 1}}One comment so far{{else}}
+			View all {{$count}} Comments{{end}}{{end}}</a>
+		</div>
+	</div>
+	{{end}}
 
-				<p><a href="/post/{{.ID}}/{{urlquery .Title}}#commentForm" title="Make a comment">
-				{{$count := commentCount .}}
-				{{if eq $count 0}}Comment on this article{{else}}
-				{{if eq $count 1}}One comment so far{{else}}
-				View all {{$count}} Comments{{end}}{{end}}</a></p>
-			  </div>
-			</div>
-		</article>
+	{{/* Handling of next/back/empty */}}
+	{{if eq .offset 0 | not}}
+		<a href="/?offset={{ sub .offset 3}}">&laquo; Back</a>
+	{{end}}
+	{{if len .posts | eq 0}}
+		<h2>Oops!</h2>
+		<p>There seems to be no content here</p>
+	{{else}}
+		{{if len .posts | eq 5}}
+			<a href="/?offset={{add .offset 3}}">Next &raquo;</a>
 		{{end}}
-
-		{{/* Handling of next/back/empty */}}
-		{{if eq .offset 0 | not}}
-			<a href="/?offset={{ sub .offset 3}}">&laquo; Back</a>
-		{{end}}
-		{{if len .posts | eq 0}}
-			<h2>Oops!</h2>
-			<p>There seems to be no content here</p>
-		{{else}}
-			{{if len .posts | eq 5}}
-				<a href="/?offset={{add .offset 3}}">Next &raquo;</a>
-			{{end}}
-		{{end}}
-	</main>
+	{{end}}
 	</div><!-- ./col-sm-11 -->
 
-	<div class="col-xs-12 col-sm-1">
+	<div class="col-3">
+	<p>
+		Hello my name is Simon<br />
+		TODO
+	</p>
+
 	{{template "App/social.html" .}}
 	</div>
 </div><!-- /.row -->

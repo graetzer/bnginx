@@ -1,21 +1,24 @@
-{{set . "title" "Admin Panel"}} {{template "header.html" .}}
+{{set . "title" "About Page"}}
+{{append . "moreScripts" "/public/js/admin.js"}}
+{{template "header.html" .}}
 
 <div class="row">
-  <div class="col-sm-10 col-sm-offset-2">
-    <ol class="breadcrumb">
-      <li class="active">Admin Panel</li>
-    </ol>
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin">Admin Panel</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{.title}}</li>
+      </ol>
+    </nav>
   </div>
 </div>
 {{$user := .user}}
 
 <div class="row">
-
-  <div class="col-sm-2">
+  <div class="col-2">
     {{ set . "pp" 5}} {{template "Admin/adminMenu.html" .}}
   </div>
-
-  <div class="col-sm-10">
+  <div class="col-10">
     <h3>Stays</h3><a href="/admin/about/stays/create">Add a stay</a>
     <table class="table table-hover">
       <thead>
@@ -29,7 +32,7 @@
       </thead>
       <tbody>
         {{range .stays}}{{$place := place .}}
-        <tr>
+        <tr id="stay-{{.ID}}" class="place-{{.ID}}">
           <td>{{$place.Name}}</td>
           <td>{{date .StartedAt}}</td>
           <td>{{date .EndedAt}}</td>
@@ -37,7 +40,8 @@
           {{if $user.IsAdmin}}
           <td>
             <a href="/admin/about/stays/{{.ID}}" class="btn btn-primary btn-sm">Edit</a>
-            <a href="/admin/about/stays/{{.ID}}/delete" class="btn btn-danger btn-sm">Delete</a>
+            <div data-href="/admin/about/stays/{{.ID}}" data-hide="#stay-{{.ID}}"
+              class="btn btn-danger btn-sm btn-delete">Delete</a>
           </td>{{end}}
         </tr>
         {{end}}
@@ -47,21 +51,25 @@
 </div>
 
 <div class="row">
-  <div class="col-sm-5 col-sm-offset-2"><h3>Places</h3></div>
-<div class="col-sm-5"><a href="/admin/about/places/create">Create Location</a></div></div>
+  <div class="col-5 offset-2">
+    <h3>Places</h3>
+  </div>
+  <div class="col-5"><a href="/admin/about/places/create">Create Location</a></div>
+</div>
 <div class="row">
-  <div class="col-sm-2 col-sm-offset-2"><strong>Name</strong></div>
-  <div class="col-sm-4"><strong>Cover</strong></div>
-  {{if $user.IsAdmin}}<div class="col-sm-3"><strong>Actions</strong></div>{{end}}
+  <div class="col-2 offset-2"><strong>Name</strong></div>
+  <div class="col-4"><strong>Cover</strong></div>
+  {{if $user.IsAdmin}}<div class="col-3"><strong>Actions</strong></div>{{end}}
 </div>
 {{range .places}}
-<div class="row" style="margin-top:10px">
-  <div class="col-sm-2 col-sm-offset-2">{{.Name}}</div>
-  <div class="col-sm-4"><img src="{{.CoverUrl}}" alt="Location Logo"></div>
+<div class="row mt-1" id="place-{{.ID}}">
+  <div class="col-2 offset-2">{{.Name}}</div>
+  <div class="col-4"><img src="{{.CoverUrl}}" alt="Location Logo"></div>
   {{if $user.IsAdmin}}
-  <div class="col-sm-3">
+  <div class="col-3">
     <a href="/admin/about/places/{{.ID}}" class="btn btn-primary btn-sm">Edit</a>
-    <a href="/admin/about/places/{{.ID}}/delete" class="btn btn-danger btn-sm">Delete</a>
+    <div class="btn btn-danger btn-sm btn-delete" data-href="/admin/about/places/{{.ID}}"
+      data-hide="#place-{{.ID}}, .place-{{.ID}}">Delete</div>
   </div>{{end}}
 </div>
 {{end}}

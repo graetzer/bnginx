@@ -1,17 +1,19 @@
-{{set . "title" "Admin Panel"}} {{template "header.html" .}}
+{{set . "title" "Admin Panel"}} 
+{{append . "moreScripts" "/public/js/admin.js"}}
+{{template "header.html" .}}
 
 <div class="row">
-	<div class="col-sm-10 col-sm-offset-2">
+	<div class="col-12">
 		<ol class="breadcrumb">
 			<li class="active">Admin Panel</li>
 		</ol>
 	</div>
 </div>
 <div class="row">
-	<div class="col-sm-2">
+	<div class="col-2">
 		{{ set . "pp" 0}} {{template "Admin/adminMenu.html" .}}
 	</div>
-	<div class="col-sm-10">
+	<div class="col-10">
 		<h3>Posts</h3>
 		<table class="table table-hover">
 			<thead>
@@ -25,14 +27,15 @@
 			</thead>
 			<tbody>
 				{{$user := .user}} {{range .posts}}
-				<tr class="{{if .Published}}success{{else}}info{{end}}">
+				<tr class="table-{{if .Published}}success{{else}}info{{end}}" id="post-{{.ID}}">
 					<td>{{.Title}}</td>
 					<td>{{date .CreatedAt}}</td>
 					<td>{{date .UpdatedAt}}</td>
 					<td>{{username .UserID}}</td>
 					<td>
-						<a href="/admin/post/{{.ID}}" class="btn btn-primary btn-sm">Edit</a> {{if eq $user.ID .UserID}}
-						<a href="/admin/post/{{.ID}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
+						<a href="/admin/post/{{.ID}}" class="btn btn-primary btn-sm">Edit</a>
+						{{if eq $user.ID .UserID}}<div class="btn btn-danger btn-sm btn-delete" 
+						data-href="/admin/post/{{.ID}}" data-hide="#post-{{.ID}}">Delete</a>{{end}}
 					</td>
 				</tr>
 				{{end}}
@@ -59,7 +62,7 @@
 					<td>{{if .IsAdmin}}Administrator{{else}}User{{end}}</td>
 					<td>
 						<a href="/admin/user/{{urlquery .Email}}" class="btn btn-primary btn-sm">Edit</a> {{if and ($user.IsAdmin) (not (eq $user.ID .ID))}}
-						<a href="/admin/user/{{.Email}}/delete" class="btn btn-danger btn-sm">Delete</a> {{end}}
+						<div href="/admin/user/{{.Email}}" class="btn btn-danger btn-sm btn-delete">Delete</a> {{end}}
 					</td>
 				</tr>
 				{{end}}

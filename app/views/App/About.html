@@ -5,47 +5,43 @@
 {{template "header.html" .}}
 
 <div class="row">
-    <div class="col-sm-11">
-        <div class="row">
-            <div class="col-xs-3 col-sm-2 col-lg-1">
-                <img src="/public/img/profile.jpg" alt="Profile image" class="img-circle" style="max-width:100%" />
-            </div>
-            <div class="col-xs-9 col-sm-10 col-lg-11">
-                My name is Simon and I'm a software developer from Germany. I mostly work on mobile app's (<strong>iOS</strong>                and
-                <strong>Android</strong>), but I also have an active interest in
-                <strong>Computer Graphics</strong>,
-                <strong>Machine Learning</strong> and
-                <strong>Web Development</strong>. If you want to know what I'm up to, look at this <a href="/projects" title="Project List">list of projects</a>                or go to <a href="https://github.com/graetzer/" title="My Github profile">Github</a>. I am currently pursuing
-                a master degree in Computer Science at the RWTH Aachen University.
-                <br/>If you want to get in touch shoot me an email at <strong>simon(at)graetzer.org</strong>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-3 hidden-xs" id="stays-list" style="padding: 10px 20px 0 20px">
-                Trips &amp; Locations {{range .stays}}{{$place := place .}}
-                <div class="row" onclick="javascript:showPlace({{.ID}}, {{$place.ID}})" id="stay-{{.ID}}">
-                    <div class="col-xs-4" style="padding:0">
-                        <img src="{{$place.CoverUrl}}" alt="{{$place.Name}}" class="img-circle" />
-                    </div>
-                    <div class="col-xs-8">
-                        <h6><a href="{{.Url}}" target="_blank" title="Pictures of my stay">{{$place.Name}}</a></h6>
-                        <small>{{if eqtime .StartedAt .EndedAt}}{{date .StartedAt}} - <strong>Now</strong>{{else}}{{date .StartedAt}} - {{date .EndedAt}}{{end}}</small>
-                    </div>
-                </div>{{end}}
-            </div>
-            <div class="col-sm-9" id="globe-container">
-                <div id="globe-placeholder" style="width:100%;height:300px;background:transparent url('/public/globe/loading.gif') no-repeat center center"></div>
-            </div>
-        </div>
+    <div class="col-2">
+        <img src="/public/img/profile.jpg" alt="Profile image" class="img-fluid rounded-circle" style="max-width:100%" />
     </div>
-    <!-- ./col-sm-11 -->
+    <div class="col-9">
+		<p class=lead>My name is Simon and I'm a software developer from Germany. I mostly work on mobile app's (<strong>iOS</strong>                and
+			<strong>Android</strong>), but I also have an active interest in
+			<strong>Computer Graphics</strong>,
+			<strong>Machine Learning</strong> and
+			<strong>Web Development</strong>. If you want to know what I'm up to, look at this <a href="/projects" title="Project List">list of projects</a>                
+			or go to <a href="https://github.com/graetzer/" title="My Github profile">Github</a>. I am currently pursuing
+			a master degree in Computer Science at the RWTH Aachen University.
 
-    <div class="col-sm-1">
-        {{template "App/social.html" .}}
+			<strong>TODO</strong>
+		</p>
+        If you want to get in touch shoot me an email at <strong>simon(at)graetzer.org</strong>
     </div>
 </div>
-<!-- /.row -->
+
+<div class="row" style="margin-top:15px">
+	<div class="col-3" id="stays-list">
+		<h4 class="display-4">Trips</h4>
+		{{range .stays}}{{$place := place .}}
+        <div class="row stay" onclick="javascript:showPlace('{{.ID}}', '{{$place.ID}}')" id="stay-{{.ID}}">
+            <div class="col-3">
+                <img src="{{$place.CoverUrl}}" class="img-circle" />
+            </div>
+            <div class="col-9">
+                <h6><a href="{{.Url}}" target="_blank" title="Pictures of my stay">{{$place.Name}}</a></h6>
+                <small>{{if eqtime .StartedAt .EndedAt}}{{date .StartedAt}} - <strong>Now</strong>{{else}}{{date .StartedAt}} - {{date .EndedAt}}{{end}}</small>
+            </div>
+        </div>{{end}}
+    </div>
+    <div class="col-9" id="globe-container">
+        <div id="globe-placeholder" style="width:100%;height:350px;background:transparent url('/public/globe/loading.gif') no-repeat center center"></div>
+    </div>
+</div>
+
 <script type="text/javascript">
     var globe, places, active;
 	window.onload = function() {

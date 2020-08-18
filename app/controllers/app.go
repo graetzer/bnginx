@@ -4,7 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/graetzer/bnginx/app/routes"
+	"bnginx/app/models"
+	"bnginx/app/routes"
+
 	"github.com/graetzer/go-recaptcha"
 	"github.com/revel/revel"
 )
@@ -22,14 +24,19 @@ func (c App) addCacheHeaders() revel.Result {
 
 // ================ Actions ================
 
-func (c App) Login(email string, password string) revel.Result {
+func (c App) Login() revel.Result {
+	return c.Render()
+}
+
+func (c App) LoginPost(email string, password string) revel.Result {
+
 	c.Validation.Required(email)
 	c.Validation.Required(password)
 	c.Validation.MaxSize(password, 300) // Kinda important
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
 		c.FlashParams()
-		return c.Redirect(routes.App.Index(0))
+		return c.Redirect(routes.App.Login())
 	}
 
 	user := c.getUser(email)
@@ -38,22 +45,22 @@ func (c App) Login(email string, password string) revel.Result {
 		return c.Redirect(routes.App.Index(0))
 	}
 	c.Session["user"] = user.Email
-	c.RenderArgs["User"] = user // Probably not needed
+	c.ViewArgs["user"] = user // Probably not needed
 	return c.Redirect(routes.Admin.Index())
 }
 
 // Logout the user
 func (c App) Logout() revel.Result {
 	delete(c.Session, "user")
-	delete(c.RenderArgs, "user")
+	delete(c.ViewArgs, "user")
 	return c.Redirect(routes.App.Index(0))
 }
 
 // Index serves the frontpage including the last stay
 func (c App) Index(offset int) revel.Result {
 	posts := c.getPublishedPosts(offset, 3)
-	var place Place
-	var stay Stay
+	var place models.Place
+	var stay models.Stay
 	DB.Order("started_at DESC").First(&stay)
 	if DB.Model(&stay).Related(&place).RecordNotFound() {
 		return c.Render(posts, offset)
@@ -63,15 +70,15 @@ func (c App) Index(offset int) revel.Result {
 
 // Feed serves the current RSS feed
 func (c App) Feed() revel.Result {
-	c.RenderArgs["posts"] = c.getPublishedPosts(0, 5)
-	c.RenderArgs["time"] = time.Now()
+	c.ViewArgs["posts"] = c.getPublishedPosts(0, 5)
+	c.ViewArgs["time"] = time.Now()
 	c.Response.ContentType = "application/rss+xml"
 	return c.RenderTemplate("App/Feed.xml")
 }
 
 // Search serrves matching blogposts
 func (c App) Search(query string, offset int) revel.Result {
-	var posts []*Blogpost
+	var posts []*models.Blogpost
 	q := "%" + query + "%"
 	DB.Where("published AND (body like ? OR title like ?)", q, q).Limit(5).Offset(offset).Find(&posts)
 	return c.Render(posts, query, offset)
@@ -83,8 +90,8 @@ func (c App) Post(postID int64) revel.Result {
 	if post == nil {
 		return c.NotFound("Oh no! I couldn't find this page")
 	}
-	var comments []Comment
-	DB.Where(&Comment{PostID: postID, Approved: true}).Find(&comments)
+	var comments []models.Comment
+	DB.Where(&models.Comment{PostID: postID, Approved: true}).Find(&comments)
 	recaptchaSiteKey := revel.Config.StringDefault("recaptcha.sitekey", "")
 	return c.Render(post, comments, recaptchaSiteKey)
 }
@@ -116,7 +123,7 @@ func (c App) SaveComment(postID int64, name, title, body string) revel.Result {
 	} else if ok := recaptcha.Confirm(clientIP, recaptchaResponse); !ok {
 		c.Flash.Error("Wrong captcha")
 	} else if post := c.getPostByID(postID); post != nil {
-		comment := Comment{PostID: postID, Name: name, Title: title, Body: body}
+		comment := models.Comment{PostID: postID, Name: name, Title: title, Body: body}
 		DB.Save(&comment)
 		c.Flash.Success("Thanks for commenting")
 	}
@@ -124,7 +131,7 @@ func (c App) SaveComment(postID int64, name, title, body string) revel.Result {
 }
 
 func (c App) Projects(hidden bool) revel.Result {
-	var projects []*Project
+	var projects []*models.Project
 	if hidden {
 		DB.Order("updated_at DESC").Find(&projects)
 	} else {
@@ -135,12 +142,17 @@ func (c App) Projects(hidden bool) revel.Result {
 
 func (c App) About() revel.Result {
 	var (
-		places []Place
-		stays  []Stay
+		places []models.Place
+		stays  []models.Stay
 	)
 	DB.Order("started_at DESC").Find(&stays)
 	DB.Find(&places)
 	return c.Render(places, stays)
+}
+
+// Experience
+func (c App) Experience() revel.Result {
+	return c.Render()
 }
 
 func (c App) Imprint() revel.Result {

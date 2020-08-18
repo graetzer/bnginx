@@ -1,7 +1,7 @@
 /**
  * Globe Animation
  *
- * Copyright 2015 Simon P. Grätzer
+ * Copyright 2020 Simon P. Grätzer
  * Copyright 2011 Data Arts Team, Google Creative Lab
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
@@ -236,28 +236,30 @@ DAT.Globe = function(container, worldMap, opts) {
     function onDocumentKeyDown(event) {
         var key = event.which || event.keyCode || 0;
         switch (key) {
-            case 38: // up arrow
+            /*case 38: // up arrow
                 zoom(100);
                 event.preventDefault();
                 break;
             case 40: // down arrow
                 zoom(-100);
                 event.preventDefault();
-                break;
-            case 87: // w
+                break;*/
+            case 38: // up arrow
+            //case 87: // w
                 target.y += 0.1;
                 event.preventDefault();
                 break;
-            case 83: // s
+            case 40: // down arrow
+            //case 83: // s
                 target.y -= 0.1;
                 event.preventDefault();
                 break;
-            case 65: // a
+            //case 65: // a
             case 37: //left arrow
                 target.x -= 0.1;
                 event.preventDefault();
                 break;
-            case 68: // d
+            //case 68: // d
             case 39: //right arrow
                 target.x += 0.1;
                 event.preventDefault();

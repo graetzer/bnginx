@@ -1,10 +1,18 @@
 {{append . "moreScripts" "/public/globe/Detector.js"}} {{append . "moreScripts" "/public/globe/three.min.js"}}
 {{append . "moreScripts" "/public/globe/globe.js"}} {{template "header.html" .}}
-<header role="banner" class="row jumbotron" id="trailer">
-    <h1>Technical Notebook</h1>
-    <p class="lead">Thoughts on iOS, Android, GoLang and more.</p>
-</header>
-<script type="text/javascript">
+
+
+<div class="row"><div class="col-sm-12">
+<div class="jumbotron" id="trailer">
+	<h1 class="display-4">Technical Notebook</h1>
+	<p class="lead">I am C++ Dev working on distributed databases . </p>
+	<hr class="my-4">
+	<p>Thoughts on C++ iOS, Android, GoLang and more.</p>
+	<a class="btn btn-primary btn-lg" href="#" role="button">About me</a>
+</div>
+</div></div>
+
+{{/*<script type="text/javascript">
     var globe, globeImg;
 	window.onload = function() {
 		var container = document.getElementById('trailer');
@@ -37,4 +45,4 @@
 		}
 	};
 
-</script>
+</script>*/}}

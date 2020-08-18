@@ -1,12 +1,11 @@
-<ul class="nav nav-pills nav-stacked">
-
-  <li {{if eq .pp 0 }}class="active"{{end}}><a href="/admin"><span class="glyphicon glyphicon-home"></span> Content</a></li>
-  <li {{if eq .pp 1 }}class="active"{{end}}><a href="/admin/post/create"><span class="glyphicon glyphicon-pencil"></span> Write Post</a></li>
-  <li {{if eq .pp 2 }}class="active"{{end}}><a href="/admin/comments"><span class="glyphicon glyphicon-comment"></span> Comments <span class="badge">{{commentCount nil}}</span></a></li>
-  <li {{if eq .pp 3 }}class="active"{{end}}><a href="/admin/media"><span class="glyphicon glyphicon-hdd"></span> Manage Files</a></li>
-  <li {{if eq .pp 4 }}class="active"{{end}}><a href="/admin/projects"><span class="glyphicon glyphicon-piggy-bank"></span> Projects</a></li>
-  <li {{if eq .pp 5 }}class="active"{{end}}><a href="/admin/about"><span class="glyphicon glyphicon-globe"></span> About</a></li>
+<ul class="nav nav-pills flex-column">
+  <li class="nav-item"><a href="/admin" class="nav-link {{if eq .pp 0 }}active{{end}}"><img class="mr-1" src="/public/icons/flame.svg" alt="" width="22" height="22"> Content</a></li>
+  <li class="nav-item"><a class="nav-link {{if eq .pp 1 }}active{{end}}" href="/admin/post/create"><img class="mr-1" src="/public/icons/pencil.svg" alt="" width="22" height="22">Write Post</a></li>
+  <li class="nav-item"><a class="nav-link {{if eq .pp 2 }}active{{end}}" href="/admin/comments"><img class="mr-1" src="/public/icons/comment-discussion.svg" alt="" width="22" height="22">Comments <span class="badge">{{commentCount nil}}</span></a></li>
+  <li class="nav-item"><a class="nav-link {{if eq .pp 3 }}active{{end}}" href="/admin/media"><img class="mr-1" src="/public/icons/database.svg" alt="" width="22" height="22">Manage Files</a></li>
+  <li class="nav-item"><a class="nav-link {{if eq .pp 4 }}active{{end}}" href="/admin/projects"><img class="mr-1" src="/public/icons/rocket.svg" alt="" width="22" height="22">Projects</a></li>
+  <li class="nav-item"><a class="nav-link {{if eq .pp 5 }}active{{end}}" href="/admin/about"><img class="mr-1" src="/public/icons/globe.svg" alt="" width="22" height="22">About</a></li>
   {{if .user.IsAdmin}}
-  	<li {{if eq .pp 6 }}class="active"{{end}}><a href="/admin/user/create"><span class="glyphicon glyphicon-user"></span> Add User</a></li>
+  	<li class="nav-item"><a  class="nav-link {{if eq .pp 6 }}active{{end}}" href="/admin/user/create"><img class="mr-1" src="/public/icons/person.svg" alt="" width="22" height="22">Add User</a></li>
   {{end}}
 </ul>
