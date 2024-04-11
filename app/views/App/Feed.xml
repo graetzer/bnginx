@@ -18,7 +18,7 @@
       <title>{{.Title}}</title>
       <description>{{.Summary}}</description>
       <link>http://graetzer.org/post/{{.ID}}/{{urlquery .Title}}</link>
-      <author>{{username .UserId}}</author>
+      <author>{{username .UserID}}</author>
       {{/*<guid>Eindeutige Identifikation des Eintrages</guid>*/}}
       <pubDate>{{datetime .CreatedAt}}</pubDate>
     </item>
